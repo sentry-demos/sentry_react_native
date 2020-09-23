@@ -22,6 +22,12 @@ It appears to me that we wanted to start fresh to create this demo. And while th
 
 Since the assets are taken from there, and that it has its own App.js, it makes me wonder that a part/whole of it should already be working. I will investigate that as time permits. 
 
+### Update
+
+So I took the major files from this working demo viz. package.json, package-lock.json, ios/Podfile, ios/Podfile.lock, because it is these files that make the deliverable self-contained, amongst other changes like DSN and put them on top of [original react-native repo ]( https://github.com/sentry-demos/react-native/commit/269f58d63426065a4de67a3f22d2e774787cd996) , and I am getting comile errors for both ios and android. 
+
+At this time, I propose, we use this very repo (sentry_react_native) as the new working demo for RN stuff and forget about making them work on TOP of [original react-native repo ]( https://github.com/sentry-demos/react-native/commit/269f58d63426065a4de67a3f22d2e774787cd996) . That to me is now a hacker's or pure development exercise.
+
 ## What were the steps again
 
 This is just the background steps to get to this repo in this state. You can simply clone and  make minimal changes to DSN key to get up and running. 
