@@ -6,109 +6,120 @@
  * @flow strict-local
  */
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import React, { Component } from 'react';
+import { Button, Platform, StyleSheet, Text, View, TextInput, ImageBackground, Image, SafeAreaView } from 'react-native';
 
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
+import * as Sentry from '@sentry/react-native';
 
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
+const Separator = () => (
+  <View style={styles.separator} />
+);
+
+Sentry.init({
+  dsn: "<Your DSN Here>",
+  logLevel: "debug",
+  debug: true,
+  deactivateStacktraceMerging: false,
+  enableAutoSessionTracking: true,
+  sessionTrackingIntervalMillis: 10000,
 });
 
-export default App;
+
+export default class App extends React.Component {
+  render() {
+    return (
+      <ImageBackground source={require('./assets/sentry-pattern.png')} style={{ width: '100%', height: '100%' }}>
+        <View style={styles.container}>
+          <Image source={require('./assets/sentry-glyph-black.png')} style={{ height: 70, width: 70, alignSelf: "center" }}></Image>
+          <Text style={styles.welcome}>Sample React-Native app</Text>
+
+          <TextInput
+            style={styles.emailTextInput}
+            onChangeText={(email) => Sentry.setUser({ email })}
+            accessibilityLabel={'email'}
+            textContentType='emailAddress'
+            placeholder='Enter email address'
+            placeholderTextColor="#808080"
+            textAlign='center'
+            Align='center'
+          />
+          <View style={styles.separator} />
+          <View>
+            <Button
+              style={styles.button}
+              styleDisabled={{ color: 'red' }}
+              onPress={() => { var a = undefinedVariable; }}
+              accessibilityLabel={'ReferenceError: undefinedVariable is not defined'}
+              title="ReferenceError: undefinedVariable is not defined"
+            />
+          </View>
+          <View style={styles.separator} />
+          <Button
+            style={styles.button}
+            styleDisabled={{ color: 'red' }}
+            onPress={() => { var obj = {}; obj.invalidFunction(); }}
+            accessibilityLabel={'TypeError: obj.invalidFunction is not a function'}
+            title="TypeError: obj.invalidFunction is not a function"
+          />
+          <View style={styles.separator} />
+          <Button
+            style={styles.button}
+            styleDisabled={{ color: 'red' }}
+            onPress={() => { Sentry.nativeCrash(); }}
+            accessibilityLabel={'native crash'}
+            title="native crash!"
+          />
+          <Separator />
+          <Button
+            style={styles.button}
+            styleDisabled={{ color: 'red' }}
+            onPress={() => { Sentry.captureMessage('TEST message', { level: SentrySeverity.Warning }); }}
+            accessibilityLabel={'send message'}
+            title="send message"
+          />
+          <Separator />
+
+          <Button
+            style={styles.button}
+            styleDisabled={{ color: 'red' }}
+            onPress={() => { Sentry.setTag('customerType', 'enterprise'); Sentry.setTag('environment', 'production'); }}
+            accessibilityLabel={'set sample tags'}
+            title="set sample tags"
+          />
+
+        </View>
+      </ImageBackground>
+    );
+  }
+}
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    marginHorizontal: 16,
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10
+  },
+  button: {
+    fontSize: 12,
+    color: 'green'
+  },
+  separator: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  emailTextInput: {
+    height: 40,
+    borderColor: 'black',
+    borderWidth: 1,
+    textAlign: 'center',
+    margin: 10
+  }
+});
