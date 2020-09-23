@@ -12,7 +12,7 @@ Turns out react-native generates it owne gitignore, which is of course part of t
 
 ## Where's the "original" code
 
-Adam worked on App.js which I took as is from him. Plus 2 image files in the assets dir (which are also present in "original" react-native demo org)
+Adam worked on App.js which I took as is from him. Plus 2 image files in the assets dir (which are also present in [original react-native repo ]( https://github.com/sentry-demos/react-native/commit/269f58d63426065a4de67a3f22d2e774787cd996)
 
 
 ## What else 
