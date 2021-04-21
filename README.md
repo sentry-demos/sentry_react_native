@@ -28,6 +28,15 @@ cd ios
 pod install
 ```
 
+Make sure to have Internet access enabled on your Android emulator. If you can't access the browser you may need to launch your emulator with the below commands:
+
+```
+emulator -list-avds
+
+emulator @{YourEmulator} -dns-server 8.8.8.8
+```
+
+
 ### To Launch the Demo apps:
 
 * _iOS  version_: `npx react-native run-ios --configuration Release`
@@ -87,4 +96,62 @@ pod install
 cd ..
 ```
 Ran git commit along the way and finally pushed to this repo.
+
+## To enable a Hermes event
+
+Android
+
+In your build.gradle file make sure to have the 
+following: 
+
+```
+
+def enableHermes = project.ext.react.get("enableHermes", true);
+
+project.ext.react = [
+    enableHermes: true,  // clean and rebuild if changing
+]
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    //noinspection GradleDynamicVersion
+    implementation "com.facebook.react:react-native:0.64.0"  // From node_modules
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+      exclude group:'com.facebook.fbjni'
+    }
+
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.flipper'
+        exclude group:'com.squareup.okhttp3', module:'okhttp'
+    }
+
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.flipper'
+    }
+
+    if (enableHermes) {
+        def hermesPath = "../../node_modules/hermes-engine/android/";
+        debugImplementation files(hermesPath + "hermes-debug.aar")
+        releaseImplementation files(hermesPath + "hermes-release.aar")
+    } else {
+        implementation jscFlavor
+    }
+}
+
+```
+
+iOS
+
+In your Podfile before running pod install make sure to have the following:
+
+```
+
+use_react_native!(
+    :path => config["reactNativePath"],
+    :hermes_enabled => true
+    )
+```
 

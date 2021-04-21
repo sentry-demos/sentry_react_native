@@ -28,7 +28,7 @@ const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumenta
 
 Sentry.init({
   // Replace the example DSN below with your own DSN:
-  dsn: SENTRY_INTERNAL_DSN,
+  dsn: "https://e7d16d043be64997b251cb62611f0297@o87286.ingest.sentry.io/5713490",
   debug: true,
   beforeSend: (e) => {
     console.log('Event beforeSend:', e);
@@ -40,14 +40,14 @@ Sentry.init({
       idleTimeout: 5000,
       routingInstrumentation: reactNavigationV5Instrumentation,
       tracingOrigins: ['localhost', /^\//, /^https:\/\//],
-      beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
-        // Example of not sending a transaction for the screen with the name "Manual Tracker"
-        if (context.data.route.name === 'ManualTracker') {
-          context.sampled = false;
-        }
+      // beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
+      //   // Example of not sending a transaction for the screen with the name "Manual Tracker"
+      //   if (context.data.route.name === 'ManualTracker') {
+      //     context.sampled = false;
+      //   }
 
-        return context;
-      },
+      //   return context;
+      // },
     }),
   ],
   enableAutoSessionTracking: true,
@@ -64,7 +64,8 @@ Sentry.init({
 const Stack = createStackNavigator();
 
 const App = () => {
-  const navigation = React.useRef<NavigationContainerRef>();
+  const navigation = React.useRef();
+  
 
   return (
     <Provider store={store}>
