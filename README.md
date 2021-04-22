@@ -31,13 +31,19 @@ pod install
 
 Be sure to export your auth token: `export SENTRY_AUTH_TOKEN=<token>`
 
+### Versioning
+
+Don't foget to bump your release version depending on platform:
+iOS: `Info.plist` `CFBundleShortVersionString`
+android: `app.build.gradle` `versionName`
+
 ### To Launch the Demo apps:
 
 * _iOS  version_: `npx react-native run-ios --configuration Release`
 * _Android version_: `npx react-native run-android --variant Release`
 
 ### When Launching Android
-You many run into issues if you haven't added sdk and sdk platform-tools to path:
+You may run into issues if you haven't added sdk and sdk platform-tools to path:
 `export ANDROID_SDK_ROOT=/Users/dustinbailey/Library/Android/sdk`
 `export export PATH=/Users/dustinbailey/Library/Android/sdk/platform-tools:$PATH`
 
