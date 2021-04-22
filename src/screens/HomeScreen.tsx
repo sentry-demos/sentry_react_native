@@ -248,7 +248,15 @@ const HomeScreen = (props: Props) => {
               }}>
               <Text style={styles.buttonText}>Redux Example</Text>
             </TouchableOpacity>
+            <View style={styles.spacer} />
+            <TouchableOpacity
+              onPress={() => {
+                props.navigation.navigate('ToolStore');
+              }}>
+              <Text style={styles.buttonText}>Tool Store</Text>
+            </TouchableOpacity>
           </View>
+          
         </View>
       </ScrollView>
     </>

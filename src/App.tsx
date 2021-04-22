@@ -15,6 +15,9 @@ import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
 import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
 import ReduxScreen from './screens/ReduxScreen';
+import ToolStore from './screens/ToolStore';
+import CartScreen from './screens/CartScreen';
+import Toast from 'react-native-toast-message';
 
 import {store} from './reduxApp';
 // import {version as packageVersion} from '../../package.json';
@@ -31,13 +34,13 @@ Sentry.init({
   dsn: SENTRY_INTERNAL_DSN,
   debug: true,
   beforeSend: (e) => {
-    console.log('Event beforeSend:', e);
+    console.log('Event beforeSend :', e);
     return e;
   },
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   integrations: [
     new Sentry.ReactNativeTracing({
-      idleTimeout: 5000,
+      // idleTimeout: 5000,
       routingInstrumentation: reactNavigationV5Instrumentation,
       tracingOrigins: ['localhost', /^\//, /^https:\/\//],
       beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
@@ -85,7 +88,10 @@ const App = () => {
           />
           <Stack.Screen name="Redux" component={ReduxScreen} />
           <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
+          <Stack.Screen name="ToolStore" component={ToolStore} />
+          <Stack.Screen name="Cart" component={CartScreen} />
         </Stack.Navigator>
+        <Toast ref={(ref) => Toast.setRef(ref)} />
       </NavigationContainer>
     </Provider>
   );

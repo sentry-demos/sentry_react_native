@@ -27,11 +27,19 @@ cp andoid/sentry.properties ios/sentry.properties
 cd ios
 pod install
 ```
+### Before Launching the Demo apps:
+
+Be sure to export your auth token: `export SENTRY_AUTH_TOKEN=<token>`
 
 ### To Launch the Demo apps:
 
 * _iOS  version_: `npx react-native run-ios --configuration Release`
 * _Android version_: `npx react-native run-android --variant Release`
+
+### When Launching Android
+You many run into issues if you haven't added sdk and sdk platform-tools to path:
+`export ANDROID_SDK_ROOT=/Users/dustinbailey/Library/Android/sdk`
+`export export PATH=/Users/dustinbailey/Library/Android/sdk/platform-tools:$PATH`
 
 ## Why so many files
 
