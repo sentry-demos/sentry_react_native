@@ -23,7 +23,7 @@ At this point, you may get an error like:
 From my test runs I've noted that it is safe to look past this error. A minor issue is that it blocks creation of `ios/sentry.properties`. So simply make a copy of `android/sentry.properties` and put it in `ios/sentry.properties`
 
 ```
-cp andoid/sentry.properties ios/sentry.properties
+cp android/sentry.properties ios/sentry.properties
 cd ios
 pod install
 ```
