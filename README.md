@@ -2,6 +2,24 @@
 
 This is demo repo is used by Solution Engineers when demo'ing Sentry's [React Native](https://docs.sentry.io/platforms/react-native) SDK's capabilties. 
 
+## Versions Summary:
+
+| dependency      | version           
+| ------------- |:-------------:| 
+| react-native     | 0.64.0  |
+| gradle           | 6.7     |
+| react           | 16.13.1    |
+| sentry/react-native      | 2.4.0    |
+
+
+
+
+
+
+
+
+This is demo repo is used by Solution Engineers when demo'ing Sentry's [React Native](https://docs.sentry.io/platforms/react-native) SDK's capabilties. 
+
 ## Where do I begin 
 
 Please see [INSTALL.md](./Install.md) to get started with the setup.
@@ -28,7 +46,7 @@ cd ios
 pod install
 ```
 
-If you launch your emulator from Android Studio you may not have internet access on the emulator.  Make sure to have Internet access enabled on your Android emulator. If you can't access the browser you may need to launch your emulator with the below commands from the CLI:
+Make sure to have Internet access enabled on your Android emulator. If you can't access the browser you may need to launch your emulator with the below commands:
 
 ```
 emulator -list-avds
@@ -36,6 +54,25 @@ emulator -list-avds
 emulator @{YourEmulator} -dns-server 8.8.8.8
 ```
 
+If you are experiencing issues with running the following launch command:
+
+If the app launches and suddenly crashes you may need to reinstall your node package with this command:
+
+```
+rm -rf node_modules
+
+npm install
+```
+
+If all else fails and you seem to be getting a weird error related to IllegalAccessErrors or anything else you may need to rebuild your Android and iOS folders using the following (just make sure to grab the sentry.properties files, build.gradle files, and pod files from Github afterwards):
+
+```
+sudo rm -rf android/ ios/
+
+yarn add react-native-eject
+
+npx react-native eject
+```
 
 ### To Launch the Demo apps:
 
@@ -96,8 +133,4 @@ pod install
 cd ..
 ```
 Ran git commit along the way and finally pushed to this repo.
-
-## To enable a Hermes event
-
-See /android/app/build.gradle
 
