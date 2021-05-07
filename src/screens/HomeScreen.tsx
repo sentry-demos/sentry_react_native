@@ -17,6 +17,8 @@ import {
 
 import * as Sentry from '@sentry/react-native';
 
+const globalAny:any = global;
+
 import {getTestProps} from '../../utils/getTestProps';
 import {SENTRY_INTERNAL_DSN} from '../dsn';
 
@@ -32,6 +34,8 @@ const HomeScreen = (props: Props) => {
 
   const setScopeProps = () => {
     const dateString = new Date().toString();
+
+    
 
     Sentry.setUser({
       id: 'test-id-0',
@@ -117,10 +121,13 @@ const HomeScreen = (props: Props) => {
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}>
         {
-          // @ts-ignore
-          global.HermesInternal == null ? null : (
+        
+          globalAny.HermesInternal == null ? null : (
             <View style={styles.engine}>
               <Text>Engine: Hermes</Text>
+              {() => {
+                Sentry.setTag("Hermes", "enabled")
+              }}
             </View>
           )
         }

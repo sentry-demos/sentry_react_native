@@ -43,14 +43,15 @@ Sentry.init({
       // idleTimeout: 5000,
       routingInstrumentation: reactNavigationV5Instrumentation,
       tracingOrigins: ['localhost', /^\//, /^https:\/\//],
-      beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
-        // Example of not sending a transaction for the screen with the name "Manual Tracker"
-        if (context.data.route.name === 'ManualTracker') {
-          context.sampled = false;
-        }
+      // OPTIONAL to comment out
+      // beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
+      //   // Example of not sending a transaction for the screen with the name "Manual Tracker"
+      //   if (context.data.route.name === 'ManualTracker') {
+      //     context.sampled = false;
+      //   }
 
-        return context;
-      },
+      //   return context;
+      // },
     }),
   ],
   enableAutoSessionTracking: true,
@@ -58,7 +59,7 @@ Sentry.init({
   sessionTrackingIntervalMillis: 5000,
   // This will capture ALL TRACES and likely use up all your quota
   tracesSampleRate: 1.0,
-  // Sets the `release` and `dist` on Sentry events. Make sure this matches EXACTLY with the values on your sourcemaps
+  // OPTIONAL Sets the `release` and `dist` on Sentry events. Make sure this matches EXACTLY with the values on your sourcemaps
   // otherwise they will not work.
   // release: packageVersion,
   // dist: `${packageVersion}.0`,
@@ -67,7 +68,8 @@ Sentry.init({
 const Stack = createStackNavigator();
 
 const App = () => {
-  const navigation = React.useRef<NavigationContainerRef>();
+  const navigation = React.useRef();
+  
 
   return (
     <Provider store={store}>
