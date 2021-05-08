@@ -91,7 +91,12 @@ npx react-native eject
 ### When Launching Android
 You may run into issues if you haven't added sdk and sdk platform-tools to path:
 `export ANDROID_SDK_ROOT=/Users/dustinbailey/Library/Android/sdk`
-`export export PATH=/Users/dustinbailey/Library/Android/sdk/platform-tools:$PATH`
+`export PATH=/Users/dustinbailey/Library/Android/sdk/platform-tools:$PATH`
+
+Toolstore            |  Checkout
+:-------------------------:|:-------------------------:
+![list of tools](./img/toolstore.png)  |  ![checkout cart](./img/cart.png)| 
+
 
 ## Why so many files
 
