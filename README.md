@@ -52,6 +52,7 @@ Be sure to export your auth token: `export SENTRY_AUTH_TOKEN=<token>`
 ### Versioning
 
 Don't foget to bump your release version depending on platform:
+
 iOS: `Info.plist` `CFBundleShortVersionString`
 android: `app.build.gradle` `versionName`
 
