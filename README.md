@@ -13,12 +13,20 @@ This is demo repo is used by Solution Engineers when demo'ing Sentry's [React Na
 
 Please see [INSTALL.md](./Install.md) for some of the things needed.
 
-**If it's your first time adding sentry sdk to an app, you need to run:**
+**If it's your first time adding sentry sdk to an app (that's at least RN >0.60), you need to run:**
 ```
 $npx @sentry/wizard -i reactNative -p ios android
 ```
-Run this command to launch the [Sentry wizard](https://github.com/getsentry/sentry-wizard) allowing you to [link](https://docs.sentry.io/platforms/react-native/#linking) with the correct Sentry react-native project.  
-This also creates a `ios/sentry.properties` and `android/sentry.properties`.
+The above command launches the [Sentry wizard](https://github.com/getsentry/sentry-wizard) allowing you to [link](https://docs.sentry.io/platforms/react-native/#linking) with the correct Sentry react-native project.  
+From our [documentation](https://docs.sentry.io/platforms/react-native/), the following changes happen which you should be aware of:
+```
+- add the sentry-android package for native crash reporting on Android
+- add the sentry-cocoa package for native crash reporting on iOS
+- enable the Sentry Gradle build step for Android
+- patch MainApplication.java for Android
+- configure Sentry for the supplied DSN in your index.js/App.js files
+- store build credentials in ios/sentry.properties and android/sentry.properties.
+```
 
 **Otherwise, start at step 1 here:**
 
@@ -35,14 +43,15 @@ android: `app.build.gradle` `versionName`
 
 1. start the emulator by AVD Manager or:
 ```
+// emulator executable is at /Users/<user>/Library/Android/sdk/emulator
 emulator -list-avds
-emulator @{YourEmulator} -dns-server 8.8.8.8
-
-// emulator is at /Users/<user>/Library/Android/sdk/emulator
+emulator @<YourEmulator> -dns-server 8.8.8.8
 ```
 2. Run Ios or Android app
 * _iOS  version_: `npx react-native run-ios --configuration Release`
 * _Android version_: `npx react-native run-android --variant Release`
+
+emulator @Pixel_3_API_30_x86_64 -dns-server 8.8.8.8
 
 ## Expected Behavior
 
