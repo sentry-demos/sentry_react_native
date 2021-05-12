@@ -8,6 +8,8 @@ This is demo repo is used by Solution Engineers when demo'ing Sentry's [React Na
 | gradle           | 6.7     |
 | react           | 16.13.1    |
 | sentry/react-native      | 2.4.0    |
+| npx | 7.8.0 |
+| cocoapods | +1.10.1 |
 
 ## Setup
 
@@ -33,11 +35,14 @@ From our [documentation](https://docs.sentry.io/platforms/react-native/), the fo
 1. git clone git@github.com:sentry-demos/sentry_react_native.git
 2. Add your DSN and URL for back-end to src/dsn.tx
 3. `export SENTRY_AUTH_TOKEN=<token>`
-4. Don't forget to bump your release version depending on platform  
+4. Setup a Android Virtual Device via AVD Manager.
+5. If you don't have cocopods or get an error about cocopods out of date, run `gem install cocopods`
+6. `cd ios && pod install`
+7. `npm install`
+
+Don't forget to bump your release version depending on platform  
 iOS: `Info.plist` `CFBundleShortVersionString`  
 android: `app.build.gradle` `versionName`  
-5. setup a AVD Manager emulator
-6. `cd ios && pod install`
 
 ## Run
 
@@ -46,12 +51,20 @@ android: `app.build.gradle` `versionName`
 // emulator executable is at /Users/<user>/Library/Android/sdk/emulator
 emulator -list-avds
 emulator @<YourEmulator> -dns-server 8.8.8.8
+emulator @Pixel_3_API_30_x86_64 -dns-server 8.8.8.8
 ```
 2. Run Ios or Android app
-* _iOS  version_: `npx react-native run-ios --configuration Release`
+* _iOS  version_: 
+```
+## builds a Release (takes longer)
+npx react-native run-ios --configuration Release
+npx react-native run-ios --simulator="iPhone 11"
+```
 * _Android version_: `npx react-native run-android --variant Release`
+^ this command builds APK for the arch and installs to the emulator.
+^ click 'OK' if you get a pop-up, and it should open Metro
 
-emulator @Pixel_3_API_30_x86_64 -dns-server 8.8.8.8
+`npx react-native run-android --variant Debug` may open the Metro debugger
 
 ## Expected Behavior
 
@@ -127,3 +140,6 @@ You may run into issues if you haven't added sdk and sdk platform-tools to path:
 `export PATH=/Users/<user>/Library/Android/sdk/platform-tools:$PATH`
 
 "error: Can't find the 'node' binary to build the React Native bundle." should be okay
+
+If tools don't load, then swipe-away (kill) the app, then relaunch from app menu in the emulator. If still fails, then go to AVD Manager and 'wipe' the device and run the emulator again.
+Could also be a problem with the backend container/app you're requesting the tools from (check that URL/Postman, check TDA job)

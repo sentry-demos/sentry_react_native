@@ -52,6 +52,7 @@ const ToolStore = ({navigation}) => {
   }, []);
 
   const loadData = () => {
+    console.log("> loadData()")
     setToolData(null);
 
     // Create a child span for the API call.
@@ -59,7 +60,8 @@ const ToolStore = ({navigation}) => {
       op: 'http',
       description: 'Fetch toolstore data from API',
     });
-
+    
+    console.log("> loadData() span child started, now go fetch")
     fetch('https://dustinbailey-flask-m3uuizd7iq-uc.a.run.app/tools', {
       method: 'GET',
       headers: {
