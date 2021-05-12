@@ -45,6 +45,16 @@ cp andoid/sentry.properties ios/sentry.properties
 cd ios
 pod install
 ```
+### Before Launching the Demo apps:
+
+Be sure to export your auth token: `export SENTRY_AUTH_TOKEN=<token>`
+
+### Versioning
+
+Don't foget to bump your release version depending on platform:
+
+iOS: `Info.plist` `CFBundleShortVersionString`
+android: `app.build.gradle` `versionName`
 
 Make sure to have Internet access enabled on your Android emulator. If you can't access the browser you may need to launch your emulator with the below commands:
 
@@ -78,6 +88,16 @@ npx react-native eject
 
 * _iOS  version_: `npx react-native run-ios --configuration Release`
 * _Android version_: `npx react-native run-android --variant Release`
+
+### When Launching Android
+You may run into issues if you haven't added sdk and sdk platform-tools to path:
+`export ANDROID_SDK_ROOT=/Users/dustinbailey/Library/Android/sdk`
+`export PATH=/Users/dustinbailey/Library/Android/sdk/platform-tools:$PATH`
+
+Toolstore            |  Checkout
+:-------------------------:|:-------------------------:
+![list of tools](./img/toolstore.png)  |  ![checkout cart](./img/cart.png)| 
+
 
 ## Why so many files
 
