@@ -10,6 +10,7 @@ import * as Sentry from '@sentry/react-native';
  * This screen calls an API to get the latest COVID-19 Data to display. We attach a span
  * to the fetch call and track the time it takes for Promise to resolve.
  */
+ // TODO
 const TrackerScreen = () => {
   const [cases, setCases] = React.useState<{
     TotalConfirmed: number;
