@@ -11,11 +11,11 @@ This is demo repo is used by Solution Engineers when demo'ing Sentry's [React Na
 | npx | 7.8.0 |
 | cocoapods | +1.10.1 |
 
-## Setup
+## Setup (Bootstrap)
 
-Please see [INSTALL.md](./Install.md) for some of the things needed.
+[INSTALL.md](./Install.md) was written by the CreateReactNativeApp maintainers and outlines some things you'll need.
 
-**If it's your first time adding sentry sdk to an app (that's at least RN >0.60), you need to run:**
+This step was already performed for adding the sdk to sentry_react_native, but it's good to know it was used as customers will use it:
 ```
 $npx @sentry/wizard -i reactNative -p ios android
 ```
@@ -30,7 +30,7 @@ From our [documentation](https://docs.sentry.io/platforms/react-native/), the fo
 - store build credentials in ios/sentry.properties and android/sentry.properties.
 ```
 
-**Otherwise, start at step 1 here:**
+## Setup
 
 1. git clone git@github.com:sentry-demos/sentry_react_native.git
 2. Add your DSN and URL for back-end to src/dsn.tx
@@ -46,13 +46,14 @@ android: `app.build.gradle` `versionName`
 
 ## Run
 
-1. start the emulator by AVD Manager or:
+1. Android (optional) start the emulator by AVD Manager or:
 ```
 // emulator executable is at /Users/<user>/Library/Android/sdk/emulator
 emulator -list-avds
 emulator @<YourEmulator> -dns-server 8.8.8.8
 emulator @Pixel_3_API_30_x86_64 -dns-server 8.8.8.8
 ```
+
 2. Run Ios or Android app
 * _iOS  version_: 
 ```
@@ -60,11 +61,15 @@ emulator @Pixel_3_API_30_x86_64 -dns-server 8.8.8.8
 npx react-native run-ios --configuration Release
 npx react-native run-ios --simulator="iPhone 11"
 ```
-* _Android version_: `npx react-native run-android --variant Release`
-^ this command builds APK for the arch and installs to the emulator.
+* _Android version_: 
+```
+npx react-native run-android --variant Release
+npx react-native run-android --variant Debug # opens the Metro debugger
+```
+^ this command builds APK for the arch and installs to the emulator.  
 ^ click 'OK' if you get a pop-up, and it should open Metro
 
-`npx react-native run-android --variant Debug` may open the Metro debugger
+
 
 ## Expected Behavior
 
