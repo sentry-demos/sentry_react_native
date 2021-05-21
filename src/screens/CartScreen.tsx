@@ -85,8 +85,8 @@ const CartScreen = (props) => {
   ): Promise<Response> => {
     setOrderStatusUI(true);
     const data = {cart: Object.values(cartData)};
-    let response = await fetch(
-      'https://dustinbailey-flask-m3uuizd7iq-uc.a.run.app/checkout',
+    let response = await fetch( 
+      'https://wcap-flask-m3uuizd7iq-uc.a.run.app/checkout',
       {
         method: 'POST',
         headers: {

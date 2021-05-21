@@ -32,37 +32,53 @@ const ToolStore = ({navigation}) => {
     | null
   >(null);
 
-  const transaction = React.useRef(null);
+  // const transaction = React.useRef(null);
+  // const transaction = Sentry.getCurrentHub()
+  //   .getScope()
+  //   .getTransaction();
 
   React.useEffect(() => {
+    console.log("*UPDATED ToolStore useEffect()")
     // Initialize the transaction for the screen.
-    transaction.current = Sentry.startTransaction({
-      name: 'Toolstore screen',
-      op: 'navigation',
-    });
+    // transaction.current = Sentry.startTransaction({
+    //   name: 'Toolstore screen',
+    //   op: 'navigation',
+    // });
 
     return () => {
       // Finishing the transaction triggers sending the data to Sentry.
-      transaction.current?.finish();
-      transaction.current = null;
-      Sentry.configureScope((scope) => {
-        scope.setSpan(undefined);
-      });
+      // transaction.current?.finish();
+      // // TODO do we need this?
+      // transaction.current = null;
+      // Sentry.configureScope((scope) => {
+      //   scope.setSpan(undefined);
+      // });
     };
   }, []);
 
   const loadData = () => {
     console.log("> loadData()")
     setToolData(null);
-
+    let span
+    const transaction = Sentry.getCurrentHub()
+      .getScope()
+      .getTransaction();
+    if (transaction) {
+      span = transaction.startChild({
+        op: "http",
+        description: "Fetching... toolstore data from API",
+      });
+      // Do something
+      span.finish();
+    }
     // Create a child span for the API call.
-    const span = transaction.current?.startChild({
-      op: 'http',
-      description: 'Fetch toolstore data from API',
-    });
+    // const span = transaction.current?.startChild({
+    //   op: 'http',
+    //   description: 'Fetch toolstore data from API',
+    // });
     
     console.log("> loadData() span child started, now go fetch")
-    fetch('https://dustinbailey-flask-m3uuizd7iq-uc.a.run.app/tools', {
+    fetch('https://wcap-flask-m3uuizd7iq-uc.a.run.app/tools', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
