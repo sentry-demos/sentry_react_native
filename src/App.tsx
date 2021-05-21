@@ -30,40 +30,37 @@ const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumenta
 );
 
 Sentry.init({
-  // Replace the example DSN below with your own DSN:
   dsn: SENTRY_INTERNAL_DSN,
-  debug: true,
+  release: packageVersion,
+  environment: "dev",
   beforeSend: (e) => {
     console.log('Event beforeSend :', e);
     return e;
   },
-  maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   integrations: [
     new Sentry.ReactNativeTracing({
-      // idleTimeout: 5000,
       routingInstrumentation: reactNavigationV5Instrumentation,
       tracingOrigins: ['localhost', /^\//, /^https:\/\//],
-      // OPTIONAL to comment out
       // beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
-      //   // Example of not sending a transaction for the screen with the name "Manual Tracker"
-      //   if (context.data.route.name === 'ManualTracker') {
-      //     context.sampled = false;
-      //   }
-
-      //   return context;
-      // },
-    }),
-  ],
-  enableAutoSessionTracking: true,
-  // For testing, session close when 5 seconds (instead of the default 30) in the background.
-  sessionTrackingIntervalMillis: 5000,
-  // This will capture ALL TRACES and likely use up all your quota
-  tracesSampleRate: 1.0,
-  // OPTIONAL Sets the `release` and `dist` on Sentry events. Make sure this matches EXACTLY with the values on your sourcemaps
-  // otherwise they will not work.
-  // release: packageVersion,
-  // dist: `${packageVersion}.0`,
-});
+        //   // Example of not sending a transaction for the screen with the name "Manual Tracker"
+        //   if (context.data.route.name === 'ManualTracker') {
+          //     context.sampled = false;
+          //   }
+          //   return context;
+          // },
+          // idleTimeout: 5000,
+        }),
+      ],
+      // This will capture ALL TRACES and likely use up all your quota
+      tracesSampleRate: 1.0,
+      enableAutoSessionTracking: true,
+      // For testing, session close when 5 seconds (instead of the default 30) in the background.
+      sessionTrackingIntervalMillis: 5000,
+      // OPTIONAL Sets the `release` and `dist` on Sentry events. Make sure this matches EXACTLY with the values on your sourcemaps
+      // dist: `${packageVersion}.0`,
+      maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
+      debug: true
+    });
 
 const Stack = createStackNavigator();
 
