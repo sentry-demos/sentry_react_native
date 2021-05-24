@@ -38,46 +38,34 @@ const ToolStore = ({navigation}) => {
   //   .getTransaction();
 
   React.useEffect(() => {
-    console.log("*UPDATED ToolStore useEffect()")
-    // Initialize the transaction for the screen.
-    // transaction.current = Sentry.startTransaction({
-    //   name: 'Toolstore screen',
-    //   op: 'navigation',
-    // });
 
     return () => {
-      // Finishing the transaction triggers sending the data to Sentry.
-      // transaction.current?.finish();
-      // // TODO do we need this?
-      // transaction.current = null;
-      // Sentry.configureScope((scope) => {
-      //   scope.setSpan(undefined);
-      // });
+
     };
   }, []);
 
   const loadData = () => {
     console.log("> loadData()")
     setToolData(null);
-    let span
-    const transaction = Sentry.getCurrentHub()
-      .getScope()
-      .getTransaction();
+    // var span
+    // var transaction = Sentry.getCurrentHub()
+    //   .getScope()
+    //   .getTransaction();
+    let transaction = true
     if (transaction) {
-      span = transaction.startChild({
-        op: "http",
-        description: "Fetching... toolstore data from API",
-      });
-      // Do something
-      span.finish();
+      // span = transaction.startChild({
+      //   op: "http",
+      //   description: "Fetching - toolstore data from API",
+      // });
+      
+      // Create a child span for the API call.
+      // const span = transaction.current?.startChild({
+      //   op: 'http',
+      //   description: 'Fetch toolstore data from API',
+      // });
     }
-    // Create a child span for the API call.
-    // const span = transaction.current?.startChild({
-    //   op: 'http',
-    //   description: 'Fetch toolstore data from API',
-    // });
     
-    console.log("> loadData() span child started, now go fetch")
+    console.log("> loadData() span fetch()")
     fetch('https://wcap-flask-m3uuizd7iq-uc.a.run.app/tools', {
       method: 'GET',
       headers: {
@@ -87,20 +75,34 @@ const ToolStore = ({navigation}) => {
     })
       .then((response) => response.json())
       .then((json) => {
+        console.log("> loadData() span fetch()ed")
+
         setToolData(json);
-        span?.setData('json', json);
-        span?.finish();
+        // if (span) {
+        //   console.log("* SPAN EXISTS *")
+        //   span.setData('json', json)
+        //   span.finish()
+        // }
+        // span?.setData('json', json);
+        // span?.finish();
+        
+        console.log("> loadData() span finish()ed")
+        
+        // if (transaction) {
+        //   console.log("TRANSACTION")
+        //   transaction.finish()
+        // } else {
+        //   console.log("NO TRANSACTION")
+        // }
       });
   };
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRightContainerStyle: {paddingRight: 20},
       headerRight: () => {
-      
         return (
           <Button
             onPress={() => {
-        
               navigation.navigate('Cart');
             }}
             title="Cart"

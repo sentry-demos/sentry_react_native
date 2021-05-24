@@ -34,7 +34,7 @@ Sentry.init({
   release: packageVersion,
   environment: "dev",
   beforeSend: (e) => {
-    console.log('Event beforeSend :', e);
+    // console.log('Event beforeSend :', e);
     return e;
   },
   integrations: [
