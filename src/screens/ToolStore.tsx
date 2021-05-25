@@ -32,40 +32,17 @@ const ToolStore = ({navigation}) => {
     | null
   >(null);
 
-  // const transaction = React.useRef(null);
-  // const transaction = Sentry.getCurrentHub()
-  //   .getScope()
-  //   .getTransaction();
-
-  React.useEffect(() => {
-
-    return () => {
-
-    };
-  }, []);
+  // React.useEffect(() => {
+  //   console.log("> React.useEffect() I get logged, but I don't do anything, can comment this whole block out")
+  //   return () => {
+  //     console.log("> React.useEffect() I don't log until you navigate away or reload app")
+  //   };
+  // }, []);
 
   const loadData = () => {
-    console.log("> loadData()")
+    console.log("> loadData() start")
     setToolData(null);
-    // var span
-    // var transaction = Sentry.getCurrentHub()
-    //   .getScope()
-    //   .getTransaction();
-    let transaction = true
-    if (transaction) {
-      // span = transaction.startChild({
-      //   op: "http",
-      //   description: "Fetching - toolstore data from API",
-      // });
-      
-      // Create a child span for the API call.
-      // const span = transaction.current?.startChild({
-      //   op: 'http',
-      //   description: 'Fetch toolstore data from API',
-      // });
-    }
-    
-    console.log("> loadData() span fetch()")
+
     fetch('https://wcap-flask-m3uuizd7iq-uc.a.run.app/tools', {
       method: 'GET',
       headers: {
@@ -75,27 +52,11 @@ const ToolStore = ({navigation}) => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log("> loadData() span fetch()ed")
-
         setToolData(json);
-        // if (span) {
-        //   console.log("* SPAN EXISTS *")
-        //   span.setData('json', json)
-        //   span.finish()
-        // }
-        // span?.setData('json', json);
-        // span?.finish();
-        
-        console.log("> loadData() span finish()ed")
-        
-        // if (transaction) {
-        //   console.log("TRANSACTION")
-        //   transaction.finish()
-        // } else {
-        //   console.log("NO TRANSACTION")
-        // }
+        console.log("> loadData() finish")
       });
   };
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRightContainerStyle: {paddingRight: 20},
@@ -113,7 +74,9 @@ const ToolStore = ({navigation}) => {
   }, [navigation]);
 
   React.useEffect(() => {
-    loadData();
+    console.log("> React.useEffect pre loadData") 
+    loadData(); // <-- this line is not blocking...and can't add await/async keywords...is that okay?
+    console.log("> React.useEffect post loadData")
   }, []);
 
   return (

@@ -48,7 +48,7 @@ Sentry.init({
           //   }
           //   return context;
           // },
-          // idleTimeout: 5000,
+          idleTimeout: 5000,
         }),
       ],
       // This will capture ALL TRACES and likely use up all your quota
