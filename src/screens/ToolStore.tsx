@@ -79,6 +79,7 @@ const ToolStore = ({navigation}) => {
     console.log("> React.useEffect post loadData")
   }, []);
 
+  console.log("> I get logged several times") 
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>
