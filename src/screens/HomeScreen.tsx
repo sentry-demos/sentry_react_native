@@ -35,8 +35,6 @@ const HomeScreen = (props: Props) => {
   const setScopeProps = () => {
     const dateString = new Date().toString();
 
-    
-
     Sentry.setUser({
       id: 'test-id-0',
       email: 'testing@testing.test',
