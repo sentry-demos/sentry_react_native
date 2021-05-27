@@ -21,46 +21,44 @@ import Toast from 'react-native-toast-message';
 
 import {store} from './reduxApp';
 import {version as packageVersion} from '../package.json';
-import {SENTRY_INTERNAL_DSN} from './dsn';
+import {DSN} from './config';
 
 const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumentation(
   {
-    routeChangeTimeoutMs: 500, // How long it will wait for the route change to complete. Default is 1000ms
+    // How long it will wait for the route change to complete. Default is 1000ms
+    routeChangeTimeoutMs: 500, 
   },
 );
 
 Sentry.init({
-  dsn: SENTRY_INTERNAL_DSN,
+  dsn: DSN,
   release: packageVersion,
   environment: "dev",
   beforeSend: (e) => {
-    // console.log('Event beforeSend :', e);
+    console.log(e);
     return e;
   },
   integrations: [
     new Sentry.ReactNativeTracing({
       routingInstrumentation: reactNavigationV5Instrumentation,
       tracingOrigins: ['localhost', /^\//, /^https:\/\//],
+      idleTimeout: 5000,
+      // How to not send transactions for the "Manual Tracker" screen
       // beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
-        //   // Example of not sending a transaction for the screen with the name "Manual Tracker"
-        //   if (context.data.route.name === 'ManualTracker') {
-          //     context.sampled = false;
-          //   }
-          //   return context;
-          // },
-          idleTimeout: 5000,
-        }),
-      ],
-      // This will capture ALL TRACES and likely use up all your quota
-      tracesSampleRate: 1.0,
-      enableAutoSessionTracking: true,
-      // For testing, session close when 5 seconds (instead of the default 30) in the background.
-      sessionTrackingIntervalMillis: 5000,
-      // OPTIONAL Sets the `release` and `dist` on Sentry events. Make sure this matches EXACTLY with the values on your sourcemaps
-      // dist: `${packageVersion}.0`,
-      maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
-      debug: true
-    });
+      //   if (context.data.route.name === 'ManualTracker') {
+      //     context.sampled = false;
+      //   }
+      //   return context;
+      // },
+    }),
+  ],
+  tracesSampleRate: 1.0,
+  enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
+  sessionTrackingIntervalMillis: 5000,
+  maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
+  debug: true
+  // dist: `${packageVersion}.0`, // optional.. Make sure this matches EXACTLY with the values on your sourcemaps
+});
 
 const Stack = createStackNavigator();
 

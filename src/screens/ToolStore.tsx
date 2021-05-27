@@ -13,10 +13,16 @@ import * as Sentry from '@sentry/react-native';
 import Toast from 'react-native-toast-message';
 import {AppDispatch} from '../reduxApp';
 import {GradientBtn} from './CartScreen';
+import {BACKEND_URL} from '../config';
 
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
  * So you can control all spans that belong to that one transaction.
+ * ToolStore is a  Higher-order component, becuase it's a Function Component,
+ * and both Function Components and Class Components are Higher-order components.
+ * Higher-order component can only read the props coming in. Props are changed as they're passed in.
+ * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
+ * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
  */
 const ToolStore = ({navigation}) => {
   const dispatch = useDispatch();
@@ -32,18 +38,11 @@ const ToolStore = ({navigation}) => {
     | null
   >(null);
 
-  // React.useEffect(() => {
-  //   console.log("> React.useEffect() I get logged, but I don't do anything, can comment this whole block out")
-  //   return () => {
-  //     console.log("> React.useEffect() I don't log until you navigate away or reload app")
-  //   };
-  // }, []);
-
   const loadData = () => {
     console.log("> loadData() start")
     setToolData(null);
 
-    fetch('https://wcap-flask-m3uuizd7iq-uc.a.run.app/tools', {
+    fetch(BACKEND_URL, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -75,9 +74,9 @@ const ToolStore = ({navigation}) => {
 
   React.useEffect(() => {
     console.log("> React.useEffect pre loadData") 
-    loadData(); // <-- this line is not blocking...and can't add await/async keywords...is that okay?
+    loadData(); // this line is not blocking
     console.log("> React.useEffect post loadData")
-  }, []);
+  }, []); 
 
   console.log("> I get logged several times") 
   return (
@@ -112,6 +111,11 @@ const ToolStore = ({navigation}) => {
   );
 };
 
+/* This works because sentry/react-native wraps sentry/react right now.
+* The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
+* because that comes from props being passed into the Profiler (which comes from redux).
+* The Profiler doesn't watch the internal state of ToolStore here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
+*/
 export default Sentry.withProfiler(ToolStore);
 
 export const selectImage = (source: string): React.ReactElement => {
@@ -159,6 +163,9 @@ export const selectImage = (source: string): React.ReactElement => {
   }
 };
 
+/* You could wrap this with the Sentry Profiler, 
+* but then you'd have hundreds/thousands of spans because the tools response is not paginated.
+*/
 const ToolItem = (props: {
   sku: string;
   name: string;

@@ -4,7 +4,7 @@ import {ScrollView, Text} from 'react-native';
 import * as Sentry from '@sentry/react-native';
 
 import {getTestProps} from '../../utils/getTestProps';
-import {SENTRY_INTERNAL_DSN} from '../dsn';
+import {DSN} from '../config';
 
 /**
  * This screen is for internal end-to-end testing purposes only. Do not use.
@@ -17,7 +17,7 @@ const EndToEndTestsScreen = () => {
   // We only do this to render the eventId onto the UI for end to end tests.
   React.useEffect(() => {
     Sentry.init({
-      dsn: SENTRY_INTERNAL_DSN,
+      dsn: DSN,
       beforeSend: (e) => {
         setEventId(e.event_id);
         return e;
