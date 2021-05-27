@@ -334,4 +334,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default Sentry.withProfiler(HomeScreen);
+
