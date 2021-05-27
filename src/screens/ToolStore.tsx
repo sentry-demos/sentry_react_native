@@ -110,8 +110,10 @@ const ToolStore = ({navigation}) => {
 * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
 * because that comes from props being passed into the Profiler (which comes from redux).
 * The Profiler doesn't watch the internal state of ToolStore here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
+* Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
+* and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
 */
-export default Sentry.withProfiler(ToolStore);
+export default ToolStore
 
 export const selectImage = (source: string): React.ReactElement => {
   /**
