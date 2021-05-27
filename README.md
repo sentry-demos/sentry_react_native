@@ -33,7 +33,7 @@ From our [documentation](https://docs.sentry.io/platforms/react-native/), the fo
 ## Setup
 
 1. git clone git@github.com:sentry-demos/sentry_react_native.git
-2. Add your DSN and URL for back-end to src/dsn.tx
+2. Add your DSN and BACKEND_URL for back-end to src/config.ts
 3. `export SENTRY_AUTH_TOKEN=<token>`
 4. Setup a Android Virtual Device via AVD Manager.
 5. If you don't have cocopods or get an error about cocopods out of date, run `gem install cocopods`
@@ -57,6 +57,9 @@ emulator @Pixel_3_API_30_x86_64 -dns-server 8.8.8.8
 2. Run Ios or Android app
 * _iOS  version_: 
 ```
+# opens the Metro debugger, has hot reload
+npx react-native run-ios --configuration Debug 
+
 ## builds a Release (takes longer)
 npx react-native run-ios --configuration Release
 npx react-native run-ios --simulator="iPhone 11"
@@ -64,7 +67,6 @@ npx react-native run-ios --simulator="iPhone 11"
 * _Android version_: 
 ```
 npx react-native run-android --variant Release
-npx react-native run-android --variant Debug # opens the Metro debugger
 ```
 ^ this command builds APK for the arch and installs to the emulator.  
 ^ click 'OK' if you get a pop-up, and it should open Metro
