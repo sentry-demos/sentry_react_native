@@ -20,7 +20,7 @@ import * as Sentry from '@sentry/react-native';
 const globalAny:any = global;
 
 import {getTestProps} from '../../utils/getTestProps';
-import {SENTRY_INTERNAL_DSN} from '../dsn';
+import {DSN} from '../config';
 
 interface Props {
   navigation: StackNavigationProp<any, 'HomeScreen'>;
@@ -34,8 +34,6 @@ const HomeScreen = (props: Props) => {
 
   const setScopeProps = () => {
     const dateString = new Date().toString();
-
-    
 
     Sentry.setUser({
       id: 'test-id-0',
@@ -148,7 +146,7 @@ const HomeScreen = (props: Props) => {
             }}>
             <Text style={styles.hiddenE2e}>End to End Tests</Text>
           </TouchableOpacity>
-          {currentDSN === SENTRY_INTERNAL_DSN && (
+          {currentDSN == null && DSN && (
             <View style={styles.warningBlock}>
               <Text style={styles.warningText}>
                 😃 Hey! You need to replace the DSN inside Sentry.init with your
@@ -336,4 +334,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default Sentry.withProfiler(HomeScreen);
+

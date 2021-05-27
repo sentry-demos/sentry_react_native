@@ -13,10 +13,16 @@ import * as Sentry from '@sentry/react-native';
 import Toast from 'react-native-toast-message';
 import {AppDispatch} from '../reduxApp';
 import {GradientBtn} from './CartScreen';
+import {BACKEND_URL} from '../config';
 
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
  * So you can control all spans that belong to that one transaction.
+ * ToolStore is a  Higher-order component, becuase it's a Function Component,
+ * and both Function Components and Class Components are Higher-order components.
+ * Higher-order component can only read the props coming in. Props are changed as they're passed in.
+ * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
+ * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
  */
 const ToolStore = ({navigation}) => {
   const dispatch = useDispatch();
@@ -32,35 +38,10 @@ const ToolStore = ({navigation}) => {
     | null
   >(null);
 
-  const transaction = React.useRef(null);
-
-  React.useEffect(() => {
-    // Initialize the transaction for the screen.
-    transaction.current = Sentry.startTransaction({
-      name: 'Toolstore screen',
-      op: 'navigation',
-    });
-
-    return () => {
-      // Finishing the transaction triggers sending the data to Sentry.
-      transaction.current?.finish();
-      transaction.current = null;
-      Sentry.configureScope((scope) => {
-        scope.setSpan(undefined);
-      });
-    };
-  }, []);
-
   const loadData = () => {
     setToolData(null);
 
-    // Create a child span for the API call.
-    const span = transaction.current?.startChild({
-      op: 'http',
-      description: 'Fetch toolstore data from API',
-    });
-
-    fetch('https://dustinbailey-flask-m3uuizd7iq-uc.a.run.app/tools', {
+    fetch(`${BACKEND_URL}/tools`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -70,19 +51,16 @@ const ToolStore = ({navigation}) => {
       .then((response) => response.json())
       .then((json) => {
         setToolData(json);
-        span?.setData('json', json);
-        span?.finish();
       });
   };
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRightContainerStyle: {paddingRight: 20},
       headerRight: () => {
-      
         return (
           <Button
             onPress={() => {
-        
               navigation.navigate('Cart');
             }}
             title="Cart"
@@ -93,8 +71,8 @@ const ToolStore = ({navigation}) => {
   }, [navigation]);
 
   React.useEffect(() => {
-    loadData();
-  }, []);
+    loadData(); // this line is not blocking
+  }, []); 
 
   return (
     <View style={styles.screen}>
@@ -128,7 +106,14 @@ const ToolStore = ({navigation}) => {
   );
 };
 
-export default Sentry.withProfiler(ToolStore);
+/* This works because sentry/react-native wraps sentry/react right now.
+* The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
+* because that comes from props being passed into the Profiler (which comes from redux).
+* The Profiler doesn't watch the internal state of ToolStore here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
+* Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
+* and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
+*/
+export default ToolStore
 
 export const selectImage = (source: string): React.ReactElement => {
   /**
@@ -175,6 +160,9 @@ export const selectImage = (source: string): React.ReactElement => {
   }
 };
 
+/* You could wrap this with the Sentry Profiler, 
+* but then you'd have hundreds/thousands of spans because the tools response is not paginated.
+*/
 const ToolItem = (props: {
   sku: string;
   name: string;

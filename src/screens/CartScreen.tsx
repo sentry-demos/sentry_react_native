@@ -15,6 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {RootState, AppDispatch} from '../reduxApp';
 import {selectImage} from './ToolStore';
+import {BACKEND_URL} from '../config';
 
 interface CartData {
   sku: string;
@@ -85,8 +86,8 @@ const CartScreen = (props) => {
   ): Promise<Response> => {
     setOrderStatusUI(true);
     const data = {cart: Object.values(cartData)};
-    let response = await fetch(
-      'https://dustinbailey-flask-m3uuizd7iq-uc.a.run.app/checkout',
+    let response = await fetch( 
+      `${BACKEND_URL}/checkout`,
       {
         method: 'POST',
         headers: {
