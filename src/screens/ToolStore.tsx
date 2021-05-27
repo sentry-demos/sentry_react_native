@@ -39,10 +39,9 @@ const ToolStore = ({navigation}) => {
   >(null);
 
   const loadData = () => {
-    console.log("> loadData() start")
     setToolData(null);
 
-    fetch(BACKEND_URL, {
+    fetch(`${BACKEND_URL}/tools`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -52,7 +51,6 @@ const ToolStore = ({navigation}) => {
       .then((response) => response.json())
       .then((json) => {
         setToolData(json);
-        console.log("> loadData() finish")
       });
   };
 
@@ -73,12 +71,9 @@ const ToolStore = ({navigation}) => {
   }, [navigation]);
 
   React.useEffect(() => {
-    console.log("> React.useEffect pre loadData") 
     loadData(); // this line is not blocking
-    console.log("> React.useEffect post loadData")
   }, []); 
 
-  console.log("> I get logged several times") 
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>

@@ -28,7 +28,7 @@ interface Props {
 
 const HomeScreen = (props: Props) => {
   const currentDSN = Sentry.getCurrentHub().getClient().getOptions().dsn;
-  console.log("currentDSN", currentDSN)
+
   // Show bad code inside error boundary to trigger it.
   const [showBadCode, setShowBadCode] = React.useState(false);
 
