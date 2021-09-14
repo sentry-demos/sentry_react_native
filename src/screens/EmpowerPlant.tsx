@@ -109,6 +109,7 @@ const EmpowerPlant = ({navigation}) => {
                   // type={"type"}
                   price={item.price}
                   title={item.title}
+                  imgcropped={item.imgcropped}
                 />
               );
             }}
@@ -137,32 +138,32 @@ export const selectImage = (source: string): React.ReactElement => {
    * Dynamic strings with require syntax is not possible.
    * https://github.com/facebook/react-native/issues/2481
    */
-  switch (source) {
-    // TODO
-    // match this case via string match
-    // case 'plant-spider-cropped.jpg':
-    case 'wrench.png':
+  // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
+  let length = source.split("/").length
+  let image = source.split("/")[length-1]
+  switch (image) {
+    case 'plant-spider-cropped.jpg':
       return (
         <Image
           style={styles.tinyImage}
           source={require('../assets/images/plant-spider-cropped.png')}
         />
       );
-    case 'nails.png':
+    case 'plant-to-text-cropped.jpg':
       return (
         <Image
           style={styles.tinyImage}
           source={require('../assets/images/plant-to-text-cropped.png')}
         />
       );
-    case 'screwdriver.png':
+    case 'nodes-cropped.jpg':
       return (
         <Image
           style={styles.tinyImage}
           source={require('../assets/images/nodes-cropped.png')}
         />
       );
-    case 'hammer.png':
+    case 'mood-planter-cropped.png':
       return (
         <Image
           style={styles.tinyImage}
@@ -190,11 +191,12 @@ const ToolItem = (props: {
   // type: string;
   price: number;
   title: string;
+  imgcropped: string;
   // appDispatch: AppDispatch;
 }): React.ReactElement => {
   return (
     <View style={styles.statisticContainer}>
-      <View style={styles.card}>{selectImage(props.image)}</View>
+      <View style={styles.card}>{selectImage(props.imgcropped)}</View>
       <View style={styles.textContainer}>
         <Text style={styles.itemTitle}>
           {/* {props.name.charAt(0).toUpperCase() + props.name.slice(1)}*/}
