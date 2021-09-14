@@ -102,12 +102,13 @@ const EmpowerPlant = ({navigation}) => {
                   // price={item.price}
                   
                   // appDispatch={dispatch}
-                  sku={"12345"}
-                  name={"item.name"}
-                  image={"image"}
-                  id={1}
-                  type={"type"}
-                  price={100}
+                  // sku={"12345"}
+                  // name={"item.name"}
+                  // image={"image"}
+                  id={item.id}
+                  // type={"type"}
+                  price={item.price}
+                  title={item.title}
                 />
               );
             }}
@@ -137,6 +138,9 @@ export const selectImage = (source: string): React.ReactElement => {
    * https://github.com/facebook/react-native/issues/2481
    */
   switch (source) {
+    // TODO
+    // match this case via string match
+    // case 'plant-spider-cropped.jpg':
     case 'wrench.png':
       return (
         <Image
@@ -179,25 +183,27 @@ export const selectImage = (source: string): React.ReactElement => {
 * but then you'd have hundreds/thousands of spans because the tools response is not paginated.
 */
 const ToolItem = (props: {
-  sku: string;
-  name: string;
-  image: string;
+  // sku: string;
+  // name: string;
+  // image: string;
   id: number;
-  type: string;
+  // type: string;
   price: number;
-  appDispatch: AppDispatch;
+  title: string;
+  // appDispatch: AppDispatch;
 }): React.ReactElement => {
   return (
     <View style={styles.statisticContainer}>
-      {/* <View style={styles.card}>{selectImage(props.image)}</View>
+      <View style={styles.card}>{selectImage(props.image)}</View>
       <View style={styles.textContainer}>
         <Text style={styles.itemTitle}>
-          {props.name.charAt(0).toUpperCase() + props.name.slice(1)}
+          {/* {props.name.charAt(0).toUpperCase() + props.name.slice(1)}*/}
+          {props.title}
         </Text>
         <Text style={styles.itemPrice}>
           {'$' + (props.price / 1000).toFixed(2)}
         </Text>
-        <Text style={styles.sku}>{'sku: ' + props.sku}</Text>
+        {/* <Text style={styles.sku}>{'sku: ' + props.sku}</Text> */}
         <GradientBtn
           progressState={false}
           style={styles.linearGradient}
@@ -209,13 +215,13 @@ const ToolItem = (props: {
             props.appDispatch({
               type: 'ADD_TO_CART',
               payload: {
-                image: props.image,
-                sku: props.sku,
-                id: props.id,
-                name: props.name,
+                // image: props.image,
+                // sku: props.sku,
+                // id: props.id,
+                // name: props.name,
                 price: props.price,
-                quantity: 1,
-                type: props.type,
+                // quantity: 1,
+                // type: props.type,
               },
             });
             Toast.show({
@@ -225,7 +231,7 @@ const ToolItem = (props: {
               visibilityTime: 0.5,
             });
           }}></GradientBtn> 
-      </View>*/}
+      </View>
     </View>
   );
 };
