@@ -15,7 +15,7 @@ import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
 import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
 import ReduxScreen from './screens/ReduxScreen';
-import ToolStore from './screens/ToolStore';
+import EmpowerPlant from './screens/EmpowerPlant';
 import CartScreen from './screens/CartScreen';
 import Toast from 'react-native-toast-message';
 
@@ -56,7 +56,7 @@ Sentry.init({
   enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
   sessionTrackingIntervalMillis: 5000,
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
-  debug: true
+  // debug: true
   // dist: `${packageVersion}.0`, // optional.. Make sure this matches EXACTLY with the values on your sourcemaps
 });
 
@@ -85,7 +85,7 @@ const App = () => {
           />
           <Stack.Screen name="Redux" component={ReduxScreen} />
           <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
-          <Stack.Screen name="EmpowerPlant" component={ToolStore} />
+          <Stack.Screen name="EmpowerPlant" component={EmpowerPlant} />
           <Stack.Screen name="Cart" component={CartScreen} />
         </Stack.Navigator>
         <Toast ref={(ref) => Toast.setRef(ref)} />

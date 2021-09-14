@@ -14,7 +14,7 @@ import Toast from 'react-native-toast-message';
 import LinearGradient from 'react-native-linear-gradient';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {RootState, AppDispatch} from '../reduxApp';
-import {selectImage} from './ToolStore';
+import {selectImage} from './EmpowerPlant';
 import {BACKEND_URL} from '../config';
 
 interface CartData {
