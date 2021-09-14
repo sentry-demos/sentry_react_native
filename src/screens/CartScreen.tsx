@@ -63,12 +63,21 @@ const CartScreen = (props) => {
     );
   };
   const performCheckoutOnServer = async () => {
+    // TODO
+    // Contact Information, Keep Me Updated, Shipping Address
+      // log it right before sending
+        // before Purchase, chek redux tools, see if any is in there???
+      // put this info into shared data state that EmpowerPlant.tsx uses
+
     // ----------- Sentry Start Transaction ------------------------
     let transaction = Sentry.startTransaction({name: 'checkout'});
     Sentry.configureScope((scope) => scope.setSpan(transaction));
     // -------------------------------------------------------------
 
+    // TODO
+    // Update in this method
     let data = await placeOrder(Toast);
+    
     // ----------- Sentry Finish Transaction -----------------------
     const span = transaction.startChild({
       data,
@@ -149,7 +158,8 @@ const CartScreen = (props) => {
         </View>
         <GradientBtn
           buttonText={styles.buttonText}
-          colors={['#FFE0B2', '#FFB74D']}
+          // colors={['#FFE0B2', '#FFB74D']}
+          colors={['#002626']}
           style={styles.linearGradient}
           onPress={() => performCheckoutOnServer()}
           progressState={orderStatusUI}
@@ -245,7 +255,7 @@ const styles = StyleSheet.create({
   },
   sku: {
     fontSize: 16,
-    color: '#919191',
+    color: '#002626',
     marginBottom: 10,
   },
   screen: {
@@ -338,15 +348,19 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: 'center',
     fontSize: 16,
+    color:'white'
   },
   itemTitle: {
     marginBottom: 5,
     fontSize: 17,
     fontWeight: '500',
+    color:'#002626',
   },
   itemPrice: {
     fontSize: 22,
     fontWeight: '400',
-    color: '#371d40',
+    color: '#002626',
   },
 });
+// backgroundColor: '#002626'
+// color:'#002626'

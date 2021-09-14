@@ -30,7 +30,9 @@ const EmpowerPlant = ({navigation}) => {
     | {
         sku: string;
         name: string;
+        // description:string
         image: string;
+        // img: string;
         id: number;
         type: string;
         price: number;
@@ -41,15 +43,13 @@ const EmpowerPlant = ({navigation}) => {
   const loadData = () => {
     setToolData(null);
 
-    fetch(`${BACKEND_URL}/tools`, {
+    fetch(`${BACKEND_URL}/products`, {
       method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: { se:'willreactnative', customerType:'enterprise', email:'email@gmail.com', "Content-Type": "application/json" },
     })
       .then((response) => response.json())
       .then((json) => {
+        console.log("JSON length", json.length)
         setToolData(json);
       });
   };
@@ -93,13 +93,21 @@ const EmpowerPlant = ({navigation}) => {
             renderItem={({item}) => {
               return (
                 <ToolItem
-                  appDispatch={dispatch}
-                  sku={item.sku}
-                  name={item.name}
-                  image={item.image}
-                  id={item.id}
-                  type={item.type}
-                  price={item.price}
+                  // appDispatch={dispatch}
+                  // sku={item.sku}
+                  // name={item.name}
+                  // image={item.image}
+                  // id={item.id}
+                  // type={item.type}
+                  // price={item.price}
+                  
+                  // appDispatch={dispatch}
+                  sku={"12345"}
+                  name={"item.name"}
+                  image={"image"}
+                  id={1}
+                  type={"type"}
+                  price={100}
                 />
               );
             }}
@@ -181,7 +189,7 @@ const ToolItem = (props: {
 }): React.ReactElement => {
   return (
     <View style={styles.statisticContainer}>
-      <View style={styles.card}>{selectImage(props.image)}</View>
+      {/* <View style={styles.card}>{selectImage(props.image)}</View>
       <View style={styles.textContainer}>
         <Text style={styles.itemTitle}>
           {props.name.charAt(0).toUpperCase() + props.name.slice(1)}
@@ -195,7 +203,8 @@ const ToolItem = (props: {
           style={styles.linearGradient}
           buttonText={styles.buttonText}
           name={'Add to Cart'}
-          colors={['#FFE0B2', '#FFB74D']}
+          // colors={['#FFE0B2', '#FFB74D']}
+          colors={['#002626']}
           onPress={() => {
             props.appDispatch({
               type: 'ADD_TO_CART',
@@ -215,8 +224,8 @@ const ToolItem = (props: {
               text1: 'Added to Cart',
               visibilityTime: 0.5,
             });
-          }}></GradientBtn>
-      </View>
+          }}></GradientBtn> 
+      </View>*/}
     </View>
   );
 };
@@ -235,15 +244,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 17,
     fontWeight: '500',
+    color:'#002626'
   },
   itemPrice: {
     fontSize: 22,
     fontWeight: '400',
-    color: '#371d40',
+    // color: '#371d40',
+    color:'#002626',
   },
   sku: {
     fontSize: 16,
-    color: '#919191',
+    // color: '#919191',
+    color: '#002626',
     marginBottom: 10,
   },
   title: {
@@ -314,7 +326,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     margin: 5,
-    color: '#000000',
+    color:'white',
     backgroundColor: 'transparent',
   },
 });
