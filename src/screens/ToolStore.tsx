@@ -15,6 +15,8 @@ import {AppDispatch} from '../reduxApp';
 import {GradientBtn} from './CartScreen';
 import {BACKEND_URL} from '../config';
 
+import Svg from 'react-native-svg';
+
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
  * So you can control all spans that belong to that one transaction.
@@ -77,7 +79,14 @@ const ToolStore = ({navigation}) => {
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Results</Text>
+        <Text style={styles.title}>Empower Plant</Text>
+        {/* <Image
+          style={styles.tinyImage}
+          source={require('../assets/empowerplant-logo.png')}/> */}
+        {/* <SvgUri
+          width="100%"
+          height="100%"
+          uri='../assets/empowerplant-logo.svg' */}
       </View>
       <View style={styles.screen}>
         {toolData ? (
@@ -126,35 +135,35 @@ export const selectImage = (source: string): React.ReactElement => {
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/wrench.png')}
+          source={require('../assets/images/plant-spider-cropped.png')}
         />
       );
     case 'nails.png':
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/nails.png')}
+          source={require('../assets/images/plant-to-text-cropped.png')}
         />
       );
     case 'screwdriver.png':
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/screwdriver.png')}
+          source={require('../assets/images/nodes-cropped.png')}
         />
       );
     case 'hammer.png':
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/hammer.png')}
+          source={require('../assets/images/mood-planter-cropped.png')}
         />
       );
     default:
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/hammer.png')}
+          source={require('../assets/images/mood-planter-cropped.png')}
         />
       );
   }
@@ -242,6 +251,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '700',
+    color: '#002626',
+    // fontFamily: 'sans serif',
   },
   tinyImage: {
     width: 100,

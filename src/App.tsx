@@ -85,7 +85,7 @@ const App = () => {
           />
           <Stack.Screen name="Redux" component={ReduxScreen} />
           <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
-          <Stack.Screen name="ToolStore" component={ToolStore} />
+          <Stack.Screen name="EmpowerPlant" component={ToolStore} />
           <Stack.Screen name="Cart" component={CartScreen} />
         </Stack.Navigator>
         <Toast ref={(ref) => Toast.setRef(ref)} />
