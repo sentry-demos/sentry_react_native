@@ -18,12 +18,12 @@ import {selectImage} from './EmpowerPlant';
 import {BACKEND_URL} from '../config';
 
 interface CartData {
-  sku: string;
+  // sku: string;
   name: string;
   // image: string;
   imgcropped: string;
   id: number;
-  type: string;
+  // type: string;
   price: number;
   quantity: number;
 }
@@ -35,9 +35,9 @@ export type UIToast = typeof Toast;
 
 const CartScreen = (props) => {
   const dispatch = useDispatch();
-  const cartData = useSelector((state: RootState) => state.cart);
+  const cartData = useSelector((state: RootState) => state.cart1);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
-
+  console.log("> cartData", cartData)
   const cartItems: Array<CartData> | [] = Object.values(cartData);
   const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
     let aggregate = cartItems.reduce(
@@ -154,7 +154,7 @@ const CartScreen = (props) => {
           {cartItems.length == 0 ? (
             <Text>"No items in cart"</Text>
           ) : (
-            <div>HOLDER</div>
+            <Text>HOLDER</Text>
             // subTotalDisplay(computeCartTotal(cartItems))
           )}
         </View>
@@ -222,7 +222,7 @@ const CartItem = (props: {
   // name: string;
   imgcropped: string;
   id: number;
-  type: string;
+  // type: string;
   quantity: number;
   price: number;
   appDispatch: AppDispatch;

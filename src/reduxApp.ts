@@ -10,7 +10,6 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   let {payload,type} = action;
-  console.log("> type", type)
   console.log("> payload", payload)
   switch (type) {
     case 'ADD_TO_CART':

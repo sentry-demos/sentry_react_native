@@ -215,7 +215,6 @@ const ToolItem = (props: {
           // colors={['#FFE0B2', '#FFB74D']}
           colors={['#002626']}
           onPress={() => {
-            console.log("> addDispatch", props.id) 
             props.appDispatch({
               type: 'ADD_TO_CART',
               payload: {
