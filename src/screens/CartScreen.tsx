@@ -20,7 +20,8 @@ import {BACKEND_URL} from '../config';
 interface CartData {
   sku: string;
   name: string;
-  image: string;
+  // image: string;
+  imgcropped: string;
   id: number;
   type: string;
   price: number;
@@ -153,7 +154,8 @@ const CartScreen = (props) => {
           {cartItems.length == 0 ? (
             <Text>"No items in cart"</Text>
           ) : (
-            subTotalDisplay(computeCartTotal(cartItems))
+            <div>HOLDER</div>
+            // subTotalDisplay(computeCartTotal(cartItems))
           )}
         </View>
         <GradientBtn
@@ -174,9 +176,11 @@ const CartScreen = (props) => {
               <CartItem
                 appDispatch={dispatch}
                 quantity={item.quantity}
-                sku={item.sku}
-                name={item.name}
-                image={item.image}
+                // sku={item.sku}
+                // name={item.name}
+                title={item.title}
+                // image={item.image}
+                imgcropped={item.imgcropped} 
                 id={item.id}
                 type={item.type}
                 price={item.price}
@@ -214,26 +218,29 @@ export const GradientBtn = (props: {
 };
 
 const CartItem = (props: {
-  sku: string;
-  name: string;
-  image: string;
+  // sku: string;
+  // name: string;
+  imgcropped: string;
   id: number;
   type: string;
   quantity: number;
   price: number;
   appDispatch: AppDispatch;
+  title: string;
 }): React.ReactElement => {
   const deleteItem = (sku: string) => {
     props.appDispatch({type: 'DELETE_FROM_CART', payload: sku});
   };
+  console.log("> props", props)
   return (
     <View style={styles.statisticContainer}>
-      <View>{selectImage(props.image)}</View>
+      <View>{selectImage(props.imgcropped)}</View>
       <View>
         <Text style={styles.itemTitle}>
-          {props.name.charAt(0).toUpperCase() + props.name.slice(1)}
+          {props.title.charAt(0).toUpperCase() + props.title.slice(1)}
         </Text>
-        <Text style={styles.sku}>{'sku: ' + props.sku}</Text>
+        
+        {/* TODO <Text style={styles.sku}>{'sku: ' + props.sku}</Text> */}
         <Text style={styles.itemPrice}>
           {'$' + (props.price / 1000).toFixed(2) + ` (${props.quantity})`}
         </Text>
@@ -243,7 +250,7 @@ const CartItem = (props: {
           style={styles.deleteBtn}
           name={'Delete'}
           progressState={false}
-          onPress={() => deleteItem(props.sku)}></GradientBtn>
+          onPress={() => deleteItem(props.id.toString())}></GradientBtn>
       </View>
     </View>
   );

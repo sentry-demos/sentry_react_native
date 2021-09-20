@@ -101,7 +101,7 @@ const EmpowerPlant = ({navigation}) => {
                   // type={item.type}
                   // price={item.price}
                   
-                  // appDispatch={dispatch}
+                  appDispatch={dispatch}
                   // sku={"12345"}
                   // name={"item.name"}
                   // image={"image"}
@@ -138,6 +138,7 @@ export const selectImage = (source: string): React.ReactElement => {
    * Dynamic strings with require syntax is not possible.
    * https://github.com/facebook/react-native/issues/2481
    */
+  console.log("> source", source)
   // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
   let length = source.split("/").length
   let image = source.split("/")[length-1]
@@ -188,11 +189,11 @@ const ToolItem = (props: {
   // name: string;
   // image: string;
   id: number;
-  // type: string;
+  type: string;
   price: number;
   title: string;
   imgcropped: string;
-  // appDispatch: AppDispatch;
+  appDispatch: AppDispatch;
 }): React.ReactElement => {
   return (
     <View style={styles.statisticContainer}>
@@ -214,16 +215,19 @@ const ToolItem = (props: {
           // colors={['#FFE0B2', '#FFB74D']}
           colors={['#002626']}
           onPress={() => {
+            console.log("> addDispatch", props.id) 
             props.appDispatch({
               type: 'ADD_TO_CART',
               payload: {
                 // image: props.image,
                 // sku: props.sku,
-                // id: props.id,
+                id: props.id,
                 // name: props.name,
+                title: props.title,
                 price: props.price,
-                // quantity: 1,
+                quantity: 1,
                 // type: props.type,
+                imgcropped: props.imgcropped 
               },
             });
             Toast.show({
