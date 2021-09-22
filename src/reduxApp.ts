@@ -23,10 +23,8 @@ const reducer = (state = initialState, action) => {
 
   switch (type) {
     case 'FILL_FIELDS':
-
-      console.log("filling...", payload)
-
       if (payload == 'dummydata') {
+        console.log(">FILL_FIELDS")
         return { 
           contactInfo: {
             email:"random123@email.com",
@@ -41,6 +39,7 @@ const reducer = (state = initialState, action) => {
           ...state, 
         };
       } else {
+        console.log(">BADDDDDDDDDDDD")
         return { ...state };
       }
     case 'ADD_TO_CART':

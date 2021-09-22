@@ -36,7 +36,6 @@ Sentry.init({
   release: packageVersion,
   environment: "dev",
   beforeSend: (e) => {
-    console.log(e);
     return e;
   },
   integrations: [

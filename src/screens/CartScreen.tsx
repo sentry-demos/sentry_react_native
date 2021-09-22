@@ -18,12 +18,9 @@ import {selectImage} from './EmpowerPlant';
 import {BACKEND_URL} from '../config';
 
 interface CartData {
-  // sku: string;
   name: string;
-  // image: string;
   imgcropped: string;
   id: number;
-  // type: string;
   price: number;
   quantity: number;
 }
@@ -53,8 +50,6 @@ const CartScreen = ({navigation}) => {
       },
     });
   }, [navigation]);
-  
-  // console.log("> cartData", cartData)
 
   const cartItems: Array<CartData> | [] = Object.values(cartData);
   const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
@@ -363,5 +358,3 @@ const styles = StyleSheet.create({
     color: '#002626',
   },
 });
-// backgroundColor: '#002626'
-// color:'#002626'
