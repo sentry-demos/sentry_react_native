@@ -12,6 +12,13 @@ const reducer = (state = initialState, action) => {
   let {payload,type} = action;
   // console.log("> reducer action", action)
   switch (type) {
+    case 'FILL_FIELDS':
+      console.log("filling", payload)
+      if (payload == 'dummydata') {
+        return { ...state };
+      } else {
+        return { ...state };
+      }
     case 'ADD_TO_CART':
       // replaced sku w/ id
       // if(state.cart[payload.id]){

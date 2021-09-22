@@ -26,7 +26,7 @@ import {BACKEND_URL} from '../config';
  * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
  * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
  */
-const ContactInfoScreen = ({navigation}) => {
+const ContactInfoScreen = (props) => {
   const dispatch = useDispatch();
   const [toolData, setToolData] = React.useState<
     | {
@@ -38,12 +38,14 @@ const ContactInfoScreen = ({navigation}) => {
         id: number;
         type: string;
         price: number;
+        // appDispatch: AppDispatch; // EVAL not needed
       }[]
     | null
   >(null);
 
 //   const loadData = () => {};
 
+// TODO need props.navigation?
 //   React.useLayoutEffect(() => {
 //     navigation.setOptions({
 //       headerRightContainerStyle: {paddingRight: 20},
@@ -86,31 +88,29 @@ const ContactInfoScreen = ({navigation}) => {
         <View>
             <FlatList
                 data={items}
+                appDispatch={dispatch}
                 renderItem={({item}) => {
                     return (
                         <SafeAreaView>
                         <TextInput
                             style={styles.input}
-                            // onChangeText={onChangeNumber}
                             value={""}
                             placeholder={item.placeholder}
                             // keyboardType="numeric"
-                            onPressIn={fillFields}
+                            onPressIn={() => {
+                                dispatch({ type: 'FILL_FIELDS', payload: 'dummydata' })}
+                            }
                         />
                         </SafeAreaView>
                     );
                 }}
                 keyExtractor={(item) => item.id}
             />
-            {/* <Text>HIIIIIIIIIIIIIIII</Text> */}
         </View>
         </View>
     );
 };
 
-const fillFields = () => {
-    console.log("> YOOOOO")
-}
 /* This works because sentry/react-native wraps sentry/react right now.
 * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
 * because that comes from props being passed into the Profiler (which comes from redux).
