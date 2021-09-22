@@ -154,7 +154,7 @@ const CartScreen = (props) => {
           {cartItems.length == 0 ? (
             <Text>"No items in cart"</Text>
           ) : (
-            <Text>HOLDER</Text>
+            <Text>Price of Items...</Text>
             // subTotalDisplay(computeCartTotal(cartItems))
           )}
         </View>
@@ -228,10 +228,10 @@ const CartItem = (props: {
   appDispatch: AppDispatch;
   title: string;
 }): React.ReactElement => {
-  const deleteItem = (sku: string) => {
-    props.appDispatch({type: 'DELETE_FROM_CART', payload: sku});
+  const deleteItem = (id: string) => {
+    props.appDispatch({type: 'DELETE_FROM_CART', payload: id});
   };
-  console.log("> props", props)
+  // console.log("> CartItem props", props)
   return (
     <View style={styles.statisticContainer}>
       <View>{selectImage(props.imgcropped)}</View>

@@ -10,7 +10,7 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   let {payload,type} = action;
-  console.log("> payload", payload)
+  console.log("> reducer action", action)
   switch (type) {
     case 'ADD_TO_CART':
       // replaced sku w/ id
@@ -49,10 +49,10 @@ const reducer = (state = initialState, action) => {
         cart1: {...state.cart1,[action.payload.id]:action.payload}
       };
     case 'DELETE_FROM_CART':
-      delete state.cart[action.payload]
+      delete state.cart1[action.payload]
       return {
         ...state,
-        cart:{...state.cart}
+        cart1:{...state.cart1}
       }
     case 'COUNTER_INCREMENT':
       return {
