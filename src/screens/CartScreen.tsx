@@ -33,10 +33,26 @@ interface subTotal {
 }
 export type UIToast = typeof Toast;
 
-const CartScreen = (props) => {
+const CartScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const cartData = useSelector((state: RootState) => state.cart1);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRightContainerStyle: {paddingRight: 20},
+      headerRight: () => {
+        return (
+          <Button
+            onPress={() => {
+              navigation.navigate('ContactInfo');
+            }}
+            title="ContactInfo"
+          />
+        );
+      },
+    });
+  }, [navigation]);
   
   // console.log("> cartData", cartData)
 

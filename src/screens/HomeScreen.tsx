@@ -157,6 +157,13 @@ const HomeScreen = (props: Props) => {
           <View style={styles.buttonArea}>
             <TouchableOpacity
               onPress={() => {
+                props.navigation.navigate('EmpowerPlant');
+              }}>
+              <Text style={styles.buttonText}>Empower Plant</Text>
+            </TouchableOpacity>
+            <View style={styles.spacer} />
+            <TouchableOpacity
+              onPress={() => {
                 Sentry.captureMessage('Test Message');
               }}>
               <Text style={styles.buttonText}>Capture Message</Text>
@@ -253,15 +260,7 @@ const HomeScreen = (props: Props) => {
               }}>
               <Text style={styles.buttonText}>Redux Example</Text>
             </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('EmpowerPlant');
-              }}>
-              <Text style={styles.buttonText}>Empower Plant</Text>
-            </TouchableOpacity>
           </View>
-          
         </View>
       </ScrollView>
     </>
