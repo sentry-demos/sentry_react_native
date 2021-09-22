@@ -37,17 +37,19 @@ const CartScreen = (props) => {
   const dispatch = useDispatch();
   const cartData = useSelector((state: RootState) => state.cart1);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
-  console.log("> cartData", cartData)
+  
+  // console.log("> cartData", cartData)
+
   const cartItems: Array<CartData> | [] = Object.values(cartData);
   const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
-    let aggregate = cartItems.reduce(
-      (acc, item) => {
-        acc.quantity += item.quantity;
-        acc.total += item.price;
-        return acc;
-      },
-      {total: 0, quantity: 0},
-    );
+    let total = 0
+    let quantity = 0
+    cartItems.map(item => {
+      quantity =+ item.quantity
+      let itemTotal = item.quantity * item.price
+      total += itemTotal
+    })
+    let aggregate = { total, quantity}
     return aggregate;
   };
   const subTotalDisplay = (props: subTotal): React.ReactElement => {
@@ -60,7 +62,7 @@ const CartScreen = (props) => {
           marginBottom: 20,
           fontSize: 18,
           fontWeight: '600',
-        }}>{`Subtotal (${q} item${multiple}): $${(t / 1000).toFixed(2)}`}</Text>
+        }}>{`Subtotal (${q} item${multiple}): $${t}`}</Text>
     );
   };
   const performCheckoutOnServer = async () => {
@@ -154,8 +156,8 @@ const CartScreen = (props) => {
           {cartItems.length == 0 ? (
             <Text>"No items in cart"</Text>
           ) : (
-            <Text>Price of Items...</Text>
-            // subTotalDisplay(computeCartTotal(cartItems))
+            // <Text>Price of Items...</Text>
+            subTotalDisplay(computeCartTotal(cartItems))
           )}
         </View>
         <GradientBtn
@@ -242,7 +244,7 @@ const CartItem = (props: {
         
         {/* TODO <Text style={styles.sku}>{'sku: ' + props.sku}</Text> */}
         <Text style={styles.itemPrice}>
-          {'$' + (props.price / 1000).toFixed(2) + ` (${props.quantity})`}
+          {'$' + props.price + ` (${props.quantity})`}
         </Text>
         <GradientBtn
           buttonText={styles.buttonText}

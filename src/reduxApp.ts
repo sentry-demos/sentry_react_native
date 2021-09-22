@@ -10,7 +10,7 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   let {payload,type} = action;
-  console.log("> reducer action", action)
+  // console.log("> reducer action", action)
   switch (type) {
     case 'ADD_TO_CART':
       // replaced sku w/ id

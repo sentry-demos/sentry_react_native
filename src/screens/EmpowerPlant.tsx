@@ -138,7 +138,6 @@ export const selectImage = (source: string): React.ReactElement => {
    * Dynamic strings with require syntax is not possible.
    * https://github.com/facebook/react-native/issues/2481
    */
-  console.log("> source", source)
   // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
   let length = source.split("/").length
   let image = source.split("/")[length-1]
@@ -204,7 +203,8 @@ const ToolItem = (props: {
           {props.title}
         </Text>
         <Text style={styles.itemPrice}>
-          {'$' + (props.price / 1000).toFixed(2)}
+          {'$' + props.price}
+          {/* {'$' + (props.price / 1000).toFixed(2)} */}
         </Text>
         {/* <Text style={styles.sku}>{'sku: ' + props.sku}</Text> */}
         <GradientBtn
