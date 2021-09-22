@@ -26,6 +26,7 @@ const reducer = (state = initialState, action) => {
       if (payload == 'dummydata') {
         console.log(">FILL_FIELDS")
         return { 
+          ...state, 
           contactInfo: {
             email:"random123@email.com",
             firstName:"john",
@@ -35,8 +36,7 @@ const reducer = (state = initialState, action) => {
             countryRegion:"USA",
             state:"CA",
             zipCode:"123456",
-          },
-          ...state, 
+          }
         };
       } else {
         console.log(">BADDDDDDDDDDDD")
@@ -53,7 +53,6 @@ const reducer = (state = initialState, action) => {
               quantity:state.cart1[payload.id].quantity + 1
             }
           }
-          
         };
       }
       return {
