@@ -28,14 +28,14 @@ const reducer = (state = initialState, action) => {
         return { 
           ...state, 
           contactInfo: {
-            email:"random123@email.com",
+            email: Math.random().toString(36).substring(2, 6) + "@yahoo.com",
             firstName:"john",
             lastName:"doe",
             address:"123 Hope St",
             city:"San Francisco",
             countryRegion:"USA",
             state:"CA",
-            zipCode:"123456",
+            zipCode: (Math.floor(Math.random()*90000) + 100000).toString()
           }
         };
       } else {

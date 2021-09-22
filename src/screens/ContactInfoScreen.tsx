@@ -20,14 +20,14 @@ import {BACKEND_URL} from '../config';
 export type UIToast = typeof Toast;
 
 const items = [
-    {id:1, placeholder:'email'},
-    {id:2, placeholder:'first name'},
-    {id:3, placeholder:'last name'},
-    {id:4, placeholder:'address'},
-    {id:5, placeholder:'city'},
-    {id:6, placeholder:'country/region'},
-    {id:7, placeholder:'state'},
-    {id:8, placeholder:'zip code'},
+    {id:1, placeholder:'email', key:'email'},
+    {id:2, placeholder:'first name', key:'firstName'},
+    {id:3, placeholder:'last name', key:'lastName'},
+    {id:4, placeholder:'address', key:'address'},
+    {id:5, placeholder:'city', key:'city'},
+    {id:6, placeholder:'country/region', key:'countryRegion'},
+    {id:7, placeholder:'state', key:'state'},
+    {id:8, placeholder:'zip code', key:'zipCode'},
 ]
 
 /**
@@ -92,8 +92,10 @@ const ContactInfoScreen = (props) => {
       ): Promise<Response> => {
         // setOrderStatusUI(true);
     
-        // TODO
-        const data = {cart: Object.values(cartData)};
+        // TODO se, contactInfo,
+        const data = {
+            cart: Object.values(cartData)
+        };
     
         let response = await fetch( 
           `${BACKEND_URL}/checkout`,
@@ -137,6 +139,13 @@ const ContactInfoScreen = (props) => {
         return response;
     };
 
+    console.log("> contactInfoData", contactInfoData)
+    const contactInfoKeys = Object.keys(contactInfoData)
+    console.log("> contactInfoKeys", contactInfoKeys)
+
+    const findValue = (key) => {
+        return contactInfoData[key] || ""
+    }
     return (
         <View style={styles.screen}>
             <Text
@@ -155,7 +164,7 @@ const ContactInfoScreen = (props) => {
                             <SafeAreaView>
                             <TextInput
                                 style={styles.input}
-                                value={""}
+                                value={findValue(item.key)}
                                 placeholder={item.placeholder}
                                 onPressIn={() => {
                                     dispatch({ type: 'FILL_FIELDS', payload: 'dummydata' })}
