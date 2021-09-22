@@ -106,15 +106,26 @@ const ContactInfoScreen = (props) => {
                 }}
                 keyExtractor={(item) => item.id}
             />
-        <GradientBtn
-          buttonText={styles.buttonText}
-          // colors={['#FFE0B2', '#FFB74D']}
-          colors={['#002626']}
-          style={styles.linearGradient}
-          onPress={() => performCheckoutOnServer()}
-        //   progressState={orderStatusUI}
-          progressState={false}
-          name={'Place your order'}></GradientBtn>
+        <View style={styles.flavorContainer}>
+            {/* <Image
+            source={require('../assets/sentry-logo.png')}
+            style={styles.logo}
+            /> */}
+            <Text style={{marginLeft: 5, fontWeight: '500'}}>
+            Deliver to Sentry - San Francisco 94105
+            </Text>
+        </View>
+        <View style={styles.orderBtnContainer}>
+            <GradientBtn
+            buttonText={styles.buttonText}
+            // colors={['#FFE0B2', '#FFB74D']}
+            colors={['#002626']}
+            style={styles.linearGradient}
+            onPress={() => performCheckoutOnServer()}
+            //   progressState={orderStatusUI}
+            progressState={false}
+            name={'Place your order'}></GradientBtn>
+        </View>
         </View>
         </View>
     );
@@ -162,11 +173,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
 
     width:300,
+    margin:10, // ?
+  },
+  orderBtnContainer: {
+    height: 50,
+
+    paddingLeft: 20,
+    paddingRight: 20,
+    // borderRadius: 2,
+    borderWidth: 1,
+    borderColor: 'white',
+    flexDirection: 'column',
+    justifyContent: 'center',
+
+    width:300,
+    margin:10, // ?
   },
   buttonText: {
     textAlign: 'center',
     fontSize: 16,
     color:'white'
+  },
+  flavorContainer: {
+    width: '100%',
+    backgroundColor: '#f5f5f5',
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
 });
 

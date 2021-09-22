@@ -158,7 +158,8 @@ const CartScreen = ({navigation}) => {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.flavorContainer}>
+      {/* MOVED TO ContactInfoScreen.tsx
+       <View style={styles.flavorContainer}>
         <Image
           source={require('../assets/sentry-logo.png')}
           style={styles.logo}
@@ -166,7 +167,7 @@ const CartScreen = ({navigation}) => {
         <Text style={{marginLeft: 5, fontWeight: '500'}}>
           Deliver to Sentry - San Francisco 94105
         </Text>
-      </View>
+      </View> */}
       <View style={styles.titleContainer}>
         <View>
           {cartItems.length == 0 ? (
@@ -176,14 +177,16 @@ const CartScreen = ({navigation}) => {
             subTotalDisplay(computeCartTotal(cartItems))
           )}
         </View>
-        <GradientBtn
+        
+        {/* MOVING THIS TO ContactInfoScreen.tsx
+         <GradientBtn
           buttonText={styles.buttonText}
           // colors={['#FFE0B2', '#FFB74D']}
           colors={['#002626']}
           style={styles.linearGradient}
           onPress={() => performCheckoutOnServer()}
           progressState={orderStatusUI}
-          name={'Place your order'}></GradientBtn>
+          name={'Place your order'}></GradientBtn> */}
       </View>
       <View>
         <FlatList
