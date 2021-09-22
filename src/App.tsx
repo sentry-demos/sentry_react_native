@@ -17,6 +17,7 @@ import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
 import ReduxScreen from './screens/ReduxScreen';
 import EmpowerPlant from './screens/EmpowerPlant';
 import CartScreen from './screens/CartScreen';
+import ContactInfoScreen from './screens/ContactInfoScreen';
 import Toast from 'react-native-toast-message';
 
 import {store} from './reduxApp';
@@ -87,6 +88,7 @@ const App = () => {
           <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
           <Stack.Screen name="EmpowerPlant" component={EmpowerPlant} />
           <Stack.Screen name="Cart" component={CartScreen} />
+          <Stack.Screen name="ContactInfo" component={ContactInfoScreen} />
         </Stack.Navigator>
         <Toast ref={(ref) => Toast.setRef(ref)} />
       </NavigationContainer>

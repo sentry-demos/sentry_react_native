@@ -170,7 +170,7 @@ const CartScreen = ({navigation}) => {
       <View style={styles.titleContainer}>
         <View>
           {cartItems.length == 0 ? (
-            <Text>"No items in cart"</Text>
+            <Text>No items in cart</Text>
           ) : (
             // <Text>Price of Items...</Text>
             subTotalDisplay(computeCartTotal(cartItems))
