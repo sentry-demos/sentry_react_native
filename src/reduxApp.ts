@@ -6,38 +6,44 @@ const initialState = {
   counter: 0,
   cart:{},
   cart1: {},
+  contactInfo: {
+    email:"",
+    firstName:"",
+    lastName:"",
+    address:"",
+    city:"",
+    countryRegion:"",
+    state:"",
+    zipCode:"",
+  }
 };
 
 const reducer = (state = initialState, action) => {
   let {payload,type} = action;
-  // console.log("> reducer action", action)
+
   switch (type) {
     case 'FILL_FIELDS':
-      console.log("filling", payload)
+
+      console.log("filling...", payload)
+
       if (payload == 'dummydata') {
-        return { ...state };
+        return { 
+          contactInfo: {
+            email:"random123@email.com",
+            firstName:"john",
+            lastName:"doe",
+            address:"123 Hope St",
+            city:"San Francisco",
+            countryRegion:"USA",
+            state:"CA",
+            zipCode:"123456",
+          },
+          ...state, 
+        };
       } else {
         return { ...state };
       }
     case 'ADD_TO_CART':
-      // replaced sku w/ id
-      // if(state.cart[payload.id]){
-      //   return {
-      //     ...state,
-      //     cart:{
-      //       ...state.cart,
-      //       [payload.id]:{
-      //         ...state.cart[payload.id],
-      //         quantity:state.cart[payload.id].quantity + 1
-      //       }
-      //     }
-          
-      //   };
-      // }
-      // return {
-      //   ...state,
-      //   cart: {...state.cart,[action.payload.id]:action.payload}
-      // };
       if(state.cart1[payload.id]){
         return {
           ...state,

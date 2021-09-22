@@ -106,11 +106,23 @@ const ContactInfoScreen = (props) => {
                 }}
                 keyExtractor={(item) => item.id}
             />
+        <GradientBtn
+          buttonText={styles.buttonText}
+          // colors={['#FFE0B2', '#FFB74D']}
+          colors={['#002626']}
+          style={styles.linearGradient}
+          onPress={() => performCheckoutOnServer()}
+        //   progressState={orderStatusUI}
+          progressState={false}
+          name={'Place your order'}></GradientBtn>
         </View>
         </View>
     );
 };
 
+const performCheckoutOnServer = () => {
+    console.log("> performCheckoutOnServer")
+}
 /* This works because sentry/react-native wraps sentry/react right now.
 * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
 * because that comes from props being passed into the Profiler (which comes from redux).
@@ -137,6 +149,24 @@ const styles = StyleSheet.create({
     // new
     borderRadius: 2,
     borderColor: '#002626',
+  },
+  linearGradient: {
+    height: 50,
+
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: '#8D6E63',
+    flexDirection: 'column',
+    justifyContent: 'center',
+
+    width:300,
+  },
+  buttonText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color:'white'
   },
 });
 
