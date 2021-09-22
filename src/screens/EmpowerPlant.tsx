@@ -30,9 +30,7 @@ const EmpowerPlant = ({navigation}) => {
     | {
         sku: string;
         name: string;
-        // description:string
         image: string;
-        // img: string;
         id: number;
         type: string;
         price: number;
@@ -78,13 +76,6 @@ const EmpowerPlant = ({navigation}) => {
     <View style={styles.screen}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Empower Plant</Text>
-        {/* <Image
-          style={styles.tinyImage}
-          source={require('../assets/empowerplant-logo.png')}/> */}
-        {/* <SvgUri
-          width="100%"
-          height="100%"
-          uri='../assets/empowerplant-logo.svg' */}
       </View>
       <View style={styles.screen}>
         {toolData ? (
@@ -92,28 +83,17 @@ const EmpowerPlant = ({navigation}) => {
             data={toolData}
             renderItem={({item}) => {
               return (
-                <ToolItem
-                  // appDispatch={dispatch}
-                  // sku={item.sku}
-                  // name={item.name}
-                  // image={item.image}
-                  // id={item.id}
-                  // type={item.type}
-                  // price={item.price}
-                  
+                <ProductItem
                   appDispatch={dispatch}
-                  // sku={"12345"}
-                  // name={"item.name"}
-                  // image={"image"}
                   id={item.id}
-                  // type={"type"}
+                  imgcropped={item.imgcropped}
                   price={item.price}
                   title={item.title}
-                  imgcropped={item.imgcropped}
+                  type={""}
                 />
               );
             }}
-            keyExtractor={(item) => item.sku}
+            keyExtractor={(item) => item.id}
           />
         ) : (
           <ActivityIndicator size="small" color="#404091" />
@@ -183,7 +163,7 @@ export const selectImage = (source: string): React.ReactElement => {
 /* You could wrap this with the Sentry Profiler, 
 * but then you'd have hundreds/thousands of spans because the tools response is not paginated.
 */
-const ToolItem = (props: {
+const ProductItem = (props: {
   // sku: string;
   // name: string;
   // image: string;
@@ -199,33 +179,25 @@ const ToolItem = (props: {
       <View style={styles.card}>{selectImage(props.imgcropped)}</View>
       <View style={styles.textContainer}>
         <Text style={styles.itemTitle}>
-          {/* {props.name.charAt(0).toUpperCase() + props.name.slice(1)}*/}
           {props.title}
         </Text>
         <Text style={styles.itemPrice}>
           {'$' + props.price}
-          {/* {'$' + (props.price / 1000).toFixed(2)} */}
         </Text>
-        {/* <Text style={styles.sku}>{'sku: ' + props.sku}</Text> */}
         <GradientBtn
           progressState={false}
           style={styles.linearGradient}
           buttonText={styles.buttonText}
           name={'Add to Cart'}
-          // colors={['#FFE0B2', '#FFB74D']}
           colors={['#002626']}
           onPress={() => {
             props.appDispatch({
               type: 'ADD_TO_CART',
               payload: {
-                // image: props.image,
-                // sku: props.sku,
                 id: props.id,
-                // name: props.name,
                 title: props.title,
                 price: props.price,
                 quantity: 1,
-                // type: props.type,
                 imgcropped: props.imgcropped 
               },
             });
@@ -260,12 +232,10 @@ const styles = StyleSheet.create({
   itemPrice: {
     fontSize: 22,
     fontWeight: '400',
-    // color: '#371d40',
     color:'#002626',
   },
   sku: {
     fontSize: 16,
-    // color: '#919191',
     color: '#002626',
     marginBottom: 10,
   },
@@ -273,7 +243,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: '#002626',
-    // fontFamily: 'sans serif',
   },
   tinyImage: {
     width: 100,

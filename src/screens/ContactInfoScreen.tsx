@@ -10,10 +10,10 @@ import {
   SafeAreaView,
   TextInput
 } from 'react-native';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import Toast from 'react-native-toast-message';
-import {AppDispatch} from '../reduxApp';
+import {AppDispatch, RootState} from '../reduxApp';
 import {GradientBtn} from './CartScreen';
 import {BACKEND_URL} from '../config';
 
@@ -42,6 +42,9 @@ const ContactInfoScreen = (props) => {
       }[]
     | null
   >(null);
+
+  const cartData = useSelector((state: RootState) => state.cart1);
+  console.log("**** cartData", cartData)
 
 //   const loadData = () => {};
 
@@ -131,9 +134,82 @@ const ContactInfoScreen = (props) => {
     );
 };
 
-const performCheckoutOnServer = () => {
-    console.log("> performCheckoutOnServer")
-}
+const performCheckoutOnServer = async () => {
+    // Contact Information, Keep Me Updated
+    // log it right before sending
+
+    // 1. connected to UseState or whatever
+    // 2. log it
+
+    // ----------- Sentry Start Transaction ------------------------
+    let transaction = Sentry.startTransaction({name: 'checkout'});
+    Sentry.configureScope((scope) => scope.setSpan(transaction));
+    // -------------------------------------------------------------
+
+    // TODO
+    // Update in this method
+    let data = await placeOrder(Toast);
+
+    // ----------- Sentry Finish Transaction -----------------------
+    const span = transaction.startChild({
+        data,
+        op: 'task',
+        description: `processing shopping cart result`,
+    });
+
+    span.finish();
+    transaction.finish();
+};
+
+const placeOrder = async (
+    uiToast: null | UIToast = null,
+  ): Promise<Response> => {
+    // setOrderStatusUI(true);
+
+    // TODO
+    const data = {cart: Object.values(cartData)};
+
+    let response = await fetch( 
+      `${BACKEND_URL}/checkout`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          email: 'test@sentry.io',
+        },
+        body: JSON.stringify(data),
+      },
+    ).catch((err) => {
+      throw new Error(err);
+    });
+    // setOrderStatusUI(false);
+    if (response.status !== 200) {
+      uiToast
+        ? uiToast.show({
+            type: 'error',
+            position: 'bottom',
+            text1: 'Error: Could not place order.',
+          })
+        : null;
+
+      Sentry.captureException(
+        new Error(
+          response.status +
+            ' - ' +
+            (response.statusText || ' INTERNAL SERVER ERROR'),
+        ),
+      );
+    } else {
+      uiToast
+        ? uiToast.show({
+            type: 'success',
+            position: 'bottom',
+            text1: 'Request Succeeded',
+          })
+        : null;
+    }
+    return response;
+  };
 /* This works because sentry/react-native wraps sentry/react right now.
 * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
 * because that comes from props being passed into the Profiler (which comes from redux).
@@ -142,8 +218,6 @@ const performCheckoutOnServer = () => {
 * and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
 */
 export default ContactInfoScreen
-
-// export const selectImage = (source: string): React.ReactElement => {};
 
 const styles = StyleSheet.create({
   screen: {
@@ -203,20 +277,3 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 });
-
-/*
-From CartScreen.tsx
-
-  linearGradient: {
-    height: 50,
-
-    paddingLeft: 20,
-    paddingRight: 20,
-    borderRadius: 2,
-    borderWidth: 1,
-    borderColor: '#8D6E63',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-
-*/

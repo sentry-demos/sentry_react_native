@@ -81,34 +81,7 @@ const CartScreen = ({navigation}) => {
         }}>{`Subtotal (${q} item${multiple}): $${t}`}</Text>
     );
   };
-  const performCheckoutOnServer = async () => {
-    // TODO
-    // Contact Information, Keep Me Updated, Shipping Address
-      // log it right before sending
-        // before Purchase, chek redux tools, see if any is in there???
-      // put this info into shared data state that EmpowerPlant.tsx uses
 
-    // ----------- Sentry Start Transaction ------------------------
-    let transaction = Sentry.startTransaction({name: 'checkout'});
-    Sentry.configureScope((scope) => scope.setSpan(transaction));
-    // -------------------------------------------------------------
-
-    // TODO
-    // Update in this method
-    let data = await placeOrder(Toast);
-    
-    // ----------- Sentry Finish Transaction -----------------------
-    const span = transaction.startChild({
-      data,
-      op: 'task',
-      description: `processing shopping cart result`,
-    });
-
-    span.finish();
-    transaction.finish();
-
-    // -------------------------------------------------------------
-  };
   const placeOrder = async (
     uiToast: null | UIToast = null,
   ): Promise<Response> => {
