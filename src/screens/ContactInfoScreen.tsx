@@ -58,22 +58,13 @@ const ContactInfoScreen = (props) => {
 
   const cartData = useSelector((state: RootState) => state.cart1);
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
+  const [orderStatusUI, setOrderStatusUI] = React.useState(false);
 
   const performCheckoutOnServer = async () => {
-        // Contact Information, Keep Me Updated
-        // log it right before sending
-
-        // 1. connected to UseState or whatever
-        console.log(">> contactInfoData", contactInfoData)
-        // 2. log it
-
         // ----------- Sentry Start Transaction ------------------------
         let transaction = Sentry.startTransaction({name: 'checkout'});
         Sentry.configureScope((scope) => scope.setSpan(transaction));
-        // -------------------------------------------------------------
 
-        // TODO
-        // Update in this method
         let data = await placeOrder(Toast);
 
         // ----------- Sentry Finish Transaction -----------------------
@@ -90,7 +81,7 @@ const ContactInfoScreen = (props) => {
     const placeOrder = async (
         uiToast: null | UIToast = null,
       ): Promise<Response> => {
-        // setOrderStatusUI(true);
+        setOrderStatusUI(true);
     
         // TODO se, contactInfo,
         const data = {
@@ -110,7 +101,7 @@ const ContactInfoScreen = (props) => {
         ).catch((err) => {
           throw new Error(err);
         });
-        // setOrderStatusUI(false);
+        setOrderStatusUI(false);
         if (response.status !== 200) {
           uiToast
             ? uiToast.show({
@@ -139,13 +130,6 @@ const ContactInfoScreen = (props) => {
         return response;
     };
 
-    console.log("> contactInfoData", contactInfoData)
-    const contactInfoKeys = Object.keys(contactInfoData)
-    console.log("> contactInfoKeys", contactInfoKeys)
-
-    const findValue = (key) => {
-        return contactInfoData[key] || ""
-    }
     return (
         <View style={styles.screen}>
             <Text
@@ -164,7 +148,7 @@ const ContactInfoScreen = (props) => {
                             <SafeAreaView>
                             <TextInput
                                 style={styles.input}
-                                value={findValue(item.key)}
+                                value={contactInfoData[item.key] || ""}
                                 placeholder={item.placeholder}
                                 onPressIn={() => {
                                     dispatch({ type: 'FILL_FIELDS', payload: 'dummydata' })}
@@ -191,8 +175,8 @@ const ContactInfoScreen = (props) => {
                     colors={['#002626']}
                     style={styles.linearGradient}
                     onPress={() => performCheckoutOnServer()}
-                    //   progressState={orderStatusUI}
-                    progressState={false}
+                    progressState={orderStatusUI}
+                    // progressState={false}
                     name={'Place your order'}></GradientBtn>
                 </View>
             </View>

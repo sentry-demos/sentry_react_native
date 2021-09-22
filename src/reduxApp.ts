@@ -1,6 +1,5 @@
 import {createStore} from 'redux';
 import * as Sentry from '@sentry/react';
-import CartScreen from './screens/CartScreen';
 
 const initialState = {
   counter: 0,
@@ -24,7 +23,6 @@ const reducer = (state = initialState, action) => {
   switch (type) {
     case 'FILL_FIELDS':
       if (payload == 'dummydata') {
-        console.log(">FILL_FIELDS")
         return { 
           ...state, 
           contactInfo: {
@@ -35,11 +33,10 @@ const reducer = (state = initialState, action) => {
             city:"San Francisco",
             countryRegion:"USA",
             state:"CA",
-            zipCode: (Math.floor(Math.random()*90000) + 100000).toString()
+            zipCode: (Math.floor(Math.random()*90000) + 10000).toString()
           }
         };
       } else {
-        console.log(">BADDDDDDDDDDDD")
         return { ...state };
       }
     case 'ADD_TO_CART':
