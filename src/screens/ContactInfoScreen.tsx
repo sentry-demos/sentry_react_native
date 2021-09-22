@@ -7,6 +7,8 @@ import {
   Text,
   ActivityIndicator,
   FlatList,
+  SafeAreaView,
+  TextInput
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
@@ -61,21 +63,23 @@ const ContactInfoScreen = ({navigation}) => {
 //   React.useEffect(() => {
 //     loadData(); // this line is not blocking
 //   }, []); 
-
+      const items = [{id:1},{id:2}]
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Empower Plant</Text>
-        {/* <Image
-          style={styles.tinyImage}
-          source={require('../assets/empowerplant-logo.png')}/> */}
-        {/* <SvgUri
-          width="100%"
-          height="100%"
-          uri='../assets/empowerplant-logo.svg' */}
       </View>
-      <View style={styles.screen}>
-        <Text>HIIIIIIIIIIIIIIII</Text>
+      <View>
+          <FlatList
+            data={items}
+            renderItem={({item}) => {
+                return (
+                    <Text>{item.id}</Text>
+                )
+            }}
+            keyExtractor={(item) => item.id}
+          />
+        {/* <Text>HIIIIIIIIIIIIIIII</Text> */}
       </View>
     </View>
   );
