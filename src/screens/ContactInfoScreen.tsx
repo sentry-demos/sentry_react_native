@@ -63,28 +63,54 @@ const ContactInfoScreen = ({navigation}) => {
 //   React.useEffect(() => {
 //     loadData(); // this line is not blocking
 //   }, []); 
-      const items = [{id:1},{id:2}]
-  return (
-    <View style={styles.screen}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Empower Plant</Text>
-      </View>
-      <View>
-          <FlatList
-            data={items}
-            renderItem={({item}) => {
-                return (
-                    <Text>{item.id}</Text>
-                )
-            }}
-            keyExtractor={(item) => item.id}
-          />
-        {/* <Text>HIIIIIIIIIIIIIIII</Text> */}
-      </View>
-    </View>
-  );
+    const [text, onChangeText] = React.useState("Useless Text");
+    const items = [
+        {id:1, placeholder:'email'},
+        {id:2, placeholder:'first name'},
+        {id:3, placeholder:'last name'},
+        {id:4, placeholder:'address'},
+        {id:5, placeholder:'city'},
+        {id:6, placeholder:'country/region'},
+        {id:7, placeholder:'state'},
+        {id:8, placeholder:'zip code'},
+    ]
+    return (
+        <View style={styles.screen}>
+        <Text
+            style={{
+                marginTop: 20,
+                marginBottom: 20,
+                fontSize: 18,
+                fontWeight: '600',
+            }}>Contact Info</Text>
+        <View>
+            <FlatList
+                data={items}
+                renderItem={({item}) => {
+                    return (
+                        <SafeAreaView>
+                        <TextInput
+                            style={styles.input}
+                            // onChangeText={onChangeNumber}
+                            value={""}
+                            placeholder={item.placeholder}
+                            // keyboardType="numeric"
+                            onPressIn={fillFields}
+                        />
+                        </SafeAreaView>
+                    );
+                }}
+                keyExtractor={(item) => item.id}
+            />
+            {/* <Text>HIIIIIIIIIIIIIIII</Text> */}
+        </View>
+        </View>
+    );
 };
 
+const fillFields = () => {
+    console.log("> YOOOOO")
+}
 /* This works because sentry/react-native wraps sentry/react right now.
 * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
 * because that comes from props being passed into the Profiler (which comes from redux).
@@ -102,4 +128,31 @@ const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: '#ffffff',
   },
+  input: {
+    height: 40,
+    margin: 10,
+    borderWidth: 1,
+    padding: 10,
+
+    // new
+    borderRadius: 2,
+    borderColor: '#002626',
+  },
 });
+
+/*
+From CartScreen.tsx
+
+  linearGradient: {
+    height: 50,
+
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: '#8D6E63',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+
+*/
