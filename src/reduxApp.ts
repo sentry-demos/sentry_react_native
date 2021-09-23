@@ -4,7 +4,6 @@ import * as Sentry from '@sentry/react';
 const initialState = {
   counter: 0,
   cart:{},
-  cart1: {},
   contactInfo: {
     email:"",
     firstName:"",
@@ -40,27 +39,27 @@ const reducer = (state = initialState, action) => {
         return { ...state };
       }
     case 'ADD_TO_CART':
-      if(state.cart1[payload.id]){
+      if(state.cart[payload.id]){
         return {
           ...state,
-          cart1:{
-            ...state.cart1,
+          cart:{
+            ...state.cart,
             [payload.id]:{
-              ...state.cart1[payload.id],
-              quantity:state.cart1[payload.id].quantity + 1
+              ...state.cart[payload.id],
+              quantity:state.cart[payload.id].quantity + 1
             }
           }
         };
       }
       return {
         ...state,
-        cart1: {...state.cart1,[action.payload.id]:action.payload}
+        cart: {...state.cart,[action.payload.id]:action.payload}
       };
     case 'DELETE_FROM_CART':
-      delete state.cart1[action.payload]
+      delete state.cart[action.payload]
       return {
         ...state,
-        cart1:{...state.cart1}
+        cart:{...state.cart}
       }
     case 'COUNTER_INCREMENT':
       return {

@@ -32,7 +32,7 @@ export type UIToast = typeof Toast;
 
 const CartScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const cartData = useSelector((state: RootState) => state.cart1);
+  const cartData = useSelector((state: RootState) => state.cart);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
 
   React.useLayoutEffect(() => {

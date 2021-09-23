@@ -41,7 +41,7 @@ const items = [
  */
 const ContactInfoScreen = (props) => {
   const dispatch = useDispatch();
-  const cartData = useSelector((state: RootState) => state.cart1);
+  const cartData = useSelector((state: RootState) => state.cart);
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
 
@@ -70,18 +70,17 @@ const ContactInfoScreen = (props) => {
         const cart = Object.values(cartData)
         let quantities = {}
         cart.map(item => {
-          console.log(" item.id", item['id'])
           if (!quantities[item['id']]) {
             quantities[item['id']] = item['quantity']
           }
         })
-        console.log("> quantities", quantities)
+
         const data = {
             // This is the data structure implemented by application-monitoring-react and flask
             cart: { items: cart, quantities },
             form: contactInfoData
         };
-        console.log("> BACKEND_URL")
+
         let response = await fetch( 
           `${BACKEND_URL}/checkout`,
           {
