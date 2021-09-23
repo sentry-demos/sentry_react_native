@@ -81,7 +81,7 @@ const ContactInfoScreen = (props) => {
             cart: { items: cart, quantities },
             form: contactInfoData
         };
-    
+        console.log("> BACKEND_URL")
         let response = await fetch( 
           `${BACKEND_URL}/checkout`,
           {
@@ -89,7 +89,6 @@ const ContactInfoScreen = (props) => {
             headers: {
               'Content-Type': 'application/json',
               email: contactInfoData['email'],
-              // TODO se, customerType
             },
             body: JSON.stringify(data),
           },

@@ -1,5 +1,10 @@
 This is demo repo is used by Solution Engineers when demo'ing Sentry's [React Native](https://docs.sentry.io/platforms/react-native) SDK's capabilties. 
 
+<!-- ![Empower PLant](./img/empower-plant.png)  -->
+<img src="./img/empower-plant.png" width="200" height="400">
+
+[./img](./img) for more screenshots of Empower Plant
+
 ## Versions
 
 | dependency      | version           
