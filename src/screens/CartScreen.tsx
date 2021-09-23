@@ -141,20 +141,9 @@ const CartScreen = ({navigation}) => {
           {cartItems.length == 0 ? (
             <Text>No items in cart</Text>
           ) : (
-            // <Text>Price of Items...</Text>
             subTotalDisplay(computeCartTotal(cartItems))
           )}
         </View>
-        
-        {/* MOVING THIS TO ContactInfoScreen.tsx
-         <GradientBtn
-          buttonText={styles.buttonText}
-          // colors={['#FFE0B2', '#FFB74D']}
-          colors={['#002626']}
-          style={styles.linearGradient}
-          onPress={() => performCheckoutOnServer()}
-          progressState={orderStatusUI}
-          name={'Place your order'}></GradientBtn> */}
       </View>
       <View>
         <FlatList
@@ -165,18 +154,15 @@ const CartScreen = ({navigation}) => {
               <CartItem
                 appDispatch={dispatch}
                 quantity={item.quantity}
-                // sku={item.sku}
-                // name={item.name}
                 title={item.title}
-                // image={item.image}
                 imgcropped={item.imgcropped} 
                 id={item.id}
-                type={item.type}
+                // type={""}
                 price={item.price}
               />
             );
           }}
-          keyExtractor={(item) => item.sku}
+          keyExtractor={(item) => item.id}
         />
       </View>
     </View>

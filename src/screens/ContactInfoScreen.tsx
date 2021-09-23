@@ -5,7 +5,6 @@ import {
   View,
   StyleSheet,
   Text,
-  ActivityIndicator,
   FlatList,
   SafeAreaView,
   TextInput
@@ -16,6 +15,7 @@ import Toast from 'react-native-toast-message';
 import {AppDispatch, RootState} from '../reduxApp';
 import {GradientBtn} from './CartScreen';
 import {BACKEND_URL} from '../config';
+// import {API_URL} from 'react-native-dotenv'
 
 export type UIToast = typeof Toast;
 
@@ -41,21 +41,6 @@ const items = [
  */
 const ContactInfoScreen = (props) => {
   const dispatch = useDispatch();
-//   const [toolData, setToolData] = React.useState<
-//     | {
-//         sku: string;
-//         name: string;
-//         // description:string
-//         image: string;
-//         // img: string;
-//         id: number;
-//         type: string;
-//         price: number;
-//         // appDispatch: AppDispatch; // EVAL not needed
-//       }[]
-//     | null
-//   >(null);
-
   const cartData = useSelector((state: RootState) => state.cart1);
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
@@ -73,7 +58,6 @@ const ContactInfoScreen = (props) => {
             op: 'task',
             description: `processing shopping cart result`,
         });
-
         span.finish();
         transaction.finish();
     };
@@ -82,10 +66,20 @@ const ContactInfoScreen = (props) => {
         uiToast: null | UIToast = null,
       ): Promise<Response> => {
         setOrderStatusUI(true);
-    
-        // TODO se, contactInfo,
+
+        const cart = Object.values(cartData)
+        let quantities = {}
+        cart.map(item => {
+          console.log(" item.id", item['id'])
+          if (!quantities[item['id']]) {
+            quantities[item['id']] = item['quantity']
+          }
+        })
+        console.log("> quantities", quantities)
         const data = {
-            cart: Object.values(cartData)
+            // This is the data structure implemented by application-monitoring-react and flask
+            cart: { items: cart, quantities },
+            form: contactInfoData
         };
     
         let response = await fetch( 
@@ -94,7 +88,8 @@ const ContactInfoScreen = (props) => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              email: 'test@sentry.io',
+              email: contactInfoData['email'],
+              // TODO se, customerType
             },
             body: JSON.stringify(data),
           },
@@ -165,7 +160,7 @@ const ContactInfoScreen = (props) => {
                     style={styles.logo}
                     /> */}
                     <Text style={{marginLeft: 5, fontWeight: '500'}}>
-                    Deliver to Sentry - San Francisco 94105
+                    Deliver to Sentry - San Francisco {contactInfoData['zipCode']}
                     </Text>
                 </View>
                 <View style={styles.orderBtnContainer}>

@@ -26,7 +26,7 @@ import {BACKEND_URL} from '../config';
  */
 const EmpowerPlant = ({navigation}) => {
   const dispatch = useDispatch();
-  const [toolData, setToolData] = React.useState<
+  const [toolData, setProductData] = React.useState<
     | {
         sku: string;
         name: string;
@@ -39,7 +39,7 @@ const EmpowerPlant = ({navigation}) => {
   >(null);
 
   const loadData = () => {
-    setToolData(null);
+    setProductData(null);
 
     fetch(`${BACKEND_URL}/products`, {
       method: 'GET',
@@ -47,9 +47,9 @@ const EmpowerPlant = ({navigation}) => {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log("JSON length", json.length)
-        setToolData(json);
-      });
+        setProductData(json);
+      })
+      .catch(err => console.log("> api Erorr: ", err));
   };
 
   React.useLayoutEffect(() => {
