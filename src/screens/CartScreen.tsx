@@ -42,9 +42,9 @@ const CartScreen = ({navigation}) => {
         return (
           <Button
             onPress={() => {
-              navigation.navigate('ContactInfo');
+              navigation.navigate('Checkout');
             }}
-            title="ContactInfo"
+            title="Checkout"
           />
         );
       },
@@ -126,16 +126,6 @@ const CartScreen = ({navigation}) => {
 
   return (
     <View style={styles.screen}>
-      {/* MOVED TO ContactInfoScreen.tsx
-       <View style={styles.flavorContainer}>
-        <Image
-          source={require('../assets/sentry-logo.png')}
-          style={styles.logo}
-        />
-        <Text style={{marginLeft: 5, fontWeight: '500'}}>
-          Deliver to Sentry - San Francisco 94105
-        </Text>
-      </View> */}
       <View style={styles.titleContainer}>
         <View>
           {cartItems.length == 0 ? (
@@ -193,20 +183,18 @@ export const GradientBtn = (props: {
 };
 
 const CartItem = (props: {
-  // sku: string;
-  // name: string;
   imgcropped: string;
   id: number;
-  // type: string;
   quantity: number;
   price: number;
   appDispatch: AppDispatch;
   title: string;
 }): React.ReactElement => {
+  
   const deleteItem = (id: string) => {
     props.appDispatch({type: 'DELETE_FROM_CART', payload: id});
   };
-  // console.log("> CartItem props", props)
+
   return (
     <View style={styles.statisticContainer}>
       <View>{selectImage(props.imgcropped)}</View>

@@ -39,7 +39,7 @@ const items = [
  * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
  * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
  */
-const ContactInfoScreen = (props) => {
+const CheckoutScreen = (props) => {
   const dispatch = useDispatch();
   const cartData = useSelector((state: RootState) => state.cart);
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
@@ -164,12 +164,10 @@ const ContactInfoScreen = (props) => {
                 <View style={styles.orderBtnContainer}>
                     <GradientBtn
                     buttonText={styles.buttonText}
-                    // colors={['#FFE0B2', '#FFB74D']}
                     colors={['#002626']}
                     style={styles.linearGradient}
                     onPress={() => performCheckoutOnServer()}
                     progressState={orderStatusUI}
-                    // progressState={false}
                     name={'Place your order'}></GradientBtn>
                 </View>
             </View>
@@ -184,7 +182,7 @@ const ContactInfoScreen = (props) => {
 * Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
 * and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
 */
-export default ContactInfoScreen
+export default CheckoutScreen
 
 const styles = StyleSheet.create({
   screen: {
@@ -214,7 +212,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
 
     width:300,
-    margin:10, // ?
+    margin:10,
   },
   orderBtnContainer: {
     height: 50,
@@ -228,7 +226,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
 
     width:300,
-    margin:10, // ?
+    margin:10,
   },
   buttonText: {
     textAlign: 'center',

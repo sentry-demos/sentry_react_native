@@ -164,9 +164,6 @@ export const selectImage = (source: string): React.ReactElement => {
 * but then you'd have hundreds/thousands of spans because the tools response is not paginated.
 */
 const ProductItem = (props: {
-  // sku: string;
-  // name: string;
-  // image: string;
   id: number;
   type: string;
   price: number;
