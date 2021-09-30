@@ -1,5 +1,10 @@
 This is demo repo is used by Solution Engineers when demo'ing Sentry's [React Native](https://docs.sentry.io/platforms/react-native) SDK's capabilties. 
 
+<!-- ![Empower PLant](./img/empower-plant.png)  -->
+<img src="./img/empower-plant.png" width="200" height="400">
+
+[./img](./img) for more screenshots of Empower Plant
+
 ## Versions
 
 | dependency      | version           
@@ -75,12 +80,12 @@ npx react-native run-android --variant Release
 
 ## Expected Behavior
 
-Toolstore            |  Checkout
+EmpowerPlant            |  Checkout
 :-------------------------:|:-------------------------:
 ![list of tools](./img/toolstore.png)  |  ![checkout cart](./img/cart.png)| 
 
 ## Upgrade path
-1. npm install
+1. npm install, then `pod update` if `pod install` is failing. The pod updating depends on node_modules/@sentry/react-native being set.
 2. SDK Manager -> install 'emulator' or anything missing
 3. Review previous PR so you know what to expect 
 
@@ -150,3 +155,5 @@ You may run into issues if you haven't added sdk and sdk platform-tools to path:
 
 If tools don't load, then swipe-away (kill) the app, then relaunch from app menu in the emulator. If still fails, then go to AVD Manager and 'wipe' the device and run the emulator again.
 Could also be a problem with the backend container/app you're requesting the tools from (check that URL/Postman, check TDA job)
+
+When developing locally, must point React Native to http://127.0.0.1:8080/products backend instead of https://localhost:8080/products backend.

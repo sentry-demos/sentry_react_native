@@ -14,15 +14,13 @@ import Toast from 'react-native-toast-message';
 import LinearGradient from 'react-native-linear-gradient';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {RootState, AppDispatch} from '../reduxApp';
-import {selectImage} from './ToolStore';
+import {selectImage} from './EmpowerPlant';
 import {BACKEND_URL} from '../config';
 
 interface CartData {
-  sku: string;
   name: string;
-  image: string;
+  imgcropped: string;
   id: number;
-  type: string;
   price: number;
   quantity: number;
 }
@@ -32,21 +30,37 @@ interface subTotal {
 }
 export type UIToast = typeof Toast;
 
-const CartScreen = (props) => {
+const CartScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const cartData = useSelector((state: RootState) => state.cart);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRightContainerStyle: {paddingRight: 20},
+      headerRight: () => {
+        return (
+          <Button
+            onPress={() => {
+              navigation.navigate('Checkout');
+            }}
+            title="Checkout"
+          />
+        );
+      },
+    });
+  }, [navigation]);
+
   const cartItems: Array<CartData> | [] = Object.values(cartData);
   const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
-    let aggregate = cartItems.reduce(
-      (acc, item) => {
-        acc.quantity += item.quantity;
-        acc.total += item.price;
-        return acc;
-      },
-      {total: 0, quantity: 0},
-    );
+    let total = 0
+    let quantity = 0
+    cartItems.map(item => {
+      quantity =+ item.quantity
+      let itemTotal = item.quantity * item.price
+      total += itemTotal
+    })
+    let aggregate = { total, quantity}
     return aggregate;
   };
   const subTotalDisplay = (props: subTotal): React.ReactElement => {
@@ -59,28 +73,10 @@ const CartScreen = (props) => {
           marginBottom: 20,
           fontSize: 18,
           fontWeight: '600',
-        }}>{`Subtotal (${q} item${multiple}): $${(t / 1000).toFixed(2)}`}</Text>
+        }}>{`Subtotal (${q} item${multiple}): $${t}`}</Text>
     );
   };
-  const performCheckoutOnServer = async () => {
-    // ----------- Sentry Start Transaction ------------------------
-    let transaction = Sentry.startTransaction({name: 'checkout'});
-    Sentry.configureScope((scope) => scope.setSpan(transaction));
-    // -------------------------------------------------------------
 
-    let data = await placeOrder(Toast);
-    // ----------- Sentry Finish Transaction -----------------------
-    const span = transaction.startChild({
-      data,
-      op: 'task',
-      description: `processing shopping cart result`,
-    });
-
-    span.finish();
-    transaction.finish();
-
-    // -------------------------------------------------------------
-  };
   const placeOrder = async (
     uiToast: null | UIToast = null,
   ): Promise<Response> => {
@@ -130,30 +126,14 @@ const CartScreen = (props) => {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.flavorContainer}>
-        <Image
-          source={require('../assets/sentry-logo.png')}
-          style={styles.logo}
-        />
-        <Text style={{marginLeft: 5, fontWeight: '500'}}>
-          Deliver to Sentry - San Francisco 94105
-        </Text>
-      </View>
       <View style={styles.titleContainer}>
         <View>
           {cartItems.length == 0 ? (
-            <Text>"No items in cart"</Text>
+            <Text>No items in cart</Text>
           ) : (
             subTotalDisplay(computeCartTotal(cartItems))
           )}
         </View>
-        <GradientBtn
-          buttonText={styles.buttonText}
-          colors={['#FFE0B2', '#FFB74D']}
-          style={styles.linearGradient}
-          onPress={() => performCheckoutOnServer()}
-          progressState={orderStatusUI}
-          name={'Place your order'}></GradientBtn>
       </View>
       <View>
         <FlatList
@@ -164,16 +144,15 @@ const CartScreen = (props) => {
               <CartItem
                 appDispatch={dispatch}
                 quantity={item.quantity}
-                sku={item.sku}
-                name={item.name}
-                image={item.image}
+                title={item.title}
+                imgcropped={item.imgcropped} 
                 id={item.id}
-                type={item.type}
+                // type={""}
                 price={item.price}
               />
             );
           }}
-          keyExtractor={(item) => item.sku}
+          keyExtractor={(item) => item.id}
         />
       </View>
     </View>
@@ -204,28 +183,29 @@ export const GradientBtn = (props: {
 };
 
 const CartItem = (props: {
-  sku: string;
-  name: string;
-  image: string;
+  imgcropped: string;
   id: number;
-  type: string;
   quantity: number;
   price: number;
   appDispatch: AppDispatch;
+  title: string;
 }): React.ReactElement => {
-  const deleteItem = (sku: string) => {
-    props.appDispatch({type: 'DELETE_FROM_CART', payload: sku});
+  
+  const deleteItem = (id: string) => {
+    props.appDispatch({type: 'DELETE_FROM_CART', payload: id});
   };
+
   return (
     <View style={styles.statisticContainer}>
-      <View>{selectImage(props.image)}</View>
+      <View>{selectImage(props.imgcropped)}</View>
       <View>
         <Text style={styles.itemTitle}>
-          {props.name.charAt(0).toUpperCase() + props.name.slice(1)}
+          {props.title.charAt(0).toUpperCase() + props.title.slice(1)}
         </Text>
-        <Text style={styles.sku}>{'sku: ' + props.sku}</Text>
+        
+        {/* TODO <Text style={styles.sku}>{'sku: ' + props.sku}</Text> */}
         <Text style={styles.itemPrice}>
-          {'$' + (props.price / 1000).toFixed(2) + ` (${props.quantity})`}
+          {'$' + props.price + ` (${props.quantity})`}
         </Text>
         <GradientBtn
           buttonText={styles.buttonText}
@@ -233,7 +213,7 @@ const CartItem = (props: {
           style={styles.deleteBtn}
           name={'Delete'}
           progressState={false}
-          onPress={() => deleteItem(props.sku)}></GradientBtn>
+          onPress={() => deleteItem(props.id.toString())}></GradientBtn>
       </View>
     </View>
   );
@@ -245,7 +225,7 @@ const styles = StyleSheet.create({
   },
   sku: {
     fontSize: 16,
-    color: '#919191',
+    color: '#002626',
     marginBottom: 10,
   },
   screen: {
@@ -338,15 +318,17 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: 'center',
     fontSize: 16,
+    color:'white'
   },
   itemTitle: {
     marginBottom: 5,
     fontSize: 17,
     fontWeight: '500',
+    color:'#002626',
   },
   itemPrice: {
     fontSize: 22,
     fontWeight: '400',
-    color: '#371d40',
+    color: '#002626',
   },
 });

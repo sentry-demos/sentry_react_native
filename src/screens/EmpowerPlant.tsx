@@ -18,15 +18,15 @@ import {BACKEND_URL} from '../config';
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
  * So you can control all spans that belong to that one transaction.
- * ToolStore is a  Higher-order component, becuase it's a Function Component,
+ * EmpowerPlant is a  Higher-order component, becuase it's a Function Component,
  * and both Function Components and Class Components are Higher-order components.
  * Higher-order component can only read the props coming in. Props are changed as they're passed in.
  * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
  * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
  */
-const ToolStore = ({navigation}) => {
+const EmpowerPlant = ({navigation}) => {
   const dispatch = useDispatch();
-  const [toolData, setToolData] = React.useState<
+  const [toolData, setProductData] = React.useState<
     | {
         sku: string;
         name: string;
@@ -39,19 +39,17 @@ const ToolStore = ({navigation}) => {
   >(null);
 
   const loadData = () => {
-    setToolData(null);
+    setProductData(null);
 
-    fetch(`${BACKEND_URL}/tools`, {
+    fetch(`${BACKEND_URL}/products`, {
       method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: { se:'willreactnative', customerType:'enterprise', email:'email@gmail.com', "Content-Type": "application/json" },
     })
       .then((response) => response.json())
       .then((json) => {
-        setToolData(json);
-      });
+        setProductData(json);
+      })
+      .catch(err => console.log("> api Erorr: ", err));
   };
 
   React.useLayoutEffect(() => {
@@ -77,7 +75,7 @@ const ToolStore = ({navigation}) => {
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Results</Text>
+        <Text style={styles.title}>Empower Plant</Text>
       </View>
       <View style={styles.screen}>
         {toolData ? (
@@ -85,18 +83,17 @@ const ToolStore = ({navigation}) => {
             data={toolData}
             renderItem={({item}) => {
               return (
-                <ToolItem
+                <ProductItem
                   appDispatch={dispatch}
-                  sku={item.sku}
-                  name={item.name}
-                  image={item.image}
                   id={item.id}
-                  type={item.type}
+                  imgcropped={item.imgcropped}
                   price={item.price}
+                  title={item.title}
+                  type={""}
                 />
               );
             }}
-            keyExtractor={(item) => item.sku}
+            keyExtractor={(item) => item.id}
           />
         ) : (
           <ActivityIndicator size="small" color="#404091" />
@@ -109,11 +106,11 @@ const ToolStore = ({navigation}) => {
 /* This works because sentry/react-native wraps sentry/react right now.
 * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
 * because that comes from props being passed into the Profiler (which comes from redux).
-* The Profiler doesn't watch the internal state of ToolStore here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
+* The Profiler doesn't watch the internal state of EmpowerPlant here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
 * Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
 * and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
 */
-export default ToolStore
+export default EmpowerPlant
 
 export const selectImage = (source: string): React.ReactElement => {
   /**
@@ -121,40 +118,43 @@ export const selectImage = (source: string): React.ReactElement => {
    * Dynamic strings with require syntax is not possible.
    * https://github.com/facebook/react-native/issues/2481
    */
-  switch (source) {
-    case 'wrench.png':
+  // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
+  let length = source.split("/").length
+  let image = source.split("/")[length-1]
+  switch (image) {
+    case 'plant-spider-cropped.jpg':
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/wrench.png')}
+          source={require('../assets/images/plant-spider-cropped.png')}
         />
       );
-    case 'nails.png':
+    case 'plant-to-text-cropped.jpg':
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/nails.png')}
+          source={require('../assets/images/plant-to-text-cropped.png')}
         />
       );
-    case 'screwdriver.png':
+    case 'nodes-cropped.jpg':
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/screwdriver.png')}
+          source={require('../assets/images/nodes-cropped.png')}
         />
       );
-    case 'hammer.png':
+    case 'mood-planter-cropped.png':
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/hammer.png')}
+          source={require('../assets/images/mood-planter-cropped.png')}
         />
       );
     default:
       return (
         <Image
           style={styles.tinyImage}
-          source={require('../assets/images/hammer.png')}
+          source={require('../assets/images/mood-planter-cropped.png')}
         />
       );
   }
@@ -163,43 +163,39 @@ export const selectImage = (source: string): React.ReactElement => {
 /* You could wrap this with the Sentry Profiler, 
 * but then you'd have hundreds/thousands of spans because the tools response is not paginated.
 */
-const ToolItem = (props: {
-  sku: string;
-  name: string;
-  image: string;
+const ProductItem = (props: {
   id: number;
   type: string;
   price: number;
+  title: string;
+  imgcropped: string;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
   return (
     <View style={styles.statisticContainer}>
-      <View style={styles.card}>{selectImage(props.image)}</View>
+      <View style={styles.card}>{selectImage(props.imgcropped)}</View>
       <View style={styles.textContainer}>
         <Text style={styles.itemTitle}>
-          {props.name.charAt(0).toUpperCase() + props.name.slice(1)}
+          {props.title}
         </Text>
         <Text style={styles.itemPrice}>
-          {'$' + (props.price / 1000).toFixed(2)}
+          {'$' + props.price}
         </Text>
-        <Text style={styles.sku}>{'sku: ' + props.sku}</Text>
         <GradientBtn
           progressState={false}
           style={styles.linearGradient}
           buttonText={styles.buttonText}
           name={'Add to Cart'}
-          colors={['#FFE0B2', '#FFB74D']}
+          colors={['#002626']}
           onPress={() => {
             props.appDispatch({
               type: 'ADD_TO_CART',
               payload: {
-                image: props.image,
-                sku: props.sku,
                 id: props.id,
-                name: props.name,
+                title: props.title,
                 price: props.price,
                 quantity: 1,
-                type: props.type,
+                imgcropped: props.imgcropped 
               },
             });
             Toast.show({
@@ -208,7 +204,7 @@ const ToolItem = (props: {
               text1: 'Added to Cart',
               visibilityTime: 0.5,
             });
-          }}></GradientBtn>
+          }}></GradientBtn> 
       </View>
     </View>
   );
@@ -228,20 +224,22 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 17,
     fontWeight: '500',
+    color:'#002626'
   },
   itemPrice: {
     fontSize: 22,
     fontWeight: '400',
-    color: '#371d40',
+    color:'#002626',
   },
   sku: {
     fontSize: 16,
-    color: '#919191',
+    color: '#002626',
     marginBottom: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
+    color: '#002626',
   },
   tinyImage: {
     width: 100,
@@ -305,7 +303,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     margin: 5,
-    color: '#000000',
+    color:'white',
     backgroundColor: 'transparent',
   },
 });
