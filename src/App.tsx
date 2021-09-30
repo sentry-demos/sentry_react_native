@@ -85,7 +85,7 @@ const App = () => {
           />
           <Stack.Screen name="Redux" component={ReduxScreen} />
           <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
-          <Stack.Screen name="EmpowerPlant" component={EmpowerPlant} />
+          <Stack.Screen name="Products" component={EmpowerPlant} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
         </Stack.Navigator>

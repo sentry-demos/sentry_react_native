@@ -157,7 +157,7 @@ const HomeScreen = (props: Props) => {
           <View style={styles.buttonArea}>
             <TouchableOpacity
               onPress={() => {
-                props.navigation.navigate('EmpowerPlant');
+                props.navigation.navigate('Products');
               }}>
               <Text style={styles.buttonText}>Empower Plant</Text>
             </TouchableOpacity>
