@@ -186,7 +186,7 @@ const ProductItem = (props: {
           style={styles.linearGradient}
           buttonText={styles.buttonText}
           name={'Add to Cart'}
-          colors={['#002626']}
+          colors={['#002626',"#001414"]}
           onPress={() => {
             props.appDispatch({
               type: 'ADD_TO_CART',

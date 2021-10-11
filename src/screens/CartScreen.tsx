@@ -169,6 +169,7 @@ export const GradientBtn = (props: {
   buttonText: any;
 }): React.ReactElement => {
   //dependencies for this may also need to be added for android
+  //linear gradient colors Array<string> requires 2 colors
   return (
     <TouchableOpacity onPress={props.onPress}>
       <LinearGradient style={props.style} colors={props.colors}>
