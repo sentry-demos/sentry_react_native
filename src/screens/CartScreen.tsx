@@ -16,7 +16,6 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {RootState, AppDispatch} from '../reduxApp';
 import {selectImage} from './EmpowerPlant';
 import {BACKEND_URL} from '../config';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 interface CartData {
   name: string;
