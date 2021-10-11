@@ -16,6 +16,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {RootState, AppDispatch} from '../reduxApp';
 import {selectImage} from './EmpowerPlant';
 import {BACKEND_URL} from '../config';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 interface CartData {
   name: string;
@@ -169,6 +170,7 @@ export const GradientBtn = (props: {
   buttonText: any;
 }): React.ReactElement => {
   //dependencies for this may also need to be added for android
+  //linear gradient colors Array<string> requires 2 colors
   return (
     <TouchableOpacity onPress={props.onPress}>
       <LinearGradient style={props.style} colors={props.colors}>

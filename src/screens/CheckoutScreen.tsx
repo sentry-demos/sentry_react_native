@@ -164,7 +164,7 @@ const CheckoutScreen = (props) => {
                 <View style={styles.orderBtnContainer}>
                     <GradientBtn
                     buttonText={styles.buttonText}
-                    colors={['#002626']}
+                    colors={['#002626','#001414']}
                     style={styles.linearGradient}
                     onPress={() => performCheckoutOnServer()}
                     progressState={orderStatusUI}
