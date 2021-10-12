@@ -39,11 +39,11 @@ From our [documentation](https://docs.sentry.io/platforms/react-native/), the fo
 
 1. git clone git@github.com:sentry-demos/sentry_react_native.git
 2. Add your DSN and BACKEND_URL for back-end to src/config.ts
-3. `export SENTRY_AUTH_TOKEN=<token>`
+3. `export const SENTRY_AUTH_TOKEN=<token>`
 4. Setup a Android Virtual Device via AVD Manager.
-5. If you don't have cocopods or get an error about cocopods out of date, run `gem install cocopods`
-6. `cd ios && pod install`
-7. `npm install`
+5. If you don't have cocoapods or get an error about cocopods out of date, run `gem install cocoapods`
+6. `npm install` 
+7. `cd ios && pod install`
 
 Don't forget to bump your release version depending on platform  
 iOS: `Info.plist` `CFBundleShortVersionString`  
