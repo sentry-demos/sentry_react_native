@@ -41,7 +41,7 @@ From our [documentation](https://docs.sentry.io/platforms/react-native/), the fo
 2. Add your DSN and BACKEND_URL for back-end to src/config.ts
 3. `export const SENTRY_AUTH_TOKEN=<token>`
 4. Setup a Android Virtual Device via AVD Manager.
-5. If you don't have cocopods or get an error about cocopods out of date, run `gem install cocopods`
+5. If you don't have cocoapods or get an error about cocopods out of date, run `gem install cocoapods`
 6. `cd ios && pod install`
 7. `npm install`
 
