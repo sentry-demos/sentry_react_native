@@ -42,8 +42,8 @@ From our [documentation](https://docs.sentry.io/platforms/react-native/), the fo
 3. `export const SENTRY_AUTH_TOKEN=<token>`
 4. Setup a Android Virtual Device via AVD Manager.
 5. If you don't have cocoapods or get an error about cocopods out of date, run `gem install cocoapods`
-6. `cd ios && pod install`
-7. `npm install`
+6. `npm install` 
+7. `cd ios && pod install`
 
 Don't forget to bump your release version depending on platform  
 iOS: `Info.plist` `CFBundleShortVersionString`  
