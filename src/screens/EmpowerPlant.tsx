@@ -83,7 +83,7 @@ const EmpowerPlant = ({navigation}) => {
             data={toolData}
             renderItem={({item}) => {
               return (
-                <ProductItem
+                <ProfiledProductItem
                   appDispatch={dispatch}
                   id={item.id}
                   imgcropped={item.imgcropped}
@@ -124,41 +124,43 @@ export const selectImage = (source: string): React.ReactElement => {
   switch (image) {
     case 'plant-spider-cropped.jpg':
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/plant-spider-cropped.png')}
         />
       );
     case 'plant-to-text-cropped.jpg':
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/plant-to-text-cropped.png')}
         />
       );
     case 'nodes-cropped.jpg':
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/nodes-cropped.png')}
         />
       );
     case 'mood-planter-cropped.png':
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/mood-planter-cropped.png')}
         />
       );
     default:
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/mood-planter-cropped.png')}
         />
       );
   }
 };
+
+const ProfiledImage = Sentry.withProfiler(Image);
 
 /* You could wrap this with the Sentry Profiler, 
 * but then you'd have hundreds/thousands of spans because the tools response is not paginated.
@@ -209,6 +211,8 @@ const ProductItem = (props: {
     </View>
   );
 };
+
+const ProfiledProductItem = Sentry.withProfiler(ProductItem);
 
 const styles = StyleSheet.create({
   screen: {

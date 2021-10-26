@@ -8,7 +8,6 @@ target 'sentry_react_native' do
 
   use_react_native!(:path => config["reactNativePath"])
 
-
   target 'sentry_react_nativeTests' do
     inherit! :complete
     # Pods for testing
