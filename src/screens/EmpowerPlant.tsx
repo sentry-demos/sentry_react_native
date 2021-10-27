@@ -69,8 +69,9 @@ const EmpowerPlant = ({navigation}) => {
   }, [navigation]);
 
   React.useEffect(() => {
+    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
     loadData(); // this line is not blocking
-  }, []); 
+  }, []);
 
   return (
     <View style={styles.screen}>
@@ -162,9 +163,6 @@ export const selectImage = (source: string): React.ReactElement => {
 
 const ProfiledImage = Sentry.withProfiler(Image);
 
-/* You could wrap this with the Sentry Profiler, 
-* but then you'd have hundreds/thousands of spans because the tools response is not paginated.
-*/
 const ProductItem = (props: {
   id: number;
   type: string;
@@ -173,6 +171,9 @@ const ProductItem = (props: {
   imgcropped: string;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
+  React.useEffect(() => {
+    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
+  }, []);
   return (
     <View style={styles.statisticContainer}>
       <View style={styles.card}>{selectImage(props.imgcropped)}</View>
