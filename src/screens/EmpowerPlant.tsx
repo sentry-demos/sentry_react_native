@@ -171,8 +171,35 @@ const ProductItem = (props: {
   imgcropped: string;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
+  const [toolData, setProductData] = React.useState<
+    | {
+        sku: string;
+        name: string;
+        image: string;
+        id: number;
+        type: string;
+        price: number;
+      }[]
+    | null
+  >(null);
+
+  const loadData = () => {
+    setProductData(null);
+
+    fetch(`${BACKEND_URL}/products`, {
+      method: 'GET',
+      headers: { se:'willreactnative', customerType:'enterprise', email:'email@gmail.com', "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        setProductData(json);
+      })
+      .catch(err => console.log("> api Erorr: ", err));
+  };
+
   React.useEffect(() => {
     fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
+    loadData();
   }, []);
   return (
     <View style={styles.statisticContainer}>
