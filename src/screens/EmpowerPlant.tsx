@@ -69,8 +69,9 @@ const EmpowerPlant = ({navigation}) => {
   }, [navigation]);
 
   React.useEffect(() => {
+    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
     loadData(); // this line is not blocking
-  }, []); 
+  }, []);
 
   return (
     <View style={styles.screen}>
@@ -83,7 +84,7 @@ const EmpowerPlant = ({navigation}) => {
             data={toolData}
             renderItem={({item}) => {
               return (
-                <ProductItem
+                <ProfiledProductItem
                   appDispatch={dispatch}
                   id={item.id}
                   imgcropped={item.imgcropped}
@@ -124,35 +125,35 @@ export const selectImage = (source: string): React.ReactElement => {
   switch (image) {
     case 'plant-spider-cropped.jpg':
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/plant-spider-cropped.png')}
         />
       );
     case 'plant-to-text-cropped.jpg':
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/plant-to-text-cropped.png')}
         />
       );
     case 'nodes-cropped.jpg':
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/nodes-cropped.png')}
         />
       );
     case 'mood-planter-cropped.png':
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/mood-planter-cropped.png')}
         />
       );
     default:
       return (
-        <Image
+        <ProfiledImage
           style={styles.tinyImage}
           source={require('../assets/images/mood-planter-cropped.png')}
         />
@@ -160,9 +161,8 @@ export const selectImage = (source: string): React.ReactElement => {
   }
 };
 
-/* You could wrap this with the Sentry Profiler, 
-* but then you'd have hundreds/thousands of spans because the tools response is not paginated.
-*/
+const ProfiledImage = Sentry.withProfiler(Image);
+
 const ProductItem = (props: {
   id: number;
   type: string;
@@ -171,6 +171,9 @@ const ProductItem = (props: {
   imgcropped: string;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
+  React.useEffect(() => {
+    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
+  }, []);
   return (
     <View style={styles.statisticContainer}>
       <View style={styles.card}>{selectImage(props.imgcropped)}</View>
@@ -209,6 +212,8 @@ const ProductItem = (props: {
     </View>
   );
 };
+
+const ProfiledProductItem = Sentry.withProfiler(ProductItem);
 
 const styles = StyleSheet.create({
   screen: {

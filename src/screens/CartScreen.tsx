@@ -141,7 +141,7 @@ const CartScreen = ({navigation}) => {
           data={Object.values(cartData)}
           renderItem={({item}) => {
             return (
-              <CartItem
+              <ProfiledCartItem
                 appDispatch={dispatch}
                 quantity={item.quantity}
                 title={item.title}
@@ -219,6 +219,8 @@ const CartItem = (props: {
     </View>
   );
 };
+
+const ProfiledCartItem = Sentry.withProfiler(CartItem);
 
 const styles = StyleSheet.create({
   contentContainer: {
