@@ -122,6 +122,30 @@ const CheckoutScreen = (props) => {
         }
         return response;
     };
+    const renderFooter = () =>{
+      return (
+        <View>
+          <View style={styles.flavorContainer}>
+                    {/* <Image
+                    source={require('../assets/sentry-logo.png')}
+                    style={styles.logo}
+                    /> */}
+                    <Text style={{marginLeft: 5, fontWeight: '500'}}>
+                    Deliver to Sentry - San Francisco {contactInfoData['zipCode']}
+                    </Text>
+                </View>
+                <View>
+                    <GradientBtn
+                    buttonText={styles.buttonText}
+                    colors={['#002626','#001414']}
+                    style={styles.linearGradient}
+                    onPress={() => performCheckoutOnServer()}
+                    progressState={orderStatusUI}
+                    name={'Place your order'}></GradientBtn>
+                </View>
+        </View>
+      )
+    }
 
     return (
         <View style={styles.screen}>
@@ -132,10 +156,12 @@ const CheckoutScreen = (props) => {
                     fontSize: 18,
                     fontWeight: '600',
                 }}>Contact Info</Text>
-            <View>
+            <View style={{flex:1}}>
                 <FlatList
                     data={items}
                     appDispatch={dispatch}
+                    ListFooterComponent={renderFooter}
+                    ListFooterComponentStyle={styles.flavorContainer}
                     renderItem={({item}) => {
                         return (
                             <SafeAreaView>
@@ -152,24 +178,7 @@ const CheckoutScreen = (props) => {
                     }}
                     keyExtractor={(item) => item.id}
                 />
-                <View style={styles.flavorContainer}>
-                    {/* <Image
-                    source={require('../assets/sentry-logo.png')}
-                    style={styles.logo}
-                    /> */}
-                    <Text style={{marginLeft: 5, fontWeight: '500'}}>
-                    Deliver to Sentry - San Francisco {contactInfoData['zipCode']}
-                    </Text>
-                </View>
-                <View style={styles.orderBtnContainer}>
-                    <GradientBtn
-                    buttonText={styles.buttonText}
-                    colors={['#002626','#001414']}
-                    style={styles.linearGradient}
-                    onPress={() => performCheckoutOnServer()}
-                    progressState={orderStatusUI}
-                    name={'Place your order'}></GradientBtn>
-                </View>
+                
             </View>
         </View>
     );
@@ -208,20 +217,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderWidth: 1,
     borderColor: '#8D6E63',
-    flexDirection: 'column',
-    justifyContent: 'center',
-
-    width:300,
-    margin:10,
-  },
-  orderBtnContainer: {
-    height: 50,
-
-    paddingLeft: 20,
-    paddingRight: 20,
-    // borderRadius: 2,
-    borderWidth: 1,
-    borderColor: 'white',
     flexDirection: 'column',
     justifyContent: 'center',
 
