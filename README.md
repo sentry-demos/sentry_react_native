@@ -208,8 +208,11 @@ First: ensure your local repo is up to date with the Github `master` branch via 
 1. Generate the Release build
 - `cd` into the root repository directory - `sentry_react_native`
 - Run `npx react-native run-ios --configuration Release`. This will start the iPhone simulator and launch the app but we don’t care about that -- this command also creates the release build. 
-- This will result in a directory being populated under /Users/cstavitsky/Library/Developer/Xcode/DerivedData (replace cstavitsky with your local username). There will be a sentry-react-native-<bunch of random chars> directory.
-- Copy the newly created release artifact into the current directory: `cp -r /Users/cstavitsky/Library/Developer/Xcode/DerivedData/sentry_react_native-dgoblbkgunhkxscqaagaqprvjqus/Build/Products/Release-iphonesimulator/sentry_react_native.app sentry_react_native.app` [your hash sentry_react_native-<....> will probably be different]
+- This will result in a directory being populated under /Users/cstavitsky/Library/Developer/Xcode/DerivedData (replace cstavitsky with your local username). There will be a sentry-react-native-<bunch of random chars> directory. You will see it output once the `npx` command above completes:
+
+<img width="1792" alt="Screen Shot 2021-12-21 at 9 28 06 AM" src="https://user-images.githubusercontent.com/12092849/147010734-a3ef72b0-8f4f-4ee5-9eca-a569419d5a0e.png">
+
+- Copy the newly created release artifact into the current directory from the output (marked in blue underline above): `cp -r /Users/cstavitsky/Library/Developer/Xcode/DerivedData/sentry_react_native-dgoblbkgunhkxscqaagaqprvjqus/Build/Products/Release-iphonesimulator/sentry_react_native.app sentry_react_native.app` [your hash sentry_react_native-<....> will probably be different]
 - Zip the copied directory so that the .zip can be uploaded along with the Github release: `zip -r sentry_react_native.app.zip sentry_react_native.app`
 - If you do a `git status` you should see that `sentry_react_native.app.zip` was `modified`.
 - Run `git add sentry_react_native.app.zip`
@@ -217,7 +220,7 @@ First: ensure your local repo is up to date with the Github `master` branch via 
 2. Generate the Debug build
 - Run `npx react-native run-ios --configuration Debug`. This will start the iPhone simulator and launch the app but we don’t care about that -- this command also creates the debug build. 
 - This will result in a directory being populated under /Users/cstavitsky/Library/Developer/Xcode/DerivedData (replace cstavitsky with your local username). There will be a sentry-react-native-<bunch of random chars> directory.
-- Copy the newly created release artifact into the current directory: `cp -r /Users/cstavitsky/Library/Developer/Xcode/DerivedData/sentry_react_native-dgoblbkgunhkxscqaagaqprvjqus/Build/Products/Debug-iphonesimulator/sentry_react_native.app sentry_react_native_debug.app` [your hash sentry_react_native-<....> will probably be different]
+- Copy the newly created release artifact (shown in output after running the `npx` command, similar to the Release screenshot above with filepath underlined in blue) into the current directory: `cp -r /Users/cstavitsky/Library/Developer/Xcode/DerivedData/sentry_react_native-dgoblbkgunhkxscqaagaqprvjqus/Build/Products/Debug-iphonesimulator/sentry_react_native.app sentry_react_native_debug.app` [your hash sentry_react_native-<....> will probably be different]
 - Zip the copied directory `zip -r sentry_react_native_debug.app.zip sentry_react_native_debug.app`
 - Run `git add sentry_react_native_debug.app.zip`
 
