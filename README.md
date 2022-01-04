@@ -259,3 +259,17 @@ Let's say we were previously on `2.0.1` and accidentally ran the command twice, 
 
 - run `git reset <the commit hash>`.
 - Check out any unwanted files that are no longer staged for commit.
+
+
+### Will's js-crashes branch
+Sourcemaps for different DSN project? It worked on first attempt, let's put a note on why.
+
+Why do the events say release 2.0.4 when 2.0.5 is latest? 
+    Do I need to tick the version forward myself? I thought 'git pull' would have solved that.
+    Note - package.json says 2.0.4..
+
+Why did cocopods downgrade?
+```
+-COCOAPODS 1.11.2
++COCOAPODS 1.10.1
+```
