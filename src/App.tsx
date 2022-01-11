@@ -21,7 +21,6 @@ import CheckoutScreen from './screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
 
 import {store} from './reduxApp';
-import {version as packageVersion} from '../package.json';
 import {DSN} from './config';
 
 const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumentation(
@@ -33,7 +32,6 @@ const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumenta
 
 Sentry.init({
   dsn: DSN,
-  release: packageVersion,
   environment: "dev",
   beforeSend: (e) => {
     return e;
@@ -57,7 +55,6 @@ Sentry.init({
   sessionTrackingIntervalMillis: 5000,
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   // debug: true
-  // dist: `${packageVersion}.0`, // optional.. Make sure this matches EXACTLY with the values on your sourcemaps
 });
 
 const Stack = createStackNavigator();
