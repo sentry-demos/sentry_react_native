@@ -22,6 +22,7 @@ import Toast from 'react-native-toast-message';
 
 import {store} from './reduxApp';
 import {DSN} from './config';
+import {SE} from '@env'; // SE is undefined if no .env file is set
 
 const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumentation(
   {
@@ -37,9 +38,14 @@ Sentry.init({
   dsn: DSN,
   environment: "dev",
   beforeSend: (event) => {
-    // Makes issues unique to the release (app version)
-    event.fingerprint = ['{{ default }}', packageJson.version ];
-    return event;
+    if (SE === "tda") {
+      // Make issues unique to the release (app version) for Release Health
+      event.fingerprint = ['{{ default }}', SE, packageJson.version ];
+    } else if (SE) {
+      // Make issue for the SE
+      event.fingerprint = ['{{ default }}', SE ];
+    }
+    return event; 
   },
   integrations: [
     new Sentry.ReactNativeTracing({
@@ -57,10 +63,12 @@ Sentry.init({
   ],
   tracesSampleRate: 1.0,
   enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
-  sessionTrackingIntervalMillis: 5000,
+  sessionTrackingIntervalMillis: 5000, 
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   // debug: true
 });
+
+Sentry.setTag('se', SE);
 
 const Stack = createStackNavigator();
 

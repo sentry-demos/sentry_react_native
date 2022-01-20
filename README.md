@@ -44,6 +44,7 @@ From our [documentation](https://docs.sentry.io/platforms/react-native/), the fo
 5. If you don't have cocoapods or get an error about cocopods out of date, run `gem install cocoapods`
 6. `npm install`
 7. `cd ios && pod install`
+8. Optional - Create a .env file in project root and add `SE=<value>`
 
 Don't forget to bump your release version depending on platform
 iOS: `Info.plist` `CFBundleShortVersionString`
