@@ -57,6 +57,11 @@ Sentry.init({
   // debug: true
 });
 
+// See if anything different when this is in Saucelabs
+console.log("> PROCESS", process) // logs > PROCESS {"env": {"NODE_ENV": "development"}}
+Sentry.setContext("process", process);
+Sentry.captureMessage("message for context")
+
 const Stack = createStackNavigator();
 
 const App = () => {
