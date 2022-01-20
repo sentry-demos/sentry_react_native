@@ -30,11 +30,16 @@ const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumenta
   },
 );
 
+// Get app version from package.json, for fingerprinting
+const packageJson = require('../package.json');
+
 Sentry.init({
   dsn: DSN,
   environment: "dev",
-  beforeSend: (e) => {
-    return e;
+  beforeSend: (event) => {
+    // Makes issues unique to the release (app version)
+    event.fingerprint = ['{{ default }}', packageJson.version ];
+    return event;
   },
   integrations: [
     new Sentry.ReactNativeTracing({
@@ -56,11 +61,6 @@ Sentry.init({
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   // debug: true
 });
-
-// See if anything different when this is in Saucelabs
-console.log("> PROCESS", process) // logs > PROCESS {"env": {"NODE_ENV": "development"}}
-Sentry.setContext("process", process);
-Sentry.captureMessage("message for context")
 
 const Stack = createStackNavigator();
 
