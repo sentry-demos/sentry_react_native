@@ -273,3 +273,5 @@ Why did cocopods downgrade?
 -COCOAPODS 1.11.2
 +COCOAPODS 1.10.1
 ```
+
+Is there a way to run TDA on a locally running React Native app (virtual device)? NO because that's not Saucelabs|Selenium driver. Sending to a different DSN (Sentry Project) was my goal here..
