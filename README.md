@@ -85,10 +85,9 @@ EmpowerPlant            |  Checkout
 :-------------------------:|:-------------------------:
 ![list of tools](./img/toolstore.png)  |  ![checkout cart](./img/cart.png)|
 
-## Upgrade path
+## Upgrade SDK path
 1. npm install, then `cd ios && pod update` if `pod install` is failing. The pod updating depends on node_modules/@sentry/react-native being set.
-2. SDK Manager -> install 'emulator' or anything missing
-3. Review previous PR so you know what to expect
+2. Review previous PR so you know what to expect.
 
 ## Troubleshooting
 
