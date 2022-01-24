@@ -44,6 +44,7 @@ From our [documentation](https://docs.sentry.io/platforms/react-native/), the fo
 5. If you don't have cocoapods or get an error about cocopods out of date, run `gem install cocoapods`
 6. `npm install`
 7. `cd ios && pod install`
+8. Optional - Create a .env file in project root and add `SE=<value>`
 
 Don't forget to bump your release version depending on platform
 iOS: `Info.plist` `CFBundleShortVersionString`
@@ -84,10 +85,9 @@ EmpowerPlant            |  Checkout
 :-------------------------:|:-------------------------:
 ![list of tools](./img/toolstore.png)  |  ![checkout cart](./img/cart.png)|
 
-## Upgrade path
-1. npm install, then `pod update` if `pod install` is failing. The pod updating depends on node_modules/@sentry/react-native being set.
-2. SDK Manager -> install 'emulator' or anything missing
-3. Review previous PR so you know what to expect
+## Upgrade SDK path
+1. npm install, then `cd ios && pod update` if `pod install` is failing. The pod updating depends on node_modules/@sentry/react-native being set.
+2. Review previous PR so you know what to expect.
 
 ## Troubleshooting
 
