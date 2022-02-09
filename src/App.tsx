@@ -74,7 +74,14 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const navigation = React.useRef();
-  
+
+  Sentry.configureScope(scope => {
+    const customerType = ["medium-plan", "large-plan", "small-plan", "enterprise"][Math.floor(Math.random() * 4)]
+    scope.setTag("customerType", customerType )
+    let email = Math.random().toString(36).substring(2, 6) + "@yahoo.com";
+    scope.setUser({ email: email })
+  })
+
 
   return (
     <Provider store={store}>

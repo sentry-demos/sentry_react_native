@@ -45,6 +45,11 @@ const CheckoutScreen = (props) => {
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
 
+  let se, customerType, email
+  Sentry.withScope(function(scope) {
+    [ se, customerType ] = [scope._tags.se, scope._tags.customerType ]
+    email = scope._user.email
+  });
   const performCheckoutOnServer = async () => {
         // ----------- Sentry Start Transaction ------------------------
         let transaction = Sentry.startTransaction({name: 'checkout'});
@@ -63,8 +68,12 @@ const CheckoutScreen = (props) => {
     };
 
     const placeOrder = async (
+     
         uiToast: null | UIToast = null,
       ): Promise<Response> => {
+
+       
+
         setOrderStatusUI(true);
 
         const cart = Object.values(cartData)
@@ -87,7 +96,9 @@ const CheckoutScreen = (props) => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              email: contactInfoData['email'],
+              email,
+              se,
+              customerType
             },
             body: JSON.stringify(data),
           },
@@ -170,7 +181,7 @@ const CheckoutScreen = (props) => {
                                 value={contactInfoData[item.key] || ""}
                                 placeholder={item.placeholder}
                                 onPressIn={() => {
-                                    dispatch({ type: 'FILL_FIELDS', payload: 'dummydata' })}
+                                    dispatch({ type: 'FILL_FIELDS', payload: 'dummydata', onScope:email ? email:null})}
                                 }
                             />
                             </SafeAreaView>

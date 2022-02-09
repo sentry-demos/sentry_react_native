@@ -17,7 +17,7 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  let {payload,type} = action;
+  let {payload,type,onScope} = action;
 
   switch (type) {
     case 'FILL_FIELDS':
@@ -25,7 +25,7 @@ const reducer = (state = initialState, action) => {
         return { 
           ...state, 
           contactInfo: {
-            email: Math.random().toString(36).substring(2, 6) + "@yahoo.com",
+            email: onScope ? onScope:Math.random().toString(36).substring(2, 6) + "@yahoo.com",
             firstName:"john",
             lastName:"doe",
             address:"123 Hope St",
