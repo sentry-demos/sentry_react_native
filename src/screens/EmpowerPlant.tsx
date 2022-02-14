@@ -40,10 +40,15 @@ const EmpowerPlant = ({navigation}) => {
 
   const loadData = () => {
     setProductData(null);
+    let se, customerType, email;
+    Sentry.withScope(function(scope) {
+      [ se, customerType ] = [scope._tags.se, scope._tags.customerType ]
+      email = scope._user.email
+    });
 
     fetch(`${BACKEND_URL}/products`, {
       method: 'GET',
-      headers: { se:'willreactnative', customerType:'enterprise', email:'email@gmail.com', "Content-Type": "application/json" },
+      headers: { se, customerType, email, "Content-Type": "application/json" },
     })
       .then((response) => response.json())
       .then((json) => {
