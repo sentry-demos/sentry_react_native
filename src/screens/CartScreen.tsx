@@ -124,6 +124,10 @@ const CartScreen = ({navigation}) => {
     return response;
   };
 
+  React.useEffect(() => {
+    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
+  }, []);
+
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>

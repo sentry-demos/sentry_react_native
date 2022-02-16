@@ -15,7 +15,6 @@ import Toast from 'react-native-toast-message';
 import {AppDispatch, RootState} from '../reduxApp';
 import {GradientBtn} from './CartScreen';
 import {BACKEND_URL} from '../config';
-// import {API_URL} from 'react-native-dotenv'
 
 export type UIToast = typeof Toast;
 
@@ -158,6 +157,10 @@ const CheckoutScreen = (props) => {
       )
     }
 
+    React.useEffect(() => {
+      fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
+    }, []);
+  
     return (
         <View style={styles.screen}>
             <Text

@@ -74,7 +74,6 @@ const EmpowerPlant = ({navigation}) => {
   }, [navigation]);
 
   React.useEffect(() => {
-    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
     loadData(); // this line is not blocking
   }, []);
 
@@ -176,9 +175,7 @@ const ProductItem = (props: {
   imgcropped: string;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
-  React.useEffect(() => {
-    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
-  }, []);
+
   return (
     <View style={styles.statisticContainer}>
       <View style={styles.card}>{selectImage(props.imgcropped)}</View>
