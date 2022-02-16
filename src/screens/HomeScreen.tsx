@@ -9,18 +9,14 @@ import {
   View,
 } from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {
-  CommonActions,
-  useNavigation,
-  useNavigationState,
-} from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 
 import * as Sentry from '@sentry/react-native';
 
 const globalAny:any = global;
 
 import {getTestProps} from '../../utils/getTestProps';
-import {DSN} from '../config';
+import {DSN, BACKEND_URL} from '../config';
 
 interface Props {
   navigation: StackNavigationProp<any, 'HomeScreen'>;
@@ -34,7 +30,8 @@ const HomeScreen = (props: Props) => {
 
   const setScopeProps = () => {
     const dateString = new Date().toString();
-
+    
+    // user info was already set in App.tsx
     Sentry.setUser({
       id: 'test-id-0',
       email: 'testing@testing.test',
@@ -110,6 +107,10 @@ const HomeScreen = (props: Props) => {
 
     console.log('Test scope properties were set.');
   };
+
+  React.useEffect(() => {
+    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
+  }, []);
 
   return (
     <>

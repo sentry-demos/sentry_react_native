@@ -23,6 +23,7 @@ import Toast from 'react-native-toast-message';
 import {store} from './reduxApp';
 import {DSN} from './config';
 import {SE} from '@env'; // SE is undefined if no .env file is set
+console.log("> SE", SE)
 
 const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumentation(
   {
