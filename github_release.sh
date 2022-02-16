@@ -1,14 +1,17 @@
+# If you have an env file, and you've set SE variable to something
+# other than tda, prevent the release from happening
+if [ -f ".env" ]
+then
+    export $(cat .env | xargs) # Set env vars from .env file so they're accessible
+    if [[ $SE && $SE != 'tda' ]]
+    then
+        printf "Your SE environment variable is set to $SE.\nThe SE variable must be set to tda to create a release.\nPlease change it in your env file and try again."
+        exit
+    fi
+fi
+
 PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
 REPO=sentry-demos/sentry_react_native
-
-while true; do
-    read -p "Is the right value set for SE tag in .env? Answer y/n: " yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
 
 while true; do
     read -p "Do you wish to create Github Release $PACKAGE_VERSION for $REPO? Answer y/n: " yn
