@@ -108,8 +108,8 @@ const HomeScreen = (props: Props) => {
     console.log('Test scope properties were set.');
   };
 
-  React.useEffect(() => {
-    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
+  React.useEffect(() => { 
+    fetch(`${BACKEND_URL}/success`)
   }, []);
 
   return (
