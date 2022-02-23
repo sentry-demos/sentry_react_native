@@ -279,12 +279,12 @@ PODS:
     - React-Core
   - RNScreens (2.18.1):
     - React-Core
-  - RNSentry (3.2.11):
+  - RNSentry (3.2.13):
     - React-Core
-    - Sentry (= 7.7.0)
-  - Sentry (7.7.0):
-    - Sentry/Core (= 7.7.0)
-  - Sentry/Core (7.7.0)
+    - Sentry (= 7.9.0)
+  - Sentry (7.9.0):
+    - Sentry/Core (= 7.9.0)
+  - Sentry/Core (7.9.0)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -408,7 +408,7 @@ SPEC CHECKSUMS:
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: 49cbe4b43e445b06bf29199b6ad2057649e4c8f5
-  FBReactNativeSpec: f21132940a8f408886313ded89588b774fbec4b7
+  FBReactNativeSpec: 324e70dddca47678fc467ab220389cd966de7954
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 2f8cb5b7533219bf4218a045f92768129cf7050a
@@ -438,10 +438,10 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
-  RNSentry: 290e7375aa32c7edb44b404a5d4e480aa7be9bdc
-  Sentry: e58e062056a061ae1145e22ad3dff6e506bff177
+  RNSentry: 0aa1567f66c20390f3834637fc4f73380dcd0774
+  Sentry: 2f7e91f247cfb05b05bd01e0b5d0692557a7687b
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
 
 PODFILE CHECKSUM: 79ce1c465caba661d8abf443587400c2a48c5974
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2
