@@ -51,7 +51,7 @@ const CheckoutScreen = (props) => {
   });
   const performCheckoutOnServer = async () => {
         // ----------- Sentry Start Transaction ------------------------
-        let transaction = Sentry.startTransaction({name: 'checkout'});
+        let transaction = Sentry.startTransaction({name: 'Submit Checkout Form'});
         Sentry.configureScope((scope) => scope.setSpan(transaction));
 
         let data = await placeOrder(Toast);
