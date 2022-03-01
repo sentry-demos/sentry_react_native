@@ -138,8 +138,8 @@ android {
         applicationId "com.sentry_react_native"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 12
-        versionName "2.0.12"
+        versionCode 13
+        versionName "2.0.13"
     }
     splits {
         abi {
