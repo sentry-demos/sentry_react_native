@@ -113,6 +113,6 @@ const App = () => {
   );
 };
 
-export default Sentry.withTouchEventBoundary(App, {
+export default Sentry.withTouchEventBoundary(Sentry.wrap(App), {
   ignoreNames: ['Provider', 'UselessName', /^SomeRegex/],
 });
