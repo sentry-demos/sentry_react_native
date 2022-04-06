@@ -10,6 +10,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import * as Sentry from '@sentry/react-native';
 
 import HomeScreen from './screens/HomeScreen';
+import ListApp from './screens/ListApp'
 import TrackerScreen from './screens/TrackerScreen';
 import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
@@ -105,6 +106,7 @@ const App = () => {
           <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
           <Stack.Screen name="Products" component={EmpowerPlant} />
           <Stack.Screen name="Cart" component={CartScreen} />
+          <Stack.Screen name="ListApp" component={ListApp} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
         </Stack.Navigator>
         <Toast ref={(ref) => Toast.setRef(ref)} />
