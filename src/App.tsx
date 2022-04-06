@@ -10,6 +10,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import * as Sentry from '@sentry/react-native';
 
 import HomeScreen from './screens/HomeScreen';
+import ListApp from './screens/ListApp'
 import TrackerScreen from './screens/TrackerScreen';
 import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
@@ -37,6 +38,7 @@ const packageJson = require('../package.json');
 
 Sentry.init({
   dsn: DSN,
+  debug: true,
   environment: "dev",
   beforeSend: (event) => {
     if (SE === "tda") {
@@ -51,7 +53,9 @@ Sentry.init({
   integrations: [
     new Sentry.ReactNativeTracing({
       routingInstrumentation: reactNavigationV5Instrumentation,
-      tracingOrigins: ['localhost', /^\//, /^https:\/\//]
+      tracingOrigins: ['localhost', /^\//, /^https:\/\//],
+      idleTimeout: 15000 // set to prevent spans in the home screen from cancelling prematurely
+
       // How to ignore transactions for the "Manual Tracker" screen
       // beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
       //   if (context.data.route.name === 'ManualTracker') {
@@ -59,7 +63,6 @@ Sentry.init({
         //   }
         //   return context;
         // },
-      // idleTimeout: 5000
     }),
   ],
   tracesSampleRate: 1.0,
@@ -105,6 +108,7 @@ const App = () => {
           <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
           <Stack.Screen name="Products" component={EmpowerPlant} />
           <Stack.Screen name="Cart" component={CartScreen} />
+          <Stack.Screen name="ListApp" component={ListApp} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
         </Stack.Navigator>
         <Toast ref={(ref) => Toast.setRef(ref)} />
