@@ -1,338 +1,327 @@
-import React from 'react';
+import * as React from 'react';
 import {
   Image,
-  ScrollView,
-  StatusBar,
+  Button,
+  View,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
+  ActivityIndicator,
+  FlatList,
 } from 'react-native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import { CommonActions } from '@react-navigation/native';
-
+import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
+import Toast from 'react-native-toast-message';
+import {AppDispatch} from '../reduxApp';
+import {GradientBtn} from './CartScreen';
+import {BACKEND_URL} from '../config';
 
-const globalAny:any = global;
+/**
+ * An example of how to add a Sentry Transaction to a React component manually.
+ * So you can control all spans that belong to that one transaction.
+ * EmpowerPlant is a  Higher-order component, becuase it's a Function Component,
+ * and both Function Components and Class Components are Higher-order components.
+ * Higher-order component can only read the props coming in. Props are changed as they're passed in.
+ * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
+ * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
+ */
+const EmpowerPlant = ({navigation}) => {
+  const dispatch = useDispatch();
+  const [toolData, setProductData] = React.useState<
+    | {
+        sku: string;
+        name: string;
+        image: string;
+        id: number;
+        type: string;
+        price: number;
+      }[]
+    | null
+  >(null);
 
-import {getTestProps} from '../../utils/getTestProps';
-import {DSN, BACKEND_URL} from '../config';
-
-interface Props {
-  navigation: StackNavigationProp<any, 'HomeScreen'>;
-}
-
-const HomeScreen = (props: Props) => {
-  const currentDSN = Sentry.getCurrentHub().getClient().getOptions().dsn;
-
-  // Show bad code inside error boundary to trigger it.
-  const [showBadCode, setShowBadCode] = React.useState(false);
-
-  const setScopeProps = () => {
-    const dateString = new Date().toString();
-    
-    // user info was already set in App.tsx
-    Sentry.setUser({
-      id: 'test-id-0',
-      email: 'testing@testing.test',
-      username: 'USER-TEST',
-      specialField: 'special user field',
-      specialFieldNumber: 418,
+  const loadData = () => {
+    setProductData(null);
+    let se, customerType, email;
+    Sentry.withScope(function(scope) {
+      [ se, customerType ] = [scope._tags.se, scope._tags.customerType ]
+      email = scope._user.email
     });
 
-    Sentry.setTag('SINGLE-TAG', dateString);
-    // @ts-ignore
-    Sentry.setTag('SINGLE-TAG-NUMBER', 100);
-    Sentry.setTags({
-      'MULTI-TAG-0': dateString,
-      'MULTI-TAG-1': dateString,
-      'MULTI-TAG-2': dateString,
-    });
-
-    Sentry.setExtra('SINGLE-EXTRA', dateString);
-    Sentry.setExtra('SINGLE-EXTRA-NUMBER', 100);
-    Sentry.setExtra('SINGLE-EXTRA-OBJECT', {
-      message: 'I am a teapot',
-      status: 418,
-      array: ['boo', 100, 400, {objectInsideArray: 'foobar'}],
-    });
-    Sentry.setExtras({
-      'MULTI-EXTRA-0': dateString,
-      'MULTI-EXTRA-1': dateString,
-      'MULTI-EXTRA-2': dateString,
-    });
-
-    Sentry.setContext('TEST-CONTEXT', {
-      stringTest: 'Hello',
-      numberTest: 404,
-      objectTest: {
-        foo: 'bar',
-      },
-      arrayTest: ['foo', 'bar', 400],
-      nullTest: null,
-      undefinedTest: undefined,
-    });
-
-    Sentry.addBreadcrumb({
-      level: Sentry.Severity.Info,
-      message: `TEST-BREADCRUMB-INFO: ${dateString}`,
-    });
-    Sentry.addBreadcrumb({
-      level: Sentry.Severity.Debug,
-      message: `TEST-BREADCRUMB-DEBUG: ${dateString}`,
-    });
-    Sentry.addBreadcrumb({
-      level: Sentry.Severity.Error,
-      message: `TEST-BREADCRUMB-ERROR: ${dateString}`,
-    });
-    Sentry.addBreadcrumb({
-      level: Sentry.Severity.Fatal,
-      message: `TEST-BREADCRUMB-FATAL: ${dateString}`,
-    });
-    Sentry.addBreadcrumb({
-      level: Sentry.Severity.Info,
-      message: `TEST-BREADCRUMB-DATA: ${dateString}`,
-      data: {
-        stringTest: 'Hello',
-        numberTest: 404,
-        objectTest: {
-          foo: 'bar',
-        },
-        arrayTest: ['foo', 'bar', 400],
-        nullTest: null,
-        undefinedTest: undefined,
-      },
-      category: 'TEST-CATEGORY',
-    });
-
-    console.log('Test scope properties were set.');
+    fetch(`${BACKEND_URL}/products`, {
+      method: 'GET',
+      headers: { se, customerType, email, "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        setProductData(json);
+      })
+      .catch(err => console.log("> api Erorr: ", err));
   };
 
-  React.useEffect(() => { 
-    fetch(`${BACKEND_URL}/success`)
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRightContainerStyle: {paddingRight: 20},
+      headerLeftContainerStyle: {paddingLeft: 20},
+      headerRight: () => {
+        return (
+          <Button
+            onPress={() => {
+              navigation.navigate('Cart');
+            }}
+            title="Cart"
+          />
+        );
+      },
+      headerLeft: () => {
+        return (
+          <Button
+            onPress={() => {
+              navigation.navigate('ListApp');
+            }}
+            title="List App"
+          />
+        );
+      },
+    });
+  }, [navigation]);
+
+  React.useEffect(() => {
+    loadData(); // this line is not blocking
   }, []);
 
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={styles.scrollView}
-        contentContainerStyle={styles.contentContainer}>
-        {
-        
-          globalAny.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text>Engine: Hermes</Text>
-              {() => {
-                Sentry.setTag("Hermes", "enabled")
-              }}
-            </View>
-          )
-        }
-        <View style={styles.body}>
-          <Image
-            source={require('../assets/sentry-logo.png')}
-            style={styles.logo}
+    <View style={styles.screen}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Empower Plant</Text>
+      </View>
+      <View style={styles.screen}>
+        {toolData ? (
+          <FlatList
+            data={toolData}
+            renderItem={({item}) => {
+              return (
+                <ProfiledProductItem
+                  appDispatch={dispatch}
+                  id={item.id}
+                  imgcropped={item.imgcropped}
+                  price={item.price}
+                  title={item.title}
+                  type={""}
+                />
+              );
+            }}
+            keyExtractor={(item) => item.id}
           />
-          <Text style={styles.welcomeTitle}>Hey there!</Text>
-          <Text style={styles.welcomeBody}>
-            This is a simple sample app for you to try out the Sentry React
-            Native SDK.
-          </Text>
-          <TouchableOpacity
-            {...getTestProps('openEndToEndTests')}
-            onPress={() => {
-              props.navigation.navigate('EndToEndTests');
-            }}>
-            <Text style={styles.hiddenE2e}>End to End Tests</Text>
-          </TouchableOpacity>
-          {currentDSN == null && DSN && (
-            <View style={styles.warningBlock}>
-              <Text style={styles.warningText}>
-                😃 Hey! You need to replace the DSN inside Sentry.init with your
-                own or you won't see the events on your dashboard.
-              </Text>
-            </View>
-          )}
-          <View style={styles.buttonArea}>
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('Products');
-              }}>
-              <Text style={styles.buttonText}>Empower Plant</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                Sentry.captureMessage('Test Message');
-              }}>
-              <Text style={styles.buttonText}>Capture Message</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                Sentry.captureException(new Error('Test Error'));
-              }}>
-              <Text style={styles.buttonText}>Capture Exception</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                throw new Error('Thrown Error');
-              }}>
-              <Text style={styles.buttonText}>Uncaught Thrown Error</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                new Promise(() => {
-                  throw new Error('Unhandled Promise Rejection');
-                });
-              }}>
-              <Text style={styles.buttonText}>Unhandled Promise Rejection</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                Sentry.nativeCrash();
-              }}>
-              <Text style={styles.buttonText}>Native Crash</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                setScopeProps();
-              }}>
-              <Text style={styles.buttonText}>Set Scope Properties</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <Sentry.ErrorBoundary
-              fallback={({eventId}) => (
-                <Text>Error boundary caught with event id: {eventId}</Text>
-              )}>
-              <TouchableOpacity
-                onPress={() => {
-                  setShowBadCode(true);
-                }}>
-                <Text style={styles.buttonText}>
-                  Activate Error Boundary {showBadCode && <div />}
-                </Text>
-              </TouchableOpacity>
-            </Sentry.ErrorBoundary>
-          </View>
-          <View style={styles.buttonArea}>
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('Tracker');
-              }}>
-              <Text style={styles.buttonText}>Auto Tracing Example</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('ManualTracker');
-              }}>
-              <Text style={styles.buttonText}>Manual Tracing Example</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                // Navigate with a reset action just to test
-                props.navigation.dispatch(
-                  CommonActions.reset({
-                    index: 1,
-                    routes: [
-                      {name: 'Home'},
-                      {
-                        name: 'PerformanceTiming',
-                        params: {someParam: 'hello'},
-                      },
-                    ],
-                  }),
-                );
-              }}>
-              <Text style={styles.buttonText}>Performance Timing</Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('Redux');
-              }}>
-              <Text style={styles.buttonText}>Redux Example</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </>
+        ) : (
+          <ActivityIndicator size="small" color="#404091" />
+        )}
+      </View>
+    </View>
   );
 };
 
+/* This works because sentry/react-native wraps sentry/react right now.
+* The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
+* because that comes from props being passed into the Profiler (which comes from redux).
+* The Profiler doesn't watch the internal state of EmpowerPlant here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
+* Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
+* and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
+*/
+export default EmpowerPlant
+
+export const selectImage = (source: string): React.ReactElement => {
+  /**
+   * Images need to be able to be analyzed so that the packager can resolve them and package in the app automatically.
+   * Dynamic strings with require syntax is not possible.
+   * https://github.com/facebook/react-native/issues/2481
+   */
+  // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
+  let length = source.split("/").length
+  let image = source.split("/")[length-1]
+  switch (image) {
+    case 'plant-spider-cropped.jpg':
+      return (
+        <ProfiledImage
+          style={styles.tinyImage}
+          source={require('../assets/images/plant-spider-cropped.png')}
+        />
+      );
+    case 'plant-to-text-cropped.jpg':
+      return (
+        <ProfiledImage
+          style={styles.tinyImage}
+          source={require('../assets/images/plant-to-text-cropped.png')}
+        />
+      );
+    case 'nodes-cropped.jpg':
+      return (
+        <ProfiledImage
+          style={styles.tinyImage}
+          source={require('../assets/images/nodes-cropped.png')}
+        />
+      );
+    case 'mood-planter-cropped.png':
+      return (
+        <ProfiledImage
+          style={styles.tinyImage}
+          source={require('../assets/images/mood-planter-cropped.png')}
+        />
+      );
+    default:
+      return (
+        <ProfiledImage
+          style={styles.tinyImage}
+          source={require('../assets/images/mood-planter-cropped.png')}
+        />
+      );
+  }
+};
+
+const ProfiledImage = Sentry.withProfiler(Image);
+
+const ProductItem = (props: {
+  id: number;
+  type: string;
+  price: number;
+  title: string;
+  imgcropped: string;
+  appDispatch: AppDispatch;
+}): React.ReactElement => {
+
+  return (
+    <View style={styles.statisticContainer}>
+      <View style={styles.card}>{selectImage(props.imgcropped)}</View>
+      <View style={styles.textContainer}>
+        <Text style={styles.itemTitle}>
+          {props.title}
+        </Text>
+        <Text style={styles.itemPrice}>
+          {'$' + props.price}
+        </Text>
+        <GradientBtn
+          progressState={false}
+          style={styles.linearGradient}
+          buttonText={styles.buttonText}
+          name={'Add to Cart'}
+          colors={['#002626',"#001414"]}
+          onPress={() => {
+            props.appDispatch({
+              type: 'ADD_TO_CART',
+              payload: {
+                id: props.id,
+                title: props.title,
+                price: props.price,
+                quantity: 1,
+                imgcropped: props.imgcropped 
+              },
+            });
+            Toast.show({
+              type: 'success',
+              position: 'bottom',
+              text1: 'Added to Cart',
+              visibilityTime: 0.5,
+            });
+          }}></GradientBtn> 
+      </View>
+    </View>
+  );
+};
+
+const ProfiledProductItem = Sentry.withProfiler(ProductItem);
+
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: '#fff',
+  screen: {
     flex: 1,
+    padding: 5,
+    backgroundColor: '#ffffff',
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  titleContainer: {
+    paddingTop: 12,
+    paddingBottom: 12,
   },
-  logo: {
-    width: 80,
-    height: 80,
+  itemTitle: {
+    marginBottom: 5,
+    fontSize: 17,
+    fontWeight: '500',
+    color:'#002626'
   },
-  body: {
-    backgroundColor: '#fff',
-  },
-  welcomeTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#362D59',
-  },
-  welcomeBody: {
-    marginTop: 8,
-    fontSize: 18,
+  itemPrice: {
+    fontSize: 22,
     fontWeight: '400',
-    color: '#362D59',
+    color:'#002626',
   },
-  warningBlock: {
-    marginTop: 12,
-    backgroundColor: '#E1567C',
-    padding: 8,
-    borderRadius: 6,
-  },
-  warningText: {
-    color: '#fff',
-  },
-  contentContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 40,
-  },
-  buttonArea: {
-    marginTop: 20,
-    backgroundColor: '#F6F6F8',
-    borderWidth: 1,
-    borderColor: '#c6becf',
-    borderRadius: 6,
-  },
-  buttonText: {
-    color: '#3b6ecc',
-    fontWeight: '700',
+  sku: {
     fontSize: 16,
-    padding: 14,
-    textAlign: 'center',
+    color: '#002626',
+    marginBottom: 10,
   },
-  spacer: {
-    height: 1,
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#002626',
+  },
+  tinyImage: {
+    width: 100,
+    height: 150,
+  },
+  card: {
+    width: '40%',
+    height: '100%',
+
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textContainer: {
     width: '100%',
-    backgroundColor: '#c6becf',
+    height: '100%',
+    paddingLeft: 10,
+    paddingTop: 20,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
   },
-  hiddenE2e: {
-    width: 1,
-    height: 1,
-    opacity: 0,
+  statisticContainer: {
+    width: '100%',
+    height: 200,
+
+    borderWidth: 1,
+    borderColor: '#dbdbdb',
+    borderRadius: 6,
+    backgroundColor: '#ffffff',
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 5,
+  },
+  statisticTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  statisticCount: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  flavorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    backgroundColor: '#f5f5f5',
+  },
+  linearGradient: {
+    width: '100%',
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: '#8D6E63',
+  },
+
+  buttonText: {
+    fontSize: 16,
+    textAlign: 'center',
+    margin: 5,
+    color:'white',
+    backgroundColor: 'transparent',
   },
 });
-
-export default Sentry.withProfiler(HomeScreen);
-

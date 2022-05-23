@@ -1,5 +1,5 @@
 import {createStore} from 'redux';
-import * as Sentry from '@sentry/react';
+import * as Sentry from '@sentry/react-native';
 
 const initialState = {
   counter: 0,
