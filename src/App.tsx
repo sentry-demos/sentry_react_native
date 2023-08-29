@@ -29,7 +29,7 @@ console.log("> SE", SE)
 const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumentation(
   {
     // How long it will wait for the route change to complete. Default is 1000ms
-    routeChangeTimeoutMs: 500, 
+    routeChangeTimeoutMs: 500,
   },
 );
 
@@ -48,7 +48,7 @@ Sentry.init({
       // Make issue for the SE
       event.fingerprint = ['{{ default }}', SE ];
     }
-    return event; 
+    return event;
   },
   integrations: [
     new Sentry.ReactNativeTracing({
@@ -67,7 +67,7 @@ Sentry.init({
   ],
   tracesSampleRate: 1.0,
   enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
-  sessionTrackingIntervalMillis: 5000, 
+  sessionTrackingIntervalMillis: 5000,
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   // debug: true
 });
@@ -77,7 +77,7 @@ Sentry.setTag('se', SE);
 const Stack = createStackNavigator();
 
 const App = () => {
-  const navigation = React.useRef();
+  const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
 
   Sentry.configureScope(scope => {
     const customerType = ["medium-plan", "large-plan", "small-plan", "enterprise"][Math.floor(Math.random() * 4)]
@@ -86,16 +86,9 @@ const App = () => {
     scope.setUser({ email: email })
   })
 
-
   return (
     <Provider store={store}>
-      <NavigationContainer
-        ref={navigation}
-        onReady={() => {
-          reactNavigationV5Instrumentation.registerNavigationContainer(
-            navigation,
-          );
-        }}>
+      <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Tracker" component={TrackerScreen} />
@@ -111,7 +104,7 @@ const App = () => {
           <Stack.Screen name="ListApp" component={ListApp} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
         </Stack.Navigator>
-        <Toast ref={(ref) => Toast.setRef(ref)} />
+        <Toast/>
       </NavigationContainer>
     </Provider>
   );

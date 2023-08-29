@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import { CommonActions } from '@react-navigation/native';
+import { Severity as SentrySeverity } from '@sentry/core';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -24,14 +25,14 @@ interface Props {
 }
 
 const ListApp = (props: Props) => {
-  const currentDSN = Sentry.getCurrentHub().getClient().getOptions().dsn;
+  const currentDSN = Sentry.getCurrentHub().getClient()?.getOptions().dsn;
 
   // Show bad code inside error boundary to trigger it.
   const [showBadCode, setShowBadCode] = React.useState(false);
 
   const setScopeProps = () => {
     const dateString = new Date().toString();
-    
+
     // user info was already set in App.tsx
     Sentry.setUser({
       id: 'test-id-0',
@@ -75,23 +76,23 @@ const ListApp = (props: Props) => {
     });
 
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Info,
+      level: SentrySeverity.Info,
       message: `TEST-BREADCRUMB-INFO: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Debug,
+      level: SentrySeverity.Debug,
       message: `TEST-BREADCRUMB-DEBUG: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Error,
+      level: SentrySeverity.Error,
       message: `TEST-BREADCRUMB-ERROR: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Fatal,
+      level: SentrySeverity.Fatal,
       message: `TEST-BREADCRUMB-FATAL: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Info,
+      level: SentrySeverity.Info,
       message: `TEST-BREADCRUMB-DATA: ${dateString}`,
       data: {
         stringTest: 'Hello',
@@ -109,7 +110,7 @@ const ListApp = (props: Props) => {
     console.log('Test scope properties were set.');
   };
 
-  React.useEffect(() => { 
+  React.useEffect(() => {
     fetch(`${BACKEND_URL}/success`)
   }, []);
 
@@ -121,13 +122,13 @@ const ListApp = (props: Props) => {
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}>
         {
-        
           globalAny.HermesInternal == null ? null : (
             <View style={styles.engine}>
               <Text>Engine: Hermes</Text>
-              {() => {
-                Sentry.setTag("Hermes", "enabled")
-              }}
+              {(() => {
+                  Sentry.setTag("Hermes", "enabled");
+                  return null;
+              })()}
             </View>
           )
         }
