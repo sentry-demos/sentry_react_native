@@ -28,8 +28,8 @@ import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
 console.log('> SE', SE);
 
-const reactNavigationV5Instrumentation =
-  new Sentry.ReactNavigationV5Instrumentation({
+const reactNavigationInstrumentation =
+  new Sentry.ReactNavigationInstrumentation({
     // How long it will wait for the route change to complete. Default is 1000ms
     routeChangeTimeoutMs: 500,
   });
@@ -53,8 +53,8 @@ Sentry.init({
   },
   integrations: [
     new Sentry.ReactNativeTracing({
-      routingInstrumentation: reactNavigationV5Instrumentation,
-      tracingOrigins: ['localhost', /^\//, /^https:\/\//],
+      routingInstrumentation: reactNavigationInstrumentation,
+      tracePropagationTargets: ['localhost', /^\//, /^https:\/\//],
       idleTimeout: 15000, // set to prevent spans in the home screen from cancelling prematurely
 
       // How to ignore transactions for the "Manual Tracker" screen
@@ -70,7 +70,6 @@ Sentry.init({
   enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
   sessionTrackingIntervalMillis: 5000,
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
-  // debug: true
 });
 
 Sentry.setTag('se', SE);
@@ -97,7 +96,7 @@ const App = () => {
       <NavigationContainer
         ref={navigation}
         onReady={() => {
-          reactNavigationV5Instrumentation.registerNavigationContainer(
+          reactNavigationInstrumentation.registerNavigationContainer(
             navigation,
           );
         }}>
