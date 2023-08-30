@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Image,
   Button,
   View,
   StyleSheet,
@@ -16,6 +15,8 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {RootState, AppDispatch} from '../reduxApp';
 import {selectImage} from './EmpowerPlant';
 import {BACKEND_URL} from '../config';
+import {RootStackParamList} from '../navigation';
+import {StackScreenProps} from '@react-navigation/stack';
 
 interface CartData {
   name: string;
@@ -30,69 +31,71 @@ interface subTotal {
 }
 export type UIToast = typeof Toast;
 
-const CartScreen = ({navigation}) => {
+const CheckoutButton = ({
+  navigation,
+}: Pick<StackScreenProps<RootStackParamList>, 'navigation'>) => {
+  return (
+    <Button
+      onPress={() => {
+        navigation.navigate('Checkout');
+      }}
+      title="Checkout"
+    />
+  );
+};
+
+const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
+  let total = 0;
+  let quantity = 0;
+  cartItems.map((item) => {
+    quantity = +item.quantity;
+    let itemTotal = item.quantity * item.price;
+    total += itemTotal;
+  });
+  let aggregate = {total, quantity};
+  return aggregate;
+};
+
+const CartScreen = ({
+  navigation,
+}: StackScreenProps<RootStackParamList, 'Cart'>) => {
   const dispatch = useDispatch();
   const cartData = useSelector((state: RootState) => state.cart);
-  const [orderStatusUI, setOrderStatusUI] = React.useState(false);
+  const [_, setOrderStatusUI] = React.useState(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRightContainerStyle: {paddingRight: 20},
-      headerRight: () => {
-        return (
-          <Button
-            onPress={() => {
-              navigation.navigate('Checkout');
-            }}
-            title="Checkout"
-          />
-        );
-      },
+      headerRight: () => <CheckoutButton navigation={navigation} />,
     });
   }, [navigation]);
 
   const cartItems: Array<CartData> | [] = Object.values(cartData);
-  const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
-    let total = 0
-    let quantity = 0
-    cartItems.map(item => {
-      quantity =+ item.quantity
-      let itemTotal = item.quantity * item.price
-      total += itemTotal
-    })
-    let aggregate = { total, quantity}
-    return aggregate;
-  };
   const subTotalDisplay = (props: subTotal): React.ReactElement => {
     const {quantity: q, total: t} = props;
     const multiple = q > 1 ? 's' : '';
     return (
-      <Text
-        style={{
-          marginTop: 20,
-          marginBottom: 20,
-          fontSize: 18,
-          fontWeight: '600',
-        }}>{`Subtotal (${q} item${multiple}): $${t}`}</Text>
+      <Text style={styles.subtotalText}>
+        {`Subtotal (${q} item${multiple}): $${t}`}
+      </Text>
     );
   };
 
+  //TODO: This looks like it should be used
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
   const placeOrder = async (
     uiToast: null | UIToast = null,
   ): Promise<Response> => {
     setOrderStatusUI(true);
     const data = {cart: Object.values(cartData)};
-    let response = await fetch( 
-      `${BACKEND_URL}/checkout`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          email: 'test@sentry.io',
-        },
-        body: JSON.stringify(data),
+    let response = await fetch(`${BACKEND_URL}/checkout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        email: 'test@sentry.io',
       },
-    ).catch((err) => {
+      body: JSON.stringify(data),
+    }).catch((err) => {
       throw new Error(err);
     });
     setOrderStatusUI(false);
@@ -125,14 +128,14 @@ const CartScreen = ({navigation}) => {
   };
 
   React.useEffect(() => {
-    fetch(`${BACKEND_URL}/success`) // exists just to add span data to demo
+    fetch(`${BACKEND_URL}/success`); // exists just to add span data to demo
   }, []);
 
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>
         <View>
-          {cartItems.length == 0 ? (
+          {cartItems.length === 0 ? (
             <Text>No items in cart</Text>
           ) : (
             subTotalDisplay(computeCartTotal(cartItems))
@@ -149,7 +152,7 @@ const CartScreen = ({navigation}) => {
                 appDispatch={dispatch}
                 quantity={item.quantity}
                 title={item.title}
-                imgcropped={item.imgcropped} 
+                imgcropped={item.imgcropped}
                 id={item.id}
                 // type={""}
                 price={item.price}
@@ -195,7 +198,6 @@ const CartItem = (props: {
   appDispatch: AppDispatch;
   title: string;
 }): React.ReactElement => {
-  
   const deleteItem = (id: string) => {
     props.appDispatch({type: 'DELETE_FROM_CART', payload: id});
   };
@@ -207,7 +209,7 @@ const CartItem = (props: {
         <Text style={styles.itemTitle}>
           {props.title.charAt(0).toUpperCase() + props.title.slice(1)}
         </Text>
-        
+
         {/* TODO <Text style={styles.sku}>{'sku: ' + props.sku}</Text> */}
         <Text style={styles.itemPrice}>
           {'$' + props.price + ` (${props.quantity})`}
@@ -218,7 +220,8 @@ const CartItem = (props: {
           style={styles.deleteBtn}
           name={'Delete'}
           progressState={false}
-          onPress={() => deleteItem(props.id.toString())}></GradientBtn>
+          onPress={() => deleteItem(props.id.toString())}
+        />
       </View>
     </View>
   );
@@ -325,17 +328,23 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: 'center',
     fontSize: 16,
-    color:'white'
+    color: 'white',
   },
   itemTitle: {
     marginBottom: 5,
     fontSize: 17,
     fontWeight: '500',
-    color:'#002626',
+    color: '#002626',
   },
   itemPrice: {
     fontSize: 22,
     fontWeight: '400',
     color: '#002626',
+  },
+  subtotalText: {
+    marginTop: 20,
+    marginBottom: 20,
+    fontSize: 18,
+    fontWeight: '600',
   },
 });

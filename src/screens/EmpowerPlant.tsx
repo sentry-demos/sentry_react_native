@@ -41,20 +41,20 @@ const EmpowerPlant = ({navigation}) => {
   const loadData = () => {
     setProductData(null);
     let se, customerType, email;
-    Sentry.withScope(function(scope) {
-      [ se, customerType ] = [scope._tags.se, scope._tags.customerType ]
-      email = scope._user.email
+    Sentry.withScope(function (scope) {
+      [se, customerType] = [scope._tags.se, scope._tags.customerType];
+      email = scope._user.email;
     });
 
     fetch(`${BACKEND_URL}/products`, {
       method: 'GET',
-      headers: { se, customerType, email, "Content-Type": "application/json" },
+      headers: {se, customerType, email, 'Content-Type': 'application/json'},
     })
       .then((response) => response.json())
       .then((json) => {
         setProductData(json);
       })
-      .catch(err => console.log("> api Erorr: ", err));
+      .catch((err) => console.log('> api Erorr: ', err));
   };
 
   React.useLayoutEffect(() => {
@@ -94,7 +94,7 @@ const EmpowerPlant = ({navigation}) => {
                   imgcropped={item.imgcropped}
                   price={item.price}
                   title={item.title}
-                  type={""}
+                  type={''}
                 />
               );
             }}
@@ -109,13 +109,13 @@ const EmpowerPlant = ({navigation}) => {
 };
 
 /* This works because sentry/react-native wraps sentry/react right now.
-* The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`, 
-* because that comes from props being passed into the Profiler (which comes from redux).
-* The Profiler doesn't watch the internal state of EmpowerPlant here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
-* Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
-* and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
-*/
-export default EmpowerPlant
+ * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`,
+ * because that comes from props being passed into the Profiler (which comes from redux).
+ * The Profiler doesn't watch the internal state of EmpowerPlant here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
+ * Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
+ * and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
+ */
+export default EmpowerPlant;
 
 export const selectImage = (source: string): React.ReactElement => {
   /**
@@ -124,8 +124,8 @@ export const selectImage = (source: string): React.ReactElement => {
    * https://github.com/facebook/react-native/issues/2481
    */
   // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
-  let length = source.split("/").length
-  let image = source.split("/")[length-1]
+  let length = source.split('/').length;
+  let image = source.split('/')[length - 1];
   switch (image) {
     case 'plant-spider-cropped.jpg':
       return (
@@ -175,23 +175,18 @@ const ProductItem = (props: {
   imgcropped: string;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
-
   return (
     <View style={styles.statisticContainer}>
       <View style={styles.card}>{selectImage(props.imgcropped)}</View>
       <View style={styles.textContainer}>
-        <Text style={styles.itemTitle}>
-          {props.title}
-        </Text>
-        <Text style={styles.itemPrice}>
-          {'$' + props.price}
-        </Text>
+        <Text style={styles.itemTitle}>{props.title}</Text>
+        <Text style={styles.itemPrice}>{'$' + props.price}</Text>
         <GradientBtn
           progressState={false}
           style={styles.linearGradient}
           buttonText={styles.buttonText}
           name={'Add to Cart'}
-          colors={['#002626',"#001414"]}
+          colors={['#002626', '#001414']}
           onPress={() => {
             props.appDispatch({
               type: 'ADD_TO_CART',
@@ -200,7 +195,7 @@ const ProductItem = (props: {
                 title: props.title,
                 price: props.price,
                 quantity: 1,
-                imgcropped: props.imgcropped 
+                imgcropped: props.imgcropped,
               },
             });
             Toast.show({
@@ -209,7 +204,8 @@ const ProductItem = (props: {
               text1: 'Added to Cart',
               visibilityTime: 0.5,
             });
-          }}></GradientBtn> 
+          }}
+        />
       </View>
     </View>
   );
@@ -231,12 +227,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 17,
     fontWeight: '500',
-    color:'#002626'
+    color: '#002626',
   },
   itemPrice: {
     fontSize: 22,
     fontWeight: '400',
-    color:'#002626',
+    color: '#002626',
   },
   sku: {
     fontSize: 16,
@@ -310,7 +306,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     margin: 5,
-    color:'white',
+    color: 'white',
     backgroundColor: 'transparent',
   },
 });

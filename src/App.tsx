@@ -8,9 +8,10 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 // Import the Sentry React Native SDK
 import * as Sentry from '@sentry/react-native';
+import {TransactionContext} from '@sentry/types';
 
 import HomeScreen from './screens/HomeScreen';
-import ListApp from './screens/ListApp'
+import ListApp from './screens/ListApp';
 import TrackerScreen from './screens/TrackerScreen';
 import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
@@ -24,14 +25,14 @@ import Toast from 'react-native-toast-message';
 import {store} from './reduxApp';
 import {DSN} from './config';
 import {SE} from '@env'; // SE is undefined if no .env file is set
-console.log("> SE", SE)
+import {RootStackParamList} from './navigation';
+console.log('> SE', SE);
 
-const reactNavigationV5Instrumentation = new Sentry.ReactNavigationV5Instrumentation(
-  {
+const reactNavigationV5Instrumentation =
+  new Sentry.ReactNavigationV5Instrumentation({
     // How long it will wait for the route change to complete. Default is 1000ms
     routeChangeTimeoutMs: 500,
-  },
-);
+  });
 
 // Get app version from package.json, for fingerprinting
 const packageJson = require('../package.json');
@@ -39,14 +40,14 @@ const packageJson = require('../package.json');
 Sentry.init({
   dsn: DSN,
   debug: true,
-  environment: "dev",
+  environment: 'dev',
   beforeSend: (event) => {
-    if (SE === "tda") {
+    if (SE === 'tda') {
       // Make issues unique to the release (app version) for Release Health
-      event.fingerprint = ['{{ default }}', SE, packageJson.version ];
+      event.fingerprint = ['{{ default }}', SE, packageJson.version];
     } else if (SE) {
       // Make issue for the SE
-      event.fingerprint = ['{{ default }}', SE ];
+      event.fingerprint = ['{{ default }}', SE];
     }
     return event;
   },
@@ -54,15 +55,15 @@ Sentry.init({
     new Sentry.ReactNativeTracing({
       routingInstrumentation: reactNavigationV5Instrumentation,
       tracingOrigins: ['localhost', /^\//, /^https:\/\//],
-      idleTimeout: 15000 // set to prevent spans in the home screen from cancelling prematurely
+      idleTimeout: 15000, // set to prevent spans in the home screen from cancelling prematurely
 
       // How to ignore transactions for the "Manual Tracker" screen
-      // beforeNavigate: (context: Sentry.ReactNavigationTransactionContext) => {
-      //   if (context.data.route.name === 'ManualTracker') {
-        //     context.sampled = false;
-        //   }
-        //   return context;
-        // },
+      beforeNavigate: (context: TransactionContext) => {
+        if (context.data?.route.name === 'ManualTracker') {
+          context.sampled = false;
+        }
+        return context;
+      },
     }),
   ],
   tracesSampleRate: 1.0,
@@ -74,21 +75,32 @@ Sentry.init({
 
 Sentry.setTag('se', SE);
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
   const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
 
-  Sentry.configureScope(scope => {
-    const customerType = ["medium-plan", "large-plan", "small-plan", "enterprise"][Math.floor(Math.random() * 4)]
-    scope.setTag("customerType", customerType )
-    let email = Math.random().toString(36).substring(2, 6) + "@yahoo.com";
-    scope.setUser({ email: email })
-  })
+  Sentry.configureScope((scope) => {
+    const customerType = [
+      'medium-plan',
+      'large-plan',
+      'small-plan',
+      'enterprise',
+    ][Math.floor(Math.random() * 4)];
+    scope.setTag('customerType', customerType);
+    let email = Math.random().toString(36).substring(2, 6) + '@yahoo.com';
+    scope.setUser({email: email});
+  });
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer
+        ref={navigation}
+        onReady={() => {
+          reactNavigationV5Instrumentation.registerNavigationContainer(
+            navigation,
+          );
+        }}>
         <Stack.Navigator>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Tracker" component={TrackerScreen} />
@@ -104,7 +116,7 @@ const App = () => {
           <Stack.Screen name="ListApp" component={ListApp} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
         </Stack.Navigator>
-        <Toast/>
+        <Toast />
       </NavigationContainer>
     </Provider>
   );

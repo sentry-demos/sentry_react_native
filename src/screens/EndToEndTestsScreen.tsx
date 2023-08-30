@@ -11,14 +11,14 @@ import {DSN} from '../config';
  * Not visible through the UI (no button to load it).
  */
 const EndToEndTestsScreen = () => {
-  const [eventId, setEventId] = React.useState(null);
+  const [eventId, setEventId] = React.useState<String | undefined>(undefined);
 
   // !!! WARNING: Do not put Sentry.init inside React.useEffect like we do here. This is only for testing purposes.
   // We only do this to render the eventId onto the UI for end to end tests.
   React.useEffect(() => {
     Sentry.init({
       dsn: DSN,
-      beforeSend: (e) => {
+      beforeSend: (e: Sentry.Event) => {
         setEventId(e.event_id);
         return e;
       },
@@ -54,9 +54,7 @@ const EndToEndTestsScreen = () => {
       </Text>
       <Text
         onPress={() => {
-          new Promise(() => {
-            throw new Error('Unhandled Promise Rejection');
-          });
+          Promise.reject(new Error('Unhandled Promise Rejection'));
         }}
         {...getTestProps('unhandledPromiseRejection')}>
         Unhandled Promise Rejection

@@ -3,64 +3,66 @@ import * as Sentry from '@sentry/react-native';
 
 const initialState = {
   counter: 0,
-  cart:{},
+  cart: {},
   contactInfo: {
-    email:"",
-    firstName:"",
-    lastName:"",
-    address:"",
-    city:"",
-    countryRegion:"",
-    state:"",
-    zipCode:"",
-  }
+    email: '',
+    firstName: '',
+    lastName: '',
+    address: '',
+    city: '',
+    countryRegion: '',
+    state: '',
+    zipCode: '',
+  },
 };
 
 const reducer = (state = initialState, action) => {
-  let {payload,type,onScope} = action;
+  let {payload, type, onScope} = action;
 
   switch (type) {
     case 'FILL_FIELDS':
-      if (payload == 'dummydata') {
-        return { 
-          ...state, 
-          contactInfo: {
-            email: onScope ? onScope:Math.random().toString(36).substring(2, 6) + "@yahoo.com",
-            firstName:"john",
-            lastName:"doe",
-            address:"123 Hope St",
-            city:"San Francisco",
-            countryRegion:"USA",
-            state:"CA",
-            zipCode: (Math.floor(Math.random()*90000) + 10000).toString()
-          }
-        };
-      } else {
-        return { ...state };
-      }
-    case 'ADD_TO_CART':
-      if(state.cart[payload.id]){
+      if (payload === 'dummydata') {
         return {
           ...state,
-          cart:{
+          contactInfo: {
+            email: onScope
+              ? onScope
+              : Math.random().toString(36).substring(2, 6) + '@yahoo.com',
+            firstName: 'john',
+            lastName: 'doe',
+            address: '123 Hope St',
+            city: 'San Francisco',
+            countryRegion: 'USA',
+            state: 'CA',
+            zipCode: (Math.floor(Math.random() * 90000) + 10000).toString(),
+          },
+        };
+      } else {
+        return {...state};
+      }
+    case 'ADD_TO_CART':
+      if (state.cart[payload.id]) {
+        return {
+          ...state,
+          cart: {
             ...state.cart,
-            [payload.id]:{
+            [payload.id]: {
               ...state.cart[payload.id],
-              quantity:state.cart[payload.id].quantity + 1
-            }
-          }
+              quantity: state.cart[payload.id].quantity + 1,
+            },
+          },
         };
       }
       return {
         ...state,
-        cart: {...state.cart,[action.payload.id]:action.payload}
+        cart: {...state.cart, [action.payload.id]: action.payload},
       };
     case 'DELETE_FROM_CART':
-      delete state.cart[action.payload]
+      delete state.cart[action.payload];
       return {
         ...state,
-        cart:{...state.cart}
-      }
+        cart: {...state.cart},
+      };
     case 'COUNTER_INCREMENT':
       return {
         ...state,

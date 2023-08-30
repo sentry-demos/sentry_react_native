@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Image,
-  Button,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -10,12 +9,11 @@ import {
   View,
 } from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import { CommonActions } from '@react-navigation/native';
-import { Severity as SentrySeverity } from '@sentry/core';
+import {CommonActions} from '@react-navigation/native';
 
 import * as Sentry from '@sentry/react-native';
 
-const globalAny:any = global;
+const globalAny: any = global;
 
 import {getTestProps} from '../../utils/getTestProps';
 import {DSN, BACKEND_URL} from '../config';
@@ -76,23 +74,23 @@ const ListApp = (props: Props) => {
     });
 
     Sentry.addBreadcrumb({
-      level: SentrySeverity.Info,
+      level: 'info',
       message: `TEST-BREADCRUMB-INFO: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: SentrySeverity.Debug,
+      level: 'debug',
       message: `TEST-BREADCRUMB-DEBUG: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: SentrySeverity.Error,
+      level: 'error',
       message: `TEST-BREADCRUMB-ERROR: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: SentrySeverity.Fatal,
+      level: 'fatal',
       message: `TEST-BREADCRUMB-FATAL: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: SentrySeverity.Info,
+      level: 'info',
       message: `TEST-BREADCRUMB-DATA: ${dateString}`,
       data: {
         stringTest: 'Hello',
@@ -111,7 +109,7 @@ const ListApp = (props: Props) => {
   };
 
   React.useEffect(() => {
-    fetch(`${BACKEND_URL}/success`)
+    fetch(`${BACKEND_URL}/success`);
   }, []);
 
   return (
@@ -121,17 +119,15 @@ const ListApp = (props: Props) => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}>
-        {
-          globalAny.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text>Engine: Hermes</Text>
-              {(() => {
-                  Sentry.setTag("Hermes", "enabled");
-                  return null;
-              })()}
-            </View>
-          )
-        }
+        {globalAny.HermesInternal == null ? null : (
+          <View style={styles.engine}>
+            <Text>Engine: Hermes</Text>
+            {(() => {
+              Sentry.setTag('Hermes', 'enabled');
+              return null;
+            })()}
+          </View>
+        )}
         <View style={styles.body}>
           <Image
             source={require('../assets/sentry-logo.png')}
@@ -181,9 +177,7 @@ const ListApp = (props: Props) => {
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
-                new Promise(() => {
-                  throw new Error('Unhandled Promise Rejection');
-                });
+                Promise.reject(new Error('Unhandled Promise Rejection'));
               }}>
               <Text style={styles.buttonText}>Unhandled Promise Rejection</Text>
             </TouchableOpacity>
@@ -330,4 +324,3 @@ const styles = StyleSheet.create({
 });
 
 export default Sentry.withProfiler(ListApp);
-
