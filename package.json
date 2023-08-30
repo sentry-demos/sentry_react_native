@@ -1,6 +1,6 @@
 {
   "name": "sentry_react_native",
-  "version": "0.0.1",
+  "version": "2.0.16",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
