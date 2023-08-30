@@ -92,6 +92,8 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
+
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -102,8 +104,8 @@ android {
         applicationId "com.sentry_react_native"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 16
-        versionName "2.0.16"
+        versionCode 17
+        versionName "999.0.1"
     }
     signingConfigs {
         debug {
