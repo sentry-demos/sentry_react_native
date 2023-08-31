@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Image,
-  Button,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -10,11 +9,11 @@ import {
   View,
 } from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import { CommonActions } from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 
 import * as Sentry from '@sentry/react-native';
 
-const globalAny:any = global;
+const globalAny: any = global;
 
 import {getTestProps} from '../../utils/getTestProps';
 import {DSN, BACKEND_URL} from '../config';
@@ -24,14 +23,14 @@ interface Props {
 }
 
 const ListApp = (props: Props) => {
-  const currentDSN = Sentry.getCurrentHub().getClient().getOptions().dsn;
+  const currentDSN = Sentry.getCurrentHub().getClient()?.getOptions().dsn;
 
   // Show bad code inside error boundary to trigger it.
   const [showBadCode, setShowBadCode] = React.useState(false);
 
   const setScopeProps = () => {
     const dateString = new Date().toString();
-    
+
     // user info was already set in App.tsx
     Sentry.setUser({
       id: 'test-id-0',
@@ -75,23 +74,23 @@ const ListApp = (props: Props) => {
     });
 
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Info,
+      level: 'info',
       message: `TEST-BREADCRUMB-INFO: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Debug,
+      level: 'debug',
       message: `TEST-BREADCRUMB-DEBUG: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Error,
+      level: 'error',
       message: `TEST-BREADCRUMB-ERROR: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Fatal,
+      level: 'fatal',
       message: `TEST-BREADCRUMB-FATAL: ${dateString}`,
     });
     Sentry.addBreadcrumb({
-      level: Sentry.Severity.Info,
+      level: 'info',
       message: `TEST-BREADCRUMB-DATA: ${dateString}`,
       data: {
         stringTest: 'Hello',
@@ -109,8 +108,8 @@ const ListApp = (props: Props) => {
     console.log('Test scope properties were set.');
   };
 
-  React.useEffect(() => { 
-    fetch(`${BACKEND_URL}/success`)
+  React.useEffect(() => {
+    fetch(`${BACKEND_URL}/success`);
   }, []);
 
   return (
@@ -120,17 +119,15 @@ const ListApp = (props: Props) => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}>
-        {
-        
-          globalAny.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text>Engine: Hermes</Text>
-              {() => {
-                Sentry.setTag("Hermes", "enabled")
-              }}
-            </View>
-          )
-        }
+        {globalAny.HermesInternal == null ? null : (
+          <View style={styles.engine}>
+            <Text>Engine: Hermes</Text>
+            {(() => {
+              Sentry.setTag('Hermes', 'enabled');
+              return null;
+            })()}
+          </View>
+        )}
         <View style={styles.body}>
           <Image
             source={require('../assets/sentry-logo.png')}
@@ -180,9 +177,7 @@ const ListApp = (props: Props) => {
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
-                new Promise(() => {
-                  throw new Error('Unhandled Promise Rejection');
-                });
+                Promise.reject(new Error('Unhandled Promise Rejection'));
               }}>
               <Text style={styles.buttonText}>Unhandled Promise Rejection</Text>
             </TouchableOpacity>
@@ -329,4 +324,3 @@ const styles = StyleSheet.create({
 });
 
 export default Sentry.withProfiler(ListApp);
-
