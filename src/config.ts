@@ -3,4 +3,4 @@ export const DSN =
 
 export const BACKEND_URL =
   'https://application-monitoring-flask-dot-sales-engineering-sf.appspot.com';
-// 'http://127.0.0.1:8080' // for local flask backend
+  // 'http://127.0.0.1:8080'; // for local flask backend
