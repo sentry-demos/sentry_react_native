@@ -73,6 +73,9 @@ Sentry.init({
   attachStacktrace: true,
   attachScreenshot: true,
   attachViewHierarchy: true,
+  _experiments: {
+    profilesSampleRate: 1,
+  },
 });
 
 Sentry.setTag('se', SE);
