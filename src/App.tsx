@@ -53,6 +53,8 @@ Sentry.init({
   },
   integrations: [
     new Sentry.ReactNativeTracing({
+      enableUserInteractionTracing: true,
+
       routingInstrumentation: reactNavigationInstrumentation,
       tracePropagationTargets: ['localhost', /^\//, /^https:\/\//],
       idleTimeout: 15000, // set to prevent spans in the home screen from cancelling prematurely
@@ -124,6 +126,9 @@ const App = () => {
   );
 };
 
-export default Sentry.withTouchEventBoundary(Sentry.wrap(App), {
-  ignoreNames: ['Provider', 'UselessName', /^SomeRegex/],
+export default Sentry.wrap(App, {
+  touchEventBoundaryProps: {
+    ignoreNames: ['Provider', 'UselessName', /^SomeRegex/],
+    labelName: 'id',
+  },
 });

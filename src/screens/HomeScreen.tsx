@@ -1,19 +1,29 @@
 import * as React from 'react';
-import {
-  Image,
-  Button,
-  View,
-  StyleSheet,
-  Text,
-  ActivityIndicator,
-  FlatList,
-} from 'react-native';
+import {Image, Button, View, StyleSheet, Text, FlatList} from 'react-native';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import Toast from 'react-native-toast-message';
 import {AppDispatch} from '../reduxApp';
 import {GradientBtn} from './CartScreen';
 import {BACKEND_URL} from '../config';
+import {StackScreenProps} from '@react-navigation/stack';
+import {RootStackParamList} from '../navigation';
+
+type ExtendedSentryScope = Sentry.Scope & {
+  _tags: Record<string, string>;
+  _user: Record<string, string>;
+};
+
+type Product = {
+  sku: string;
+  name: string;
+  image: string;
+  id: number;
+  type: string;
+  price: number;
+  title: string;
+  imgcropped: string;
+};
 
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
@@ -24,31 +34,33 @@ import {BACKEND_URL} from '../config';
  * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
  * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
  */
-const EmpowerPlant = ({navigation}) => {
+const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
   const dispatch = useDispatch();
-  const [toolData, setProductData] = React.useState<
-    | {
-        sku: string;
-        name: string;
-        image: string;
-        id: number;
-        type: string;
-        price: number;
-      }[]
-    | null
-  >(null);
+  const [toolData, setProductData] = React.useState<Product[] | [] | null>(
+    null,
+  );
 
   const loadData = () => {
     setProductData(null);
     let se, customerType, email;
-    Sentry.withScope(function (scope) {
-      [se, customerType] = [scope._tags.se, scope._tags.customerType];
-      email = scope._user.email;
+    Sentry.withScope(function (scope: Sentry.Scope) {
+      const extendedScope = scope as ExtendedSentryScope;
+      [se, customerType] = [
+        extendedScope._tags.se,
+        extendedScope._tags.customerType,
+      ];
+      email = extendedScope._user.email;
     });
 
+    const headers: Record<string, string> = {
+      se: se ?? '',
+      customerType: customerType ?? '',
+      email: email ?? '',
+      'Content-Type': 'application/json',
+    };
     fetch(`${BACKEND_URL}/products`, {
       method: 'GET',
-      headers: {se, customerType, email, 'Content-Type': 'application/json'},
+      headers,
     })
       .then((response) => response.json())
       .then((json) => {
@@ -88,32 +100,35 @@ const EmpowerPlant = ({navigation}) => {
     loadData(); // this line is not blocking
   }, []);
 
+  const onProductsListRefresh = () => {
+    loadData();
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Empower Plant</Text>
       </View>
       <View style={styles.screen}>
-        {toolData ? (
-          <FlatList
-            data={toolData}
-            renderItem={({item}) => {
-              return (
-                <ProfiledProductItem
-                  appDispatch={dispatch}
-                  id={item.id}
-                  imgcropped={item.imgcropped}
-                  price={item.price}
-                  title={item.title}
-                  type={''}
-                />
-              );
-            }}
-            keyExtractor={(item) => item.id}
-          />
-        ) : (
-          <ActivityIndicator size="small" color="#404091" />
-        )}
+        <FlatList
+          id={'productList'}
+          onRefresh={onProductsListRefresh}
+          refreshing={toolData === null}
+          data={toolData}
+          renderItem={({item}) => {
+            return (
+              <ProfiledProductItem
+                appDispatch={dispatch}
+                id={item.id}
+                imgcropped={item.imgcropped}
+                price={item.price}
+                title={item.title}
+                type={''}
+              />
+            );
+          }}
+          keyExtractor={(item) => `${item.id}`}
+        />
       </View>
     </View>
   );
