@@ -164,6 +164,8 @@ You must complete all of the following steps when setting a new release version:
 
 ## 1. Tick the release version forward.
 
+:warning: If you have edited the `.env` file to locally change the value of the `SE` tag, change it back to `SE=tda` ! Otherwise, whatever value you have set there will get inadvertently included in the release (ask me how I know). If you have no idea what the previous sentences mean, you can ignore this warning. :warning:
+
 There is only one command needed here:
 
 ```
