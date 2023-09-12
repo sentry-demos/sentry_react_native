@@ -16,17 +16,13 @@ Not all of these have to be used in order to build the app (e.g. Android Virtual
 | react           | 18.2.0    |
 | sentry/react-native      | ^5.9.1    |
 | npx | 7.8.0? |
-| cocoapods | +1.10.1? |
 | node | 20.5.0 |
 | npm | 9.8.0 |
 | java | 17.0.8 |
 | ruby | 2.6.10p210 |
-| Xcode | x? |
 | AndroidStudio | Bumblebee 2021.1.1 Patch 2 |
 | Android Virtual Device | Pixel_6_API_30 |
-Android Virtual Device specs...?  
 
-iOS Virtual Device specs... ?
 
 ## Setup
 See 'Versions' table above for some dependencies you'll need. Recommend using [sdkman](sdkman.io) for easily installing the right java version.
@@ -40,30 +36,26 @@ See 'Versions' table above for some dependencies you'll need. Recommend using [s
 7. `cd ios && pod install`
 8. Optional - Create a .env file in project root and add `SE=<value>`
 
-Don't forget to bump your release version depending on platform?
-iOS: `Info.plist` `CFBundleShortVersionString`
-android: `app.build.gradle` `versionName`
-
 ## Run Android
 These steps were last tested on Sept 6th, 2023:  
 
 ?  
 ```
 cd android
-./gradlew installDebug // run in debug mode? cannot acces internet or other gotcha?  
-./gradlew assembleRelease // creates a release in build...output/.apk?
-./gradlew installRelease // ?
+./gradlew installDebug // Debug mode does not allow access to internet
+./gradlew assembleRelease // Creates a release in build...output/.apk?
+./gradlew installRelease // Does what?
 ```
 
 ```
 emulator -avd Pixel_6_API_34 -netdelay none -netspeed full -dns-server 8.8.8.8
 ```
-vs
+emulator command vs 'npm run android' - what's the difference? need to run them in a certain order?
 ```
 npm run android
 ```
 
-These steps were last tested before Sept 6th, 2023:  
+Old Steps from before Sept 6th, 2023:  
 Android (optional) start the emulator by AVD Manager or:
 ```
 // emulator executable is at /Users/<user>/Library/Android/sdk/emulator
@@ -82,7 +74,6 @@ TODO: fix appium selectors, run TDA against ngrok served app, Create Release and
 
 ## Run iOS
 
-These steps were last tested on Sept 6th, 2023:  
 ```
 npm run ios --mode release?
 ```
@@ -101,9 +92,6 @@ npx react-native run-ios --simulator="iPhone 11"
 ## SDK Upgrade Path
 1. `rm -rf node_modules && npm install`. For iOS, run `pod install` or `pod update`. For Android, it should pull in latest dependenices automatically as you start building again.
 2. If you're getting build errors, you may need to upgrade all your Node, npm, Java, VirtualDevices. This is due to either the previously merged PR relying on them, or the next SDK and RN versions you're upgrading to require them, or both.
-
-## Troubleshooting
-[Troubleshooting.md](./troubleshooting.md)
 
 # How To Create a Release
 
@@ -194,6 +182,14 @@ Note: do not proceed with this until you have done all the previous steps.
 3. Run the release script `./github_release.sh`, and select yes when prompted.
 
 Your new release should be [visible on Github](https://github.com/sentry-demos/sentry_react_native/releases).
+
+### Updating the version of the Demo App itself
+Don't forget to bump your release version depending on platform.  
+iOS: `Info.plist` `CFBundleShortVersionString`  
+android: `app.build.gradle` `versionName`  
+
+## Troubleshooting
+[Troubleshooting.md](./troubleshooting.md)
 
 ### [Troubleshooting - Locally undoing an accidental increment of the release version]
 
