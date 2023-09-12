@@ -102,13 +102,16 @@ npx react-native run-ios --simulator="iPhone 11"
 1. `rm -rf node_modules && npm install`. For iOS, run `pod install` or `pod update`. For Android, it should pull in latest dependenices automatically as you start building again.
 2. If you're getting build errors, you may need to upgrade all your Node, npm, Java, VirtualDevices. This is due to either the previously merged PR relying on them, or the next SDK and RN versions you're upgrading to require them, or both.
 
-Having trouble upgrading and building? Consider [Bootstrapping a new React Native App](./Install.md).
+## Troubleshooting
+[Troubleshooting.md](./troubleshooting.md)
 
 # How To Create a Release
 
 You must complete all of the following steps when setting a new release version:
 
 ## 1. Tick the release version forward.
+
+:warning: If you have edited the `.env` file to locally change the value of the `SE` tag, change it back to `SE=tda` ! Otherwise, whatever value you have set there will get inadvertently included in the release (ask me how I know). If you have no idea what the previous sentences mean, you can ignore this warning. :warning:
 
 There is only one command needed here:
 
