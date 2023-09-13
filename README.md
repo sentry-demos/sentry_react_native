@@ -39,45 +39,46 @@ See 'Versions' table above for some dependencies you'll need. Recommend using [s
 ## Run Android
 These steps were last tested on Sept 6th, 2023:  
 
-
 1.
+```
+npm run android // this command executes `react-native run-android` and does hot-reload
+```
+If step 1 is failing, try building a release and running that in the emulator:
+
+2.
 ```
 // Creates the apk of the app in /android/app/build/outputs/apk/release/app-release.apk
 cd android
 ./gradlew assembleRelease 
 ```
 
-2.
+3.
 ```
 // runs the apk you created in step1
 emulator -avd Pixel_6_API_34 -netdelay none -netspeed full -dns-server 8.8.8.8
 ```
 
-These may be helpful too:
+optional
 ```
+Gradle commands allow you to gradually control what you want to do, like avoiding rebuilding the app if you changed your emulator.
 cd android
-./gradlew installDebug // Debug mode does not allow access to internet
-./gradlew installRelease // Does what?
+./gradlew installDebug // Installs debug build of the app to the currently connected Android device/emulator
+./gradlew installRelease // Installs release build of the app to the currently connected Android device/emulator
 
-npm run android // this command executes `react-native run-android``
 ```
 
 Old Steps from before Sept 6th, 2023:  
-Android (optional) start the emulator by AVD Manager or:
 ```
+Android (optional) start the emulator by AVD Manager or:
+
 // emulator executable is at /Users/<user>/Library/Android/sdk/emulator
 emulator -list-avds
 emulator @<YourEmulator> -dns-server 8.8.8.8
 emulator @Pixel_3_API_30_x86_64 -dns-server 8.8.8.8
-```
 
-This builds the APK for the arch and installs to the emulator.
-```
+// This builds the APK for the arch and installs to the emulator.
 npx react-native run-android --variant Release
 ```
-
-
-Running the emulator with the current info....verse making a change and having to re-build with updated code.
 
 ## Run iOS
 
