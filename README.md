@@ -39,20 +39,27 @@ See 'Versions' table above for some dependencies you'll need. Recommend using [s
 ## Run Android
 These steps were last tested on Sept 6th, 2023:  
 
-?  
+
+1.
+```
+// Creates the apk of the app in /android/app/build/outputs/apk/release/app-release.apk
+cd android
+./gradlew assembleRelease 
+```
+
+2.
+```
+// runs the apk you created in step1
+emulator -avd Pixel_6_API_34 -netdelay none -netspeed full -dns-server 8.8.8.8
+```
+
+These may be helpful too:
 ```
 cd android
 ./gradlew installDebug // Debug mode does not allow access to internet
-./gradlew assembleRelease // Creates a release in build...output/.apk?
 ./gradlew installRelease // Does what?
-```
 
-```
-emulator -avd Pixel_6_API_34 -netdelay none -netspeed full -dns-server 8.8.8.8
-```
-emulator command vs 'npm run android' - what's the difference? need to run them in a certain order?
-```
-npm run android
+npm run android // this command executes `react-native run-android``
 ```
 
 Old Steps from before Sept 6th, 2023:  
@@ -69,8 +76,8 @@ This builds the APK for the arch and installs to the emulator.
 npx react-native run-android --variant Release
 ```
 
-TODO: fix appium selectors, run TDA against ngrok served app, Create Release and upload to Github, verify TDA on it, then do it all over again for iOS.
 
+Running the emulator with the current info....verse making a change and having to re-build with updated code.
 
 ## Run iOS
 
