@@ -113,8 +113,23 @@ pod install [or pod update first]
 
 TODO: put this in TDA's repo?
 ```
-ngrok http file:///Users/wcap/thinkocapo/sentry_react_native/android/app/build/outputs/apk/release/app-release.apk
+ngrok http file:///Users/wcap/thinkocapo/sentry_react_native/android/app/build/outputs/apk/release
 
+//or do this if you served the file first via `python3 -m http.server` in the directory with the APK
+ngrok http <PORT> 
+
+// Appium JSON config....+TDA?
 https://1cd3-178-73-4-138.ngrok.io + app-release.apk
 https://1cd3-178-73-4-138.ngrok.io/app-release.apk
 ```
+
+```
+//TDA
+cd empower/tda
+source env_new/bin/activate
+py.test -s -n 4 mobile_native/android_react_native/test_checkout_react_native_android.py
+
+// update the url in...empower/tda/conftest.py > android_react_native_emu_driver, with ngrok URL
+```
+
+now go check sentry for.... se:will?
