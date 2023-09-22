@@ -103,12 +103,15 @@ adb kill-server
 adb start-server
 ```
 
+uninstall the app from the emulator, if you're not sure it's getting refreshed.
 
 TODO?
 RN demo: rub 3.2.2 for RN iOS
 root folder > bundle install > setups cocopods for ruby
 pod install [or pod update first]
 
+
+how do you NOT have to uninstall the app from the virtualdevice, and have to re-build, then installRelease. is there a more streamlined way to do it, that does not involve `npm run android` which has known issues?
 
 
 TODO: put this in TDA's repo?

@@ -41,6 +41,8 @@ These steps were last tested on Sept 6th, 2023:
 
 1.
 ```
+// this tends to give errors once you run the app. avoid this.
+cd android
 npm run android // this command executes `react-native run-android` and does hot-reload
 ```
 If step 1 is failing, try building a release and running that in the emulator:
@@ -54,8 +56,11 @@ cd android
 
 3.
 ```
-// runs the apk you created in step1
+// runs the apk you created in steps1,2
 emulator -avd Pixel_6_API_34 -netdelay none -netspeed full -dns-server 8.8.8.8
+
+// optional, do this if you think you're not getting the updated app on your emulator
+./gradlew installRelease // Installs release build of the app to the currently connected Android device/emulator
 ```
 
 optional
