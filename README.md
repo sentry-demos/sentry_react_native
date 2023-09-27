@@ -12,7 +12,7 @@ Not all of these have to be used in order to build the app (e.g. Android Virtual
 | dependency      | version
 | ------------- |:-------------:|
 | react-native     | 0.72.4  |
-| gradle           | 6.7?     |
+| gradle           | 8.0.1     |
 | react           | 18.2.0    |
 | sentry/react-native      | ^5.9.1    |
 | npx | 7.8.0? |
