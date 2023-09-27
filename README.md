@@ -25,7 +25,7 @@ Not all of these have to be used in order to build the app (e.g. Android Virtual
 
 
 ## Setup
-See 'Versions' table above for some dependencies you'll need. Recommend using [sdkman](sdkman.io) for easily installing the right java version.
+See 'Versions' table above for some dependencies you'll need. Recommend using [sdkman](sdkman.io) for easily installing the right Java version. And [rbenv](http://rbenv.org/) or [rvm](https://rvm.io/) to install the right Ruby version.
 
 1. git clone git@github.com:sentry-demos/sentry_react_native.git
 2. Add your DSN and BACKEND_URL for back-end to src/config.ts
