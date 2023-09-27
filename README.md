@@ -103,7 +103,7 @@ npx react-native run-ios --simulator="iPhone 11"
 ```
 
 ## SDK Upgrade Path
-1. `rm -rf node_modules && npm install`. For iOS, run `pod install` or `pod update`. For Android, it should pull in latest dependenices automatically as you start building again.
+1. `rm -rf node_modules && npm install`. For iOS, run `pod install --repo-update`. For Android, it should pull in latest dependenices automatically as you start building again.
 2. If you're getting build errors, you may need to upgrade all your Node, npm, Java, VirtualDevices. This is due to either the previously merged PR relying on them, or the next SDK and RN versions you're upgrading to require them, or both.
 
 # How To Create a Release
