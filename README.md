@@ -19,7 +19,7 @@ Not all of these have to be used in order to build the app (e.g. Android Virtual
 | node | 20.5.0 |
 | npm | 9.8.0 |
 | java | 17.0.8 |
-| ruby | 2.6.10p210 |
+| ruby | 3.2.2 |
 | AndroidStudio | Bumblebee 2021.1.1 Patch 2 |
 | Android Virtual Device | Pixel_6_API_30 |
 
