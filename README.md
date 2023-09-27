@@ -88,7 +88,7 @@ npx react-native run-android --variant Release
 ## Run iOS
 
 ```
-npm run ios --mode release?
+npm run ios -- --mode=Release
 ```
 
 These steps were last tested before Sept 6th, 2023:
