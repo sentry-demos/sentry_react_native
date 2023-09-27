@@ -51,7 +51,7 @@ If step 1 is failing, try building a release and running that in the emulator:
 ```
 // Creates the apk of the app in /android/app/build/outputs/apk/release/app-release.apk
 cd android
-./gradlew assembleRelease 
+./gradlew assembleRelease // add '--scan' will collect logs and tasks that happen during this
 ```
 
 3.
