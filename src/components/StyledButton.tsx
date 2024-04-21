@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   GestureResponderEvent,
@@ -24,6 +24,7 @@ export const StyledButton = ({
   onPress: null | ((event: GestureResponderEvent) => void) | undefined;
   isLoading?: boolean;
 }): React.ReactElement => {
+  const [isPressed, setIsPressed] = useState(false);
   const pressableStyle: PressableProps['style'] = ({pressed}) =>
     pressed
       ? {
@@ -44,14 +45,21 @@ export const StyledButton = ({
   );
   const InnerText = (
     <Text
-      style={{...defaultStyles.defaultText, ...(style && style.defaultText)}}>
+      style={{
+        ...(isPressed ? defaultStyles.pressedText : defaultStyles.defaultText),
+        ...(style && style.defaultText),
+      }}>
       {title}
     </Text>
   );
 
   const InnerContent = isLoading ? InnerLoader : InnerText;
   return (
-    <Pressable onPress={onPress} style={pressableStyle}>
+    <Pressable
+      onPress={onPress}
+      style={pressableStyle}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}>
       {InnerContent}
     </Pressable>
   );
