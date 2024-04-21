@@ -17,7 +17,6 @@ import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
 import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
 import ReduxScreen from './screens/ReduxScreen';
-import EmpowerPlant from './screens/EmpowerPlant';
 import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
@@ -118,7 +117,6 @@ const App = () => {
           />
           <Stack.Screen name="Redux" component={ReduxScreen} />
           <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
-          <Stack.Screen name="Products" component={EmpowerPlant} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="ListApp" component={ListApp} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
