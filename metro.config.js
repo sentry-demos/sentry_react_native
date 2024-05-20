@@ -1,4 +1,5 @@
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const {withSentryConfig} = require('@sentry/react-native/metro');
 
 /**
  * Metro configuration
@@ -6,6 +7,8 @@ const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
  *
  * @type {import('metro-config').MetroConfig}
  */
-const config = {};
+const userConfig = {};
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+const config = mergeConfig(getDefaultConfig(__dirname), userConfig);
+
+module.exports = withSentryConfig(config);

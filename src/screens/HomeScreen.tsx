@@ -104,12 +104,15 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
     loadData();
   };
 
+  const recordFullDisplay = !!toolData;
+
   return (
     <View style={styles.screen}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Empower Plant</Text>
       </View>
       <View style={styles.screen}>
+        <Sentry.TimeToFullDisplay record={recordFullDisplay} />
         <FlatList
           id={'productList'}
           onRefresh={onProductsListRefresh}

@@ -1211,12 +1211,12 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (5.9.1):
+  - RNSentry (5.22.2):
+    - hermes-engine
     - React-Core
-    - Sentry/HybridSDK (= 8.10.0)
-  - Sentry/HybridSDK (8.10.0):
-    - SentryPrivate (= 8.10.0)
-  - SentryPrivate (8.10.0)
+    - React-hermes
+    - Sentry/HybridSDK (= 8.25.0)
+  - Sentry/HybridSDK (8.25.0)
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
 
@@ -1286,7 +1286,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Sentry
-    - SentryPrivate
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -1468,9 +1467,8 @@ SPEC CHECKSUMS:
   ReactCommon: f42444e384d82ab89184aed5d6f3142748b54768
   RNGestureHandler: 2282cfbcf86c360d29f44ace393203afd5c6cff7
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
-  RNSentry: 0a1daa8ee81e2776f977ae8c66e67c8d85587828
-  Sentry: 71cd4427146ac56eab6e70401ac7a24384c3d3b5
-  SentryPrivate: 9334613897c85a9e30f2c9d7a331af8aaa4fe71f
+  RNSentry: f6a5aee809d646763640130714d1fdfe69aac36b
+  Sentry: cd86fc55628f5b7c572cabe66cc8f95a9d2f165a
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 348f8b538c3ed4423eb58a8e5730feec50bce372
 
