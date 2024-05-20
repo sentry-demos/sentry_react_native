@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, View, StyleSheet, Text, FlatList} from 'react-native';
+import {Button, View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
@@ -57,34 +57,6 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
       .catch((err) => console.log('> api Erorr: ', err));
   };
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      title: '',
-      headerRightContainerStyle: {paddingRight: 20},
-      headerLeftContainerStyle: {paddingLeft: 20},
-      headerRight: () => {
-        return (
-          <Button
-            onPress={() => {
-              navigation.navigate('Cart');
-            }}
-            title="Cart"
-          />
-        );
-      },
-      headerLeft: () => {
-        return (
-          <Button
-            onPress={() => {
-              navigation.navigate('ListApp');
-            }}
-            title="List App"
-          />
-        );
-      },
-    });
-  }, [navigation]);
-
   React.useEffect(() => {
     loadData(); // this line is not blocking
   }, []);
@@ -96,7 +68,7 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
   const recordFullDisplay = !!toolData;
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Empower Plant</Text>
       </View>
@@ -123,7 +95,7 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
           keyExtractor={(item) => `${item.id}`}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -139,7 +111,7 @@ export default EmpowerPlant;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fcfcf1',
   },
   titleContainer: {
     paddingLeft: 10,
