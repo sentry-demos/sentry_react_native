@@ -4,7 +4,7 @@ import {
   NavigationContainer,
   NavigationContainerRef,
 } from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {createNativeStackNavigator as createStackNavigator} from '@react-navigation/native-stack';
 
 // Import the Sentry React Native SDK
 import * as Sentry from '@sentry/react-native';
@@ -25,12 +25,14 @@ import {store} from './reduxApp';
 import {DSN} from './config';
 import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 console.log('> SE', SE);
 
 const reactNavigationInstrumentation =
   new Sentry.ReactNavigationInstrumentation({
     // How long it will wait for the route change to complete. Default is 1000ms
     routeChangeTimeoutMs: 500,
+    enableTimeToInitialDisplay: true,
   });
 
 // Get app version from package.json, for fingerprinting
@@ -74,6 +76,7 @@ Sentry.init({
   attachStacktrace: true,
   attachScreenshot: true,
   attachViewHierarchy: true,
+  enableSpotlight: true,
   _experiments: {
     profilesSampleRate: 1,
   },
@@ -100,29 +103,31 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <NavigationContainer
-        ref={navigation}
-        onReady={() => {
-          reactNavigationInstrumentation.registerNavigationContainer(
-            navigation,
-          );
-        }}>
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Tracker" component={TrackerScreen} />
-          <Stack.Screen name="ManualTracker" component={ManualTrackerScreen} />
-          <Stack.Screen
-            name="PerformanceTiming"
-            component={PerformanceTimingScreen}
-          />
-          <Stack.Screen name="Redux" component={ReduxScreen} />
-          <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
-          <Stack.Screen name="Cart" component={CartScreen} />
-          <Stack.Screen name="ListApp" component={ListApp} />
-          <Stack.Screen name="Checkout" component={CheckoutScreen} />
-        </Stack.Navigator>
-        <Toast />
-      </NavigationContainer>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer
+          ref={navigation}
+          onReady={() => {
+            reactNavigationInstrumentation.registerNavigationContainer(
+              navigation,
+            );
+          }}>
+          <Stack.Navigator>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Tracker" component={TrackerScreen} />
+            <Stack.Screen name="ManualTracker" component={ManualTrackerScreen} />
+            <Stack.Screen
+              name="PerformanceTiming"
+              component={PerformanceTimingScreen}
+            />
+            <Stack.Screen name="Redux" component={ReduxScreen} />
+            <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
+            <Stack.Screen name="Cart" component={CartScreen} />
+            <Stack.Screen name="ListApp" component={ListApp} />
+            <Stack.Screen name="Checkout" component={CheckoutScreen} />
+          </Stack.Navigator>
+          <Toast />
+        </NavigationContainer>
+      </GestureHandlerRootView>
     </Provider>
   );
 };
