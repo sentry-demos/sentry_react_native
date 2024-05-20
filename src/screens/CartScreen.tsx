@@ -8,7 +8,6 @@ import {BACKEND_URL} from '../config';
 import {RootStackParamList} from '../navigation';
 import {StackScreenProps} from '@react-navigation/stack';
 import {ProfiledStyledCartProductCard} from '../components/StyledCartProductCard';
-import { Product } from '../types/Product';
 
 interface CartData {
   name: string;

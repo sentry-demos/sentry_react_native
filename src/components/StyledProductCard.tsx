@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {AppDispatch} from '../reduxApp';
 import {StyledButton} from './StyledButton';
 import * as Sentry from '@sentry/react-native';
+import {selectImage} from './imageFromAssets';
 
 export const StyledProductCard = (props: {
   id: number;
@@ -33,12 +34,23 @@ export const StyledProductCard = (props: {
   };
 
   return (
-    <View style={styles.statisticContainer}>
-      <View style={styles.card}>{selectImage(props.imgcropped)}</View>
-      <View style={styles.textContainer}>
-        <Text style={styles.itemTitle}>{props.title}</Text>
-        <Text style={styles.itemPrice}>{'$' + props.price}</Text>
-        <StyledButton title={'Add to Cart'} onPress={onAddToCartPressed} />
+    <View style={styles.cardContainer}>
+      <View style={styles.cardHero}>{selectImage(props.imgcropped)}</View>
+      <View style={styles.cardDetail}>
+        <View style={styles.cardDetailContent}>
+          <Text style={styles.cardTitle}>{props.title}</Text>
+          <Text style={styles.itemPrice}>${props.price}</Text>
+        </View>
+        <View style={styles.cardDetailAction}>
+          <StyledButton
+            title="Add to cart"
+            onPress={onAddToCartPressed}
+            style={{
+              default: styles.addToCartButtonDefault,
+              pressed: styles.addToCartButtonDefault,
+            }}
+          />
+        </View>
       </View>
     </View>
   );
@@ -46,60 +58,10 @@ export const StyledProductCard = (props: {
 
 export const ProfiledStyledProductCard = Sentry.withProfiler(StyledProductCard);
 
-const ProfiledImage = Sentry.withProfiler(Image);
-
-export const selectImage = (source: string): React.ReactElement => {
-  /**
-   * Images need to be able to be analyzed so that the packager can resolve them and package in the app automatically.
-   * Dynamic strings with require syntax is not possible.
-   * https://github.com/facebook/react-native/issues/2481
-   */
-  // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
-  let length = source.split('/').length;
-  let image = source.split('/')[length - 1];
-  switch (image) {
-    case 'plant-spider-cropped.jpg':
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/plant-spider-cropped.png')}
-        />
-      );
-    case 'plant-to-text-cropped.jpg':
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/plant-to-text-cropped.png')}
-        />
-      );
-    case 'nodes-cropped.jpg':
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/nodes-cropped.png')}
-        />
-      );
-    case 'mood-planter-cropped.png':
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/mood-planter-cropped.png')}
-        />
-      );
-    default:
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/mood-planter-cropped.png')}
-        />
-      );
-  }
-};
-
 const styles = StyleSheet.create({
-  itemTitle: {
+  cardTitle: {
     marginBottom: 5,
-    fontSize: 17,
+    fontSize: 24,
     fontWeight: '500',
     color: '#002626',
   },
@@ -108,11 +70,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#002626',
   },
-  tinyImage: {
-    width: 100,
-    height: 150,
-  },
-  card: {
+  cardHero: {
     width: '40%',
     height: '100%',
 
@@ -120,16 +78,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textContainer: {
-    width: '100%',
+  cardDetail: {
+    flex: 1,
     height: '100%',
-    paddingLeft: 10,
-    paddingTop: 20,
     flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    alignContent: 'space-between',
   },
-  statisticContainer: {
+  cardDetailContent: {
+    padding: 10,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    paddingBottom: 10,
+  },
+  cardDetailAction: {
+    flex: 0,
+  },
+  cardContainer: {
     width: '100%',
     height: 200,
 
@@ -142,5 +107,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginVertical: 5,
+  },
+  addToCartButtonDefault: {
+    margin: 10,
   },
 });

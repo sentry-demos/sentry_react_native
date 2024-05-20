@@ -6,7 +6,7 @@ import {BACKEND_URL} from '../config';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParamList} from '../navigation';
 import {ProfiledStyledProductCard} from '../components/StyledProductCard';
-import { Product } from '../types/Product';
+import {Product} from '../types/Product';
 
 type ExtendedSentryScope = Sentry.Scope & {
   _tags: Record<string, string>;
@@ -100,13 +100,14 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Empower Plant</Text>
       </View>
-      <View style={styles.screen}>
+      <View>
         <Sentry.TimeToFullDisplay record={recordFullDisplay} />
         <FlatList
           id={'productList'}
           onRefresh={onProductsListRefresh}
           refreshing={toolData === null}
           data={toolData}
+          contentContainerStyle={styles.productListContainer}
           renderItem={({item}) => {
             return (
               <ProfiledStyledProductCard
@@ -138,11 +139,11 @@ export default EmpowerPlant;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    paddingRight: 5,
-    paddingLeft: 5,
     backgroundColor: '#ffffff',
   },
   titleContainer: {
+    paddingLeft: 10,
+    paddingRight: 10,
     paddingTop: 12,
     paddingBottom: 12,
   },
@@ -152,8 +153,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: '700',
     color: '#002626',
+  },
+  productListContainer: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 100,
   },
 });

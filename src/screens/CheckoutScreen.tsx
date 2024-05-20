@@ -245,8 +245,9 @@ const styles = StyleSheet.create({
   contactInfoText: {
     marginTop: 20,
     marginBottom: 20,
-    fontSize: 18,
+    fontSize: 32,
     fontWeight: '600',
+    marginLeft: 10,
   },
   cartListWrapper: {
     flex: 1,

@@ -2,8 +2,8 @@ import * as React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {AppDispatch} from '../reduxApp';
 import {StyledButton} from './StyledButton';
-import {selectImage} from './StyledProductCard';
 import * as Sentry from '@sentry/react-native';
+import {selectImage} from './imageFromAssets';
 
 export const StyledCartProductCard = (props: {
   imgcropped: string;
@@ -18,22 +18,23 @@ export const StyledCartProductCard = (props: {
   };
 
   return (
-    <View style={styles.statisticContainer}>
-      <View>{selectImage(props.imgcropped)}</View>
-      <View>
-        <Text style={styles.itemTitle}>
-          {props.title.charAt(0).toUpperCase() + props.title.slice(1)}
-        </Text>
+    <View style={styles.cardContainer}>
+      {selectImage(props.imgcropped, {
+        width: '100%',
+        height: 200,
+        marginBottom: 10,
+      })}
+      <Text style={styles.itemTitle}>
+        {props.title.charAt(0).toUpperCase() + props.title.slice(1)}
+      </Text>
 
-        {/* TODO <Text style={styles.sku}>{'sku: ' + props.sku}</Text> */}
-        <Text style={styles.itemPrice}>
-          {'$' + props.price + ` (${props.quantity})`}
-        </Text>
-        <StyledButton
-          title={'Delete'}
-          onPress={() => deleteItem(props.id.toString())}
-        />
-      </View>
+      <Text style={styles.itemPrice}>
+        {'$' + props.price + ` (${props.quantity})`}
+      </Text>
+      <StyledButton
+        title={'Delete'}
+        onPress={() => deleteItem(props.id.toString())}
+      />
     </View>
   );
 };
@@ -43,22 +44,20 @@ export const ProfiledStyledCartProductCard = Sentry.withProfiler(
 );
 
 const styles = StyleSheet.create({
-  statisticContainer: {
+  cardContainer: {
     width: '100%',
-    height: 240,
     padding: 12,
     borderBottomWidth: 1,
 
     borderColor: '#dbdbdb',
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-around',
-    marginVertical: 10,
   },
   itemTitle: {
-    marginBottom: 5,
-    fontSize: 17,
+    marginBottom: 10,
+    fontSize: 24,
     fontWeight: '500',
     color: '#002626',
   },
@@ -66,5 +65,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '400',
     color: '#002626',
+    marginBottom: 20,
   },
 });
