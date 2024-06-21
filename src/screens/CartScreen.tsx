@@ -131,8 +131,12 @@ const CartScreen = ({
     fetch(`${BACKEND_URL}/success`); // exists just to add span data to demo
   }, []);
 
+  const recordFullDisplay = !!cartData;
+
   return (
     <View style={styles.screen}>
+      <Sentry.TimeToInitialDisplay record={true} />
+      <Sentry.TimeToFullDisplay record={recordFullDisplay} />
       <View style={styles.titleContainer}>
         <View>
           {cartItems.length === 0 ? (

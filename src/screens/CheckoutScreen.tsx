@@ -155,6 +155,8 @@ const CheckoutScreen = () => {
 
   return (
     <View style={styles.screen}>
+      <Sentry.TimeToInitialDisplay record={true} />
+      <Sentry.TimeToFullDisplay record={true} />
       <Text style={styles.contactInfoText}>Contact Info</Text>
       <View style={styles.cartListWrapper}>
         <FlatList
