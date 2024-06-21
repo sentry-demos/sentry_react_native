@@ -4,3 +4,4 @@ source 'https://rubygems.org'
 ruby "3.3.0"
 
 gem 'cocoapods', '~> 1.15.2'
+gem 'activesupport', '>= 6.1.7.5', '< 7.1.0'
