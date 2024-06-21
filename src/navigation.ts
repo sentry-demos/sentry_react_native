@@ -9,4 +9,5 @@ export type RootStackParamList = {
   Cart: undefined;
   ListApp: undefined;
   Checkout: undefined;
+  CartScreen: undefined;
 };

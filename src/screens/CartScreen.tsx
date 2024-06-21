@@ -49,7 +49,7 @@ const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
 
 const CartScreen = ({
   navigation,
-}: StackScreenProps<RootStackParamList, 'Cart'>) => {
+}: StackScreenProps<RootStackParamList, 'CartScreen'>) => {
   const dispatch = useDispatch();
   const cartData = useSelector((state: RootState) => state.cart);
   const [_, setOrderStatusUI] = React.useState(false);
