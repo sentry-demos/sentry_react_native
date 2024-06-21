@@ -11,8 +11,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import Toast from 'react-native-toast-message';
 import {RootState} from '../reduxApp';
-import {GradientBtn} from './CartScreen';
 import {BACKEND_URL} from '../config';
+import {StyledButton} from '../components/StyledButton';
 
 export type UIToast = typeof Toast;
 
@@ -136,13 +136,10 @@ const CheckoutScreen = () => {
           </Text>
         </View>
         <View>
-          <GradientBtn
-            buttonText={styles.buttonText}
-            colors={['#002626', '#001414']}
-            style={styles.linearGradient}
+          <StyledButton
             onPress={() => performCheckoutOnServer()}
-            progressState={orderStatusUI}
-            name={'Place your order'}
+            isLoading={orderStatusUI}
+            title={'Place your order'}
           />
         </View>
       </View>
@@ -248,8 +245,9 @@ const styles = StyleSheet.create({
   contactInfoText: {
     marginTop: 20,
     marginBottom: 20,
-    fontSize: 18,
+    fontSize: 32,
     fontWeight: '600',
+    marginLeft: 10,
   },
   cartListWrapper: {
     flex: 1,

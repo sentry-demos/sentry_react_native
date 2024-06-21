@@ -17,7 +17,6 @@ import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
 import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
 import ReduxScreen from './screens/ReduxScreen';
-import EmpowerPlant from './screens/EmpowerPlant';
 import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
@@ -26,7 +25,8 @@ import {store} from './reduxApp';
 import {DSN} from './config';
 import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {StyleSheet} from 'react-native';
 console.log('> SE', SE);
 
 const reactNavigationInstrumentation =
@@ -104,7 +104,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={styles.gestureHandlerRootView}>
         <NavigationContainer
           ref={navigation}
           onReady={() => {
@@ -115,14 +115,19 @@ const App = () => {
           <Stack.Navigator>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Tracker" component={TrackerScreen} />
-            <Stack.Screen name="ManualTracker" component={ManualTrackerScreen} />
+            <Stack.Screen
+              name="ManualTracker"
+              component={ManualTrackerScreen}
+            />
             <Stack.Screen
               name="PerformanceTiming"
               component={PerformanceTimingScreen}
             />
             <Stack.Screen name="Redux" component={ReduxScreen} />
-            <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
-            <Stack.Screen name="Products" component={EmpowerPlant} />
+            <Stack.Screen
+              name="EndToEndTests"
+              component={EndToEndTestsScreen}
+            />
             <Stack.Screen name="Cart" component={CartScreen} />
             <Stack.Screen name="ListApp" component={ListApp} />
             <Stack.Screen name="Checkout" component={CheckoutScreen} />
@@ -133,6 +138,12 @@ const App = () => {
     </Provider>
   );
 };
+
+const styles = StyleSheet.create({
+  gestureHandlerRootView: {
+    flex: 1,
+  },
+});
 
 export default Sentry.wrap(App, {
   touchEventBoundaryProps: {

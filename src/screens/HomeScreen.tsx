@@ -1,34 +1,22 @@
 import * as React from 'react';
-import {Image, Button, View, StyleSheet, Text, FlatList} from 'react-native';
+import {Button, View, StyleSheet, Text, FlatList} from 'react-native';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
-import Toast from 'react-native-toast-message';
-import {AppDispatch} from '../reduxApp';
-import {GradientBtn} from './CartScreen';
 import {BACKEND_URL} from '../config';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParamList} from '../navigation';
+import {ProfiledStyledProductCard} from '../components/StyledProductCard';
+import {Product} from '../types/Product';
 
 type ExtendedSentryScope = Sentry.Scope & {
   _tags: Record<string, string>;
   _user: Record<string, string>;
 };
 
-type Product = {
-  sku: string;
-  name: string;
-  image: string;
-  id: number;
-  type: string;
-  price: number;
-  title: string;
-  imgcropped: string;
-};
-
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
  * So you can control all spans that belong to that one transaction.
- * EmpowerPlant is a  Higher-order component, becuase it's a Function Component,
+ * EmpowerPlant is a  Higher-order component, because it's a Function Component,
  * and both Function Components and Class Components are Higher-order components.
  * Higher-order component can only read the props coming in. Props are changed as they're passed in.
  * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
@@ -71,6 +59,7 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
+      title: '',
       headerRightContainerStyle: {paddingRight: 20},
       headerLeftContainerStyle: {paddingLeft: 20},
       headerRight: () => {
@@ -111,16 +100,17 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Empower Plant</Text>
       </View>
-      <View style={styles.screen}>
+      <View>
         <Sentry.TimeToFullDisplay record={recordFullDisplay} />
         <FlatList
           id={'productList'}
           onRefresh={onProductsListRefresh}
           refreshing={toolData === null}
           data={toolData}
+          contentContainerStyle={styles.productListContainer}
           renderItem={({item}) => {
             return (
-              <ProfiledProductItem
+              <ProfiledStyledProductCard
                 appDispatch={dispatch}
                 id={item.id}
                 imgcropped={item.imgcropped}
@@ -146,122 +136,16 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
  */
 export default EmpowerPlant;
 
-export const selectImage = (source: string): React.ReactElement => {
-  /**
-   * Images need to be able to be analyzed so that the packager can resolve them and package in the app automatically.
-   * Dynamic strings with require syntax is not possible.
-   * https://github.com/facebook/react-native/issues/2481
-   */
-  // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
-  let length = source.split('/').length;
-  let image = source.split('/')[length - 1];
-  switch (image) {
-    case 'plant-spider-cropped.jpg':
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/plant-spider-cropped.png')}
-        />
-      );
-    case 'plant-to-text-cropped.jpg':
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/plant-to-text-cropped.png')}
-        />
-      );
-    case 'nodes-cropped.jpg':
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/nodes-cropped.png')}
-        />
-      );
-    case 'mood-planter-cropped.png':
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/mood-planter-cropped.png')}
-        />
-      );
-    default:
-      return (
-        <ProfiledImage
-          style={styles.tinyImage}
-          source={require('../assets/images/mood-planter-cropped.png')}
-        />
-      );
-  }
-};
-
-const ProfiledImage = Sentry.withProfiler(Image);
-
-const ProductItem = (props: {
-  id: number;
-  type: string;
-  price: number;
-  title: string;
-  imgcropped: string;
-  appDispatch: AppDispatch;
-}): React.ReactElement => {
-  return (
-    <View style={styles.statisticContainer}>
-      <View style={styles.card}>{selectImage(props.imgcropped)}</View>
-      <View style={styles.textContainer}>
-        <Text style={styles.itemTitle}>{props.title}</Text>
-        <Text style={styles.itemPrice}>{'$' + props.price}</Text>
-        <GradientBtn
-          progressState={false}
-          style={styles.linearGradient}
-          buttonText={styles.buttonText}
-          name={'Add to Cart'}
-          colors={['#002626', '#001414']}
-          onPress={() => {
-            props.appDispatch({
-              type: 'ADD_TO_CART',
-              payload: {
-                id: props.id,
-                title: props.title,
-                price: props.price,
-                quantity: 1,
-                imgcropped: props.imgcropped,
-              },
-            });
-            Toast.show({
-              type: 'success',
-              position: 'bottom',
-              text1: 'Added to Cart',
-              visibilityTime: 0.5,
-            });
-          }}
-        />
-      </View>
-    </View>
-  );
-};
-
-const ProfiledProductItem = Sentry.withProfiler(ProductItem);
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    padding: 5,
     backgroundColor: '#ffffff',
   },
   titleContainer: {
+    paddingLeft: 10,
+    paddingRight: 10,
     paddingTop: 12,
     paddingBottom: 12,
-  },
-  itemTitle: {
-    marginBottom: 5,
-    fontSize: 17,
-    fontWeight: '500',
-    color: '#002626',
-  },
-  itemPrice: {
-    fontSize: 22,
-    fontWeight: '400',
-    color: '#002626',
   },
   sku: {
     fontSize: 16,
@@ -269,73 +153,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: '700',
     color: '#002626',
   },
-  tinyImage: {
-    width: 100,
-    height: 150,
-  },
-  card: {
-    width: '40%',
-    height: '100%',
-
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textContainer: {
-    width: '100%',
-    height: '100%',
+  productListContainer: {
     paddingLeft: 10,
-    paddingTop: 20,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-  statisticContainer: {
-    width: '100%',
-    height: 200,
-
-    borderWidth: 1,
-    borderColor: '#dbdbdb',
-    borderRadius: 6,
-    backgroundColor: '#ffffff',
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 5,
-  },
-  statisticTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  statisticCount: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  flavorContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    backgroundColor: '#f5f5f5',
-  },
-  linearGradient: {
-    width: '100%',
-    paddingLeft: 20,
-    paddingRight: 20,
-    borderRadius: 2,
-    borderWidth: 1,
-    borderColor: '#8D6E63',
-  },
-
-  buttonText: {
-    fontSize: 16,
-    textAlign: 'center',
-    margin: 5,
-    color: 'white',
-    backgroundColor: 'transparent',
+    paddingRight: 10,
+    paddingBottom: 100,
   },
 });
