@@ -3,6 +3,16 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: "io.sentry.android.gradle"
 
+// Dependency 'androidx.core:core:1.15.0-alpha01' requires libraries and applications that
+// depend on it to compile against version 35 or later of the
+// Android APIs.
+// Until resolved https://stackoverflow.com/questions/78626580/how-to-resolve-app-execution-failure-due-to-androidx-corecore1-15-0-alpha
+configurations.all {
+    resolutionStrategy {
+        force "androidx.core:core:1.13.1"
+    }
+}
+
 sentry {
     // Disables or enables the automatic configuration of Native Symbols
     // for Sentry. This executes sentry-cli automatically so
