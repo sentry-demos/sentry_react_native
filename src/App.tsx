@@ -74,6 +74,10 @@ Sentry.init({
         return context;
       },
     }),
+    Sentry.mobileReplayIntegration({
+      maskAllImages: true,
+      maskAllText: true,
+    }),
   ],
   tracesSampleRate: 1.0,
   enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
@@ -85,6 +89,8 @@ Sentry.init({
   enableSpotlight: true,
   _experiments: {
     profilesSampleRate: 1,
+    replaysOnErrorSampleRate: 1,
+    replaysSessionSampleRate: 1,
   },
 });
 
