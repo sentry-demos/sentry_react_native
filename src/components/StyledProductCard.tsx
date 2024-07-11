@@ -12,6 +12,7 @@ export const StyledProductCard = (props: {
   price: number;
   title: string;
   imgcropped: string;
+  description: string;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
   const onAddToCartPressed = () => {
@@ -25,11 +26,12 @@ export const StyledProductCard = (props: {
         imgcropped: props.imgcropped,
       },
     });
+    const visibilityTimeMs = 1000;
     Toast.show({
       type: 'success',
       position: 'bottom',
       text1: 'Added to Cart',
-      visibilityTime: 0.5,
+      visibilityTime: visibilityTimeMs,
     });
   };
 
@@ -39,6 +41,7 @@ export const StyledProductCard = (props: {
       <View style={styles.cardDetail}>
         <View style={styles.cardDetailContent}>
           <Text style={styles.cardTitle}>{props.title}</Text>
+          <Text style={styles.cardDescription}>{props.description}</Text>
           <Text style={styles.itemPrice}>${props.price}</Text>
         </View>
         <View style={styles.cardDetailAction}>
@@ -110,5 +113,8 @@ const styles = StyleSheet.create({
   },
   addToCartButtonDefault: {
     margin: 10,
+  },
+  cardDescription: {
+    fontSize: 14,
   },
 });

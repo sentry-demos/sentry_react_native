@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
+import {View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
@@ -88,6 +88,7 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
                 imgcropped={item.imgcropped}
                 price={item.price}
                 title={item.title}
+                description={item.description}
                 type={''}
               />
             );
