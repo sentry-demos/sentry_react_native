@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -16,6 +16,7 @@ import {StyledButton} from '../components/StyledButton';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
+import {BACKEND_URL} from '../config';
 
 const ProductDetailScreen = ({
   navigation,
@@ -23,6 +24,10 @@ const ProductDetailScreen = ({
 }: StackScreenProps<RootStackParamList>) => {
   const showProductDetail = !!params;
   const onClosePress = () => navigation.goBack();
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/success`); // Extra fetch to add spans to the demo
+  }, []);
 
   return (
     <SafeAreaView style={screenStyles.screen}>
