@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {AppDispatch} from '../reduxApp';
 import {StyledButton} from './StyledButton';
@@ -13,6 +13,7 @@ export const StyledProductCard = (props: {
   title: string;
   imgcropped: string;
   description: string;
+  onPress: () => void;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
   const onAddToCartPressed = () => {
@@ -36,7 +37,7 @@ export const StyledProductCard = (props: {
   };
 
   return (
-    <View style={styles.cardContainer}>
+    <Pressable style={styles.cardContainer} onPress={props.onPress}>
       <View style={styles.cardHero}>{selectImage(props.imgcropped)}</View>
       <View style={styles.cardDetail}>
         <View style={styles.cardDetailContent}>
@@ -55,7 +56,7 @@ export const StyledProductCard = (props: {
           />
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

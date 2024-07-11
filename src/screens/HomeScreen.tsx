@@ -67,6 +67,10 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
 
   const recordFullDisplay = !!toolData;
 
+  const onProductCardPress = (item: Product) => {
+    navigation.navigate('ProductDetail', item);
+  };
+
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.titleContainer}>
@@ -90,6 +94,7 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
                 title={item.title}
                 description={item.description}
                 type={''}
+                onPress={() => onProductCardPress(item)}
               />
             );
           }}
