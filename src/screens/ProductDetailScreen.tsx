@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
+import {android} from '../../utils/platform';
 
 const ProductDetailScreen = ({
   navigation,
@@ -66,7 +67,10 @@ const ProductDetail = (props: Product) => {
   return (
     <View style={detailStyles.container}>
       <View style={detailStyles.image}>
-        {selectImage(props.imgcropped, {width: '100%', height: 400})}
+        {selectImage(props.imgcropped, {
+          width: '105%',
+          height: 400,
+        })}
       </View>
       <View style={detailStyles.contentContainer}>
         <Text style={detailStyles.title}>{props.title}</Text>
@@ -104,14 +108,17 @@ const detailStyles = StyleSheet.create({
     fontSize: 40,
     fontWeight: 'bold',
     marginBottom: 15,
+    color: '#002626',
   },
   description: {
     marginBottom: 10,
+    color: '#002626',
   },
   price: {
     fontSize: 24,
     alignSelf: 'flex-end',
     marginBottom: 10,
+    color: '#002626',
   },
   addToCartButton: {
     alignSelf: 'flex-end',
@@ -145,7 +152,7 @@ const getCloseButtonStyles = (top: number) =>
       borderRadius: 30,
       backgroundColor: '#002626',
       position: 'absolute',
-      top,
+      top: top + (android(10) || 0),
       left: 10,
       display: 'flex',
       alignItems: 'center',
