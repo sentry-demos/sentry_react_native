@@ -23,6 +23,11 @@ const ProductDetailScreen = ({
   navigation,
   route: {params},
 }: StackScreenProps<RootStackParamList>) => {
+  console.debug('Loading ProductDetailScreen...', {
+    id: params?.id,
+    title: params?.title,
+  });
+
   const showProductDetail = !!params;
   const onClosePress = () => navigation.goBack();
 

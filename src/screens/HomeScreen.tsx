@@ -65,6 +65,12 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
     loadData();
   };
 
+  if (toolData && toolData.length <= 10) {
+    setTimeout(() => {
+      console.warn('Loaded less then 10 products!');
+    });
+  }
+
   const recordFullDisplay = !!toolData;
 
   const onProductCardPress = (item: Product) => {
