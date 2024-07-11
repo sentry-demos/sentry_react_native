@@ -15,6 +15,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StyledButton} from '../components/StyledButton';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import {useDispatch} from 'react-redux';
+import * as Sentry from '@sentry/react-native';
 
 const ProductDetailScreen = ({
   navigation,
@@ -26,7 +27,7 @@ const ProductDetailScreen = ({
   return (
     <SafeAreaView style={screenStyles.screen}>
       {showProductDetail ? <ProductDetail {...params} /> : <ProductNotFound />}
-      <CloseButton onPress={onClosePress} />
+      <ProfiledCloseButton onPress={onClosePress} />
     </SafeAreaView>
   );
 };
@@ -129,6 +130,8 @@ const CloseButton = ({onPress}: {onPress: () => void}) => {
   );
 };
 
+const ProfiledCloseButton = Sentry.withProfiler(CloseButton);
+
 const getCloseButtonStyles = (top: number) =>
   StyleSheet.create({
     container: {
@@ -149,4 +152,4 @@ const ProductNotFound = () => {
   return <Text>Product Not Found</Text>;
 };
 
-export default ProductDetailScreen;
+export default Sentry.withProfiler(ProductDetailScreen);
