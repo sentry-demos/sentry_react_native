@@ -7,4 +7,6 @@ export type Product = {
   price: number;
   title: string;
   imgcropped: string;
+  description: string;
+  descriptionfull: string;
 };

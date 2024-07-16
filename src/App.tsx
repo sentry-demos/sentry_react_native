@@ -18,6 +18,7 @@ import TrackerScreen from './screens/TrackerScreen';
 import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
 import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
+import ProductDetailScreen from './screens/ProductDetailScreen';
 import ReduxScreen from './screens/ReduxScreen';
 import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
@@ -74,17 +75,24 @@ Sentry.init({
         return context;
       },
     }),
+    Sentry.mobileReplayIntegration({
+      maskAllImages: true,
+      maskAllText: true,
+    }),
   ],
   tracesSampleRate: 1.0,
-  enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
-  sessionTrackingIntervalMillis: 5000,
+  enableAutoSessionTracking: true,
+  // For testing, session close when 5 seconds (instead of the default 30) in the background.
+  sessionTrackingIntervalMillis: 30000,
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   attachStacktrace: true,
   attachScreenshot: true,
   attachViewHierarchy: true,
   enableSpotlight: true,
   _experiments: {
-    profilesSampleRate: 1,
+    profilesSampleRate: 1.0,
+    replaysOnErrorSampleRate: 1.0,
+    replaysSessionSampleRate: 1.0,
   },
 });
 
@@ -121,7 +129,7 @@ const App = () => {
               );
             }}>
             <BottomTabNavigator />
-            <Toast />
+            {/* <Toast /> */}
           </NavigationContainer>
         </GestureHandlerRootView>
       </SafeAreaProvider>
@@ -204,6 +212,7 @@ const ShopNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
     </Stack.Navigator>
   );
 };
