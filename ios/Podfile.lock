@@ -1211,11 +1211,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (5.25.0-alpha.2):
+  - RNSentry (5.26.0):
     - hermes-engine
     - React-Core
     - React-hermes
-    - Sentry/HybridSDK (= 8.30.0)
+    - Sentry/HybridSDK (= 8.31.1)
   - RNVectorIcons (10.1.0):
     - DoubleConversion
     - glog
@@ -1237,7 +1237,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - Sentry/HybridSDK (8.30.0)
+  - Sentry/HybridSDK (8.31.1)
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
 
@@ -1491,12 +1491,12 @@ SPEC CHECKSUMS:
   ReactCommon: f42444e384d82ab89184aed5d6f3142748b54768
   RNGestureHandler: 2282cfbcf86c360d29f44ace393203afd5c6cff7
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
-  RNSentry: 019020a295de004adc95d823558f3f4b816562a5
+  RNSentry: 85fe1023bf60ead12d059d9c845de19de0ed6f0d
   RNVectorIcons: 2a2f79274248390b80684ea3c4400bd374a15c90
-  Sentry: 37b29280c25d35e49850151b65a27786d94e1a19
+  Sentry: 9c1188876ea1291d1a9db4b38c3f17ebd8e6985e
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 348f8b538c3ed4423eb58a8e5730feec50bce372
 
-PODFILE CHECKSUM: 785af98a36abdee2bc88d72af0fe14c3f69e6945
+PODFILE CHECKSUM: 80c7c0d5a0c5b9c4c998360149ad615db237b157
 
 COCOAPODS: 1.15.2
