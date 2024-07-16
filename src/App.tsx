@@ -81,8 +81,9 @@ Sentry.init({
     }),
   ],
   tracesSampleRate: 1.0,
-  enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
-  sessionTrackingIntervalMillis: 5000,
+  enableAutoSessionTracking: true,
+  // For testing, session close when 5 seconds (instead of the default 30) in the background.
+  sessionTrackingIntervalMillis: 30000,
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   attachStacktrace: true,
   attachScreenshot: true,
