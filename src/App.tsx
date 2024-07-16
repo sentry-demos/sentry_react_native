@@ -91,6 +91,8 @@ Sentry.init({
   enableSpotlight: true,
   _experiments: {
     profilesSampleRate: 1.0,
+    replaysOnErrorSampleRate: 1.0,
+    replaysSessionSampleRate: 1.0,
   },
 });
 
@@ -127,7 +129,7 @@ const App = () => {
               );
             }}>
             <BottomTabNavigator />
-            <Toast />
+            {/* <Toast /> */}
           </NavigationContainer>
         </GestureHandlerRootView>
       </SafeAreaProvider>
