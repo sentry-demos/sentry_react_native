@@ -90,9 +90,7 @@ Sentry.init({
   attachViewHierarchy: true,
   enableSpotlight: true,
   _experiments: {
-    profilesSampleRate: 1,
-    replaysOnErrorSampleRate: 1,
-    replaysSessionSampleRate: 1,
+    profilesSampleRate: 1.0,
   },
 });
 
