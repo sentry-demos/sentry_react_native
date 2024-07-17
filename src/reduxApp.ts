@@ -14,6 +14,9 @@ const initialState = {
     state: '',
     zipCode: '',
   },
+  feedback: {
+    isActionButtonVisible: false,
+  },
 };
 
 const reducer = (state = initialState, action) => {
@@ -73,10 +76,28 @@ const reducer = (state = initialState, action) => {
         ...state,
         counter: 0,
       };
+    case 'SHOW_FEEDBACK_ACTION_BUTTON':
+      return {
+        ...state,
+        feedback: {...state.feedback, isActionButtonVisible: true},
+      };
+    case 'HIDE_FEEDBACK_ACTION_BUTTON':
+      return {
+        ...state,
+        feedback: {...state.feedback, isActionButtonVisible: false},
+      };
     default:
       return state;
   }
 };
+
+export const showFeedbackActionButton = () => ({
+  type: 'SHOW_FEEDBACK_ACTION_BUTTON',
+});
+
+export const hideFeedbackActionButton = () => ({
+  type: 'HIDE_FEEDBACK_ACTION_BUTTON',
+});
 
 /*
   Example of how to use the Sentry redux enhancer packaged with @sentry/react:
