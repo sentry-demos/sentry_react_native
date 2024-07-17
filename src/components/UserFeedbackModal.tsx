@@ -106,8 +106,8 @@ export function UserFeedbackModal(props: {onDismiss: () => void}) {
 
     const userFeedback: UserFeedback = {
       event_id: sentryId,
-      name: Sentry.getIsolationScope().getUser()?.username ?? 'Anonymous User',
-      email: Sentry.getIsolationScope().getUser()?.email,
+      name: 'Anonymous User',
+      email: 'example@example.com',
       comments,
     };
 
