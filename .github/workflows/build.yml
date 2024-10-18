@@ -61,7 +61,7 @@ jobs:
           ruby-version: '3.3.0'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-      - working-directory: samples
+      - working-directory: ios
         run: bundle exec pod install
 
       - working-directory: ios
