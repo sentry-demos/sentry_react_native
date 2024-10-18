@@ -64,7 +64,8 @@ jobs:
       - working-directory: ios
         run: bundle exec pod install
 
-      - working-directory: ios
+      - name: Run xcodebuild
+        working-directory: ios
         run: |
           mkdir -p "DerivedData"
           derivedData="$(cd "DerivedData" ; pwd -P)"
