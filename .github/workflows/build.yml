@@ -133,5 +133,5 @@ jobs:
             -camera-front none
             -timezone US/Pacific
           script: |
-            adb install -r -d sentry_react_native.app
+            adb install -r -d app-release.apk
             maestro test maestro --debug-output maestro-logs --env=APP_ID=com.sentry_react_native
