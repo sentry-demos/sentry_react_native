@@ -8,6 +8,7 @@ on:
 
 env:
   SENTRY_ALLOW_FAILURE: true
+  MAESTRO_VERSION: 1.39.0
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -95,3 +96,45 @@ jobs:
         with:
           name: build-ios-logs
           path: ios/xcodebuild.log
+
+  run-ui-test-android:
+    name: UI Test Android
+    needs: build-android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: empower-plant-react-native-android
+          path: empower-plant-react-native-android.apk
+
+      - name: Install Maestro
+        uses: dniHze/maestro-test-action@bda8a93211c86d0a05b7a4597c5ad134566fbde4 # pin@v1.0.0
+        with:
+          maestro-version: ${{env.MAESTRO_VERSION}}
+
+      - name: Run tests
+        uses: reactivecircus/android-emulator-runner@f0d1ed2dcad93c7479e8b2f2226c83af54494915 # pin@v2.32.0
+        with:
+          api-level: 30
+          force-avd-creation: false
+          disable-animations: true
+          disable-spellchecker: true
+          target: 'aosp_atd'
+          channel: canary # Necessary for ATDs
+          emulator-options: >
+            -no-window
+            -no-snapshot-save
+            -gpu swiftshader_indirect
+            -noaudio
+            -no-boot-anim
+            -camera-back none
+            -camera-front none
+            -timezone US/Pacific
+          script: |
+            adb install -r -d empower-plant-react-native-android.apk
+            maestro test \
+              maestro \
+              --debug-output maestro-logs

@@ -163,6 +163,7 @@ const BottomTabNavigator = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <Icon
+              testID="bottom-tab-cart"
               name="cart-shopping"
               size={30}
               color={focused ? '#f6cfb2' : '#dae3e4'}
