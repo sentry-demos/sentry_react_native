@@ -108,7 +108,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: empower-plant-react-native-android
-          path: empower-plant-react-native-android.apk
 
       - name: Install Maestro
         uses: dniHze/maestro-test-action@bda8a93211c86d0a05b7a4597c5ad134566fbde4 # pin@v1.0.0
@@ -134,7 +133,5 @@ jobs:
             -camera-front none
             -timezone US/Pacific
           script: |
-            adb install -r -d empower-plant-react-native-android.apk
-            maestro test \
-              maestro \
-              --debug-output maestro-logs
+            adb install -r -d sentry_react_native.app
+            maestro test maestro --debug-output maestro-logs --env=APP_ID=com.sentry_react_native
