@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+env:
+  SENTRY_ALLOW_FAILURE: true
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
