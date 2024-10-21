@@ -1,0 +1,29 @@
+appId: ${APP_ID}
+---
+- launchApp
+- assertVisible: "Empower Plant"
+- waitForAnimationToEnd
+- assertVisible: "Botana Voice"
+- tapOn:
+    text: "Add to cart"
+    below:
+      text: "Botana Voice"
+    repeat: 3
+- tapOn:
+    text: "Add to cart"
+    below:
+      text: "Plant Mood"
+- tapOn:
+    id: "bottom-tab-cart"
+- assertVisible: "CartScreen"
+- scroll
+- tapOn:
+    text: "Delete"
+    below:
+      text: "Botana Voice"
+- tapOn: "Checkout"
+- tapOn: "email"
+- scroll
+- tapOn:
+    text: "Place your order"
+    repeat: 3
