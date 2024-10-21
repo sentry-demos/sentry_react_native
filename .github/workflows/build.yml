@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  SENTRY_ALLOW_FAILURE: true
+  SENTRY_ALLOW_FAILURE: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
