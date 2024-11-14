@@ -62,6 +62,13 @@ const CartScreen = ({
   }, [navigation]);
 
   const cartItems: Array<CartData> | [] = Object.values(cartData);
+
+  if (cartItems.length === 0) {
+    setTimeout(() => {
+      console.error('No products in the cart.');
+    });
+  }
+
   const subTotalDisplay = (props: subTotal): React.ReactElement => {
     const {quantity: q, total: t} = props;
     const multiple = q > 1 ? 's' : '';

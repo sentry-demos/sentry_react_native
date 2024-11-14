@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {AppDispatch} from '../reduxApp';
 import {StyledButton} from './StyledButton';
@@ -12,6 +12,8 @@ export const StyledProductCard = (props: {
   price: number;
   title: string;
   imgcropped: string;
+  description: string;
+  onPress: () => void;
   appDispatch: AppDispatch;
 }): React.ReactElement => {
   const onAddToCartPressed = () => {
@@ -25,20 +27,22 @@ export const StyledProductCard = (props: {
         imgcropped: props.imgcropped,
       },
     });
+    const visibilityTimeMs = 1000;
     Toast.show({
       type: 'success',
       position: 'bottom',
       text1: 'Added to Cart',
-      visibilityTime: 0.5,
+      visibilityTime: visibilityTimeMs,
     });
   };
 
   return (
-    <View style={styles.cardContainer}>
+    <Pressable style={styles.cardContainer} onPress={props.onPress}>
       <View style={styles.cardHero}>{selectImage(props.imgcropped)}</View>
       <View style={styles.cardDetail}>
         <View style={styles.cardDetailContent}>
           <Text style={styles.cardTitle}>{props.title}</Text>
+          <Text style={styles.cardDescription}>{props.description}</Text>
           <Text style={styles.itemPrice}>${props.price}</Text>
         </View>
         <View style={styles.cardDetailAction}>
@@ -52,7 +56,7 @@ export const StyledProductCard = (props: {
           />
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
@@ -110,5 +114,8 @@ const styles = StyleSheet.create({
   },
   addToCartButtonDefault: {
     margin: 10,
+  },
+  cardDescription: {
+    fontSize: 14,
   },
 });

@@ -64,3 +64,6 @@ yarn-error.log
 /coverage
 
 .env
+.yalc
+yalc.lock
+.sentry
