@@ -1,0 +1,98 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+env:
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  SENTRY_ALLOW_FAILURE: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-android:
+    name: Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - uses: gradle/gradle-build-action@v3
+
+      - working-directory: android
+        run: ./gradlew :app:assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: empower-plant-react-native-android
+          path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 60
+
+  build-ios:
+    name: iOS
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.0'
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - working-directory: ios
+        run: bundle exec pod install
+
+      - name: Run xcodebuild
+        working-directory: ios
+        run: |
+          mkdir -p "DerivedData"
+          derivedData="$(cd "DerivedData" ; pwd -P)"
+          set -o pipefail && xcodebuild \
+            -workspace sentry_react_native.xcworkspace \
+            -configuration "Release" \
+            -scheme sentry_react_native \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$derivedData" \
+            build \
+            | tee xcodebuild.log \
+            | xcbeautify --quieter --is-ci --disable-colored-output
+
+      - name: Upload APP
+        uses: actions/upload-artifact@v4
+        with:
+          name: empower-plant-react-native-ios
+          path: ios/DerivedData/Build/Products/Release-iphonesimulator/sentry_react_native.app
+          retention-days: 60
+
+      - name: Upload logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ios-logs
+          path: ios/xcodebuild.log
