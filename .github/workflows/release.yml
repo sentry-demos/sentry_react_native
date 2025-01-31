@@ -29,7 +29,11 @@ jobs:
 
       - name: Bump Version
         run: |
+          git checkout -b release/${{ inputs.version_name }}
           npm version ${{ inputs.version_name }}
+          # TODO: This should happen after the GH Release is created
+          git checkout main
+          git merge release/${{ inputs.version_name }}
 
   build-android:
     needs: [release]
