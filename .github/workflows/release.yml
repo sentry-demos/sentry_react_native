@@ -1,0 +1,52 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'The version name to release. E.g. 4.0.2'
+        required: true
+        default: null
+      version_code:
+        description: 'The version code (numeric) to release. E.g. 123'
+        required: true
+        default: null
+
+jobs:
+  bump-version:
+    runs-on: macos-latest
+    name: 'Release a new React Native Empower Plant version'
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Bump Version
+        run: |
+          npm version ${{ inputs.version_name }}
+
+  build-android:
+    needs: [release]
+    uses: ./.github/workflows/build-android.yml
+
+  build-ios:
+    needs: [release]
+    uses: ./.github/workflows/build-ios.yml
+
+  publish-release:
+    needs: [bump-version, build-android, build-ios]
+    runs-on: macos-latest
+    steps:
+      - name: Download iOS App
+        uses: actions/download-artifact@v4
+        with:
+          name: empower-plant-react-native-ios
+          path: ios/DerivedData/Build/Products/Release-iphonesimulator/sentry_react_native.app
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: empower-plant-react-native-android
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Create Release
+        run: |
+          gh release create $PACKAGE_VERSION app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk -t "$PACKAGE_VERSION" --generate-notes || error_exit "Failed to create GitHub release."
