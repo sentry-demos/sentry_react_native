@@ -64,6 +64,7 @@ Sentry.init({
     reactNavigationIntegration,
   ],
   tracesSampleRate: 1.0,
+  profilesSampleRate: 1.0,
   enableUserInteractionTracing: true,
   enableAutoSessionTracking: true,
   sessionTrackingIntervalMillis: 5000, // For testing, session close when 5 seconds (instead of the default 30) in the background.
@@ -72,9 +73,6 @@ Sentry.init({
   attachScreenshot: true,
   attachViewHierarchy: true,
   spotlight: true,
-  _experiments: {
-    profilesSampleRate: 1,
-  },
 });
 
 Sentry.setTag('se', SE);
