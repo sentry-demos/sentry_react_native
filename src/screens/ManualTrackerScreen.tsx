@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Button, View, StyleSheet, Text, ActivityIndicator} from 'react-native';
 
 import * as Sentry from '@sentry/react-native';
+import {Span} from '@sentry/types';
 
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
@@ -17,48 +18,50 @@ const TrackerScreen = () => {
     TotalRecovered: number;
   } | null>(null);
 
-  const transaction = React.useRef(null);
+  const rootSpan = React.useRef<Span | undefined>(undefined);
 
   React.useEffect(() => {
     // Initialize the transaction for the screen.
-    transaction.current = Sentry.startTransaction({
-      name: 'Tracker Screen',
-      op: 'navigation',
-    });
+    rootSpan.current = Sentry.startSpanManual(
+      {
+        name: 'Tracker Screen (manual)',
+        op: 'navigation',
+      },
+      (span: Span) => span,
+    );
 
     return () => {
-      // Finishing the transaction triggers sending the data to Sentry.
-      transaction.current?.finish();
-      transaction.current = null;
-      Sentry.configureScope((scope) => {
-        scope.setSpan(undefined);
-      });
+      // Ending the span triggers sending the data to Sentry.
+      rootSpan.current?.end();
+      rootSpan.current = undefined;
     };
   }, []);
 
-  const loadData = () => {
+  const loadData = async () => {
     setCases(null);
 
     // Create a child span for the API call.
-    const span = transaction.current?.startChild({
-      op: 'http',
-      description: 'Fetch Covid19 data from API',
-    });
-
-    fetch('https://api.covid19api.com/summary', {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+    await Sentry.startSpan(
+      {
+        op: 'http',
+        name: 'Fetch Covid19 data from API',
+        parentSpan: rootSpan.current,
       },
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        setCases(json.Global);
+      async (span: Span) => {
+        const response = await fetch('https://api.covid19api.com/summary', {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+        const json = await response.json();
+        const newCases = json.Global;
+        setCases(newCases);
 
-        span?.setData('json', json);
-        span?.finish();
-      });
+        span.setAttribute('received_cases', Object.keys(newCases));
+      },
+    );
   };
 
   React.useEffect(() => {
