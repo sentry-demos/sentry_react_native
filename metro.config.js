@@ -11,4 +11,6 @@ const userConfig = {};
 
 const config = mergeConfig(getDefaultConfig(__dirname), userConfig);
 
-module.exports = withSentryConfig(config);
+module.exports = withSentryConfig(config, {
+  annotateReactComponents: true,
+});

@@ -17,6 +17,7 @@ import TrackerScreen from './screens/TrackerScreen';
 import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
 import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
+import ProductDetailScreen from './screens/ProductDetailScreen';
 import ReduxScreen from './screens/ReduxScreen';
 import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
@@ -61,10 +62,16 @@ Sentry.init({
     Sentry.reactNativeTracingIntegration({
       traceFetch: false, // RN uses XHR to implement fetch, this prevents duplicates
     }),
+    Sentry.mobileReplayIntegration({
+      maskAllImages: true,
+      maskAllText: true,
+    }),
     reactNavigationIntegration,
   ],
   tracesSampleRate: 1.0,
   profilesSampleRate: 1.0,
+  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: 1.0,
   enableUserInteractionTracing: true,
   enableAutoSessionTracking: true,
   sessionTrackingIntervalMillis: 5000, // For testing, session close when 5 seconds (instead of the default 30) in the background.
@@ -107,7 +114,7 @@ const App = () => {
               );
             }}>
             <BottomTabNavigator />
-            <Toast />
+            {/* <Toast /> */}
           </NavigationContainer>
         </GestureHandlerRootView>
       </SafeAreaProvider>
@@ -190,6 +197,7 @@ const ShopNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
     </Stack.Navigator>
   );
 };

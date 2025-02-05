@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
+import {View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
@@ -65,7 +65,17 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
     loadData();
   };
 
+  if (toolData && toolData.length <= 10) {
+    setTimeout(() => {
+      console.warn('Loaded less then 10 products!');
+    });
+  }
+
   const recordFullDisplay = !!toolData;
+
+  const onProductCardPress = (item: Product) => {
+    navigation.navigate('ProductDetail', item);
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -88,7 +98,9 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
                 imgcropped={item.imgcropped}
                 price={item.price}
                 title={item.title}
+                description={item.description}
                 type={''}
+                onPress={() => onProductCardPress(item)}
               />
             );
           }}
