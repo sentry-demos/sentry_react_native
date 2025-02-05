@@ -42,26 +42,28 @@ const CheckoutScreen = () => {
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
 
-  let se, customerType, email;
-  Sentry.withScope(function (scope) {
-    [se, customerType] = [scope._tags.se, scope._tags.customerType];
-    email = scope._user.email;
-  });
+  const scopeData = Sentry.getCurrentScope().getScopeData();
+  const se = scopeData.tags['se'];
+  const customerType = scopeData.tags['customerType'];
+  const email = scopeData.user?.email;
+
   const performCheckoutOnServer = async () => {
-    // ----------- Sentry Start Transaction ------------------------
-    let transaction = Sentry.startTransaction({name: 'Submit Checkout Form'});
-    Sentry.configureScope((scope) => scope.setSpan(transaction));
+    await Sentry.startSpan(
+      {name: 'Submit Checkout Form', forceTransaction: true},
+      async () => {
+        // Span starts here
+        let data = await placeOrder(Toast);
 
-    let data = await placeOrder(Toast);
-
-    // ----------- Sentry Finish Transaction -----------------------
-    const span = transaction.startChild({
-      data,
-      op: 'task',
-      description: 'processing shopping cart result',
-    });
-    span.finish();
-    transaction.finish();
+        Sentry.startSpan(
+          {name: 'Processing shopping cart result', op: 'task'},
+          () => {
+            // Child span starts here and ends when the function returns
+            console.log('Processing shopping cart result...', data);
+          },
+        );
+        // Span ends with the function returning
+      },
+    );
   };
 
   const placeOrder = async (
