@@ -23,13 +23,14 @@ import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
 
-import {RootState, store} from './reduxApp';
+import {RootState, store, showFeedbackActionButton} from './reduxApp';
 import {DSN} from './config';
 import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LogBox, Platform, StyleSheet} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {SentryUserFeedbackActionButton} from './components/UserFeedbackModal';
 console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
@@ -56,6 +57,12 @@ Sentry.init({
       // Make issue for the SE
       event.fingerprint = ['{{ default }}', SE];
     }
+
+    if (!event.type) {
+      // Only show the feedback button for errors
+      store.dispatch(showFeedbackActionButton());
+    }
+
     return event;
   },
   integrations: [
@@ -115,6 +122,7 @@ const App = () => {
             }}>
             <BottomTabNavigator />
             {/* <Toast /> */}
+            <SentryUserFeedbackActionButton />
           </NavigationContainer>
         </GestureHandlerRootView>
       </SafeAreaProvider>
@@ -171,7 +179,7 @@ const BottomTabNavigator = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <Icon
-              name="bug"
+              name="gear"
               size={30}
               color={focused ? '#f6cfb2' : '#dae3e4'}
             />
