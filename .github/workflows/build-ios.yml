@@ -3,15 +3,14 @@ name: iOS
 on:
   workflow_call:
 
-env:
-  APP_ARCHIVE_PATH: sentry_react_native.app.zip
-  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  SENTRY_ALLOW_FAILURE: false
-
 jobs:
   build-ios:
     name: iOS
     runs-on: macos-14
+    env:
+      APP_ARCHIVE_PATH: sentry_react_native.app.zip
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ALLOW_FAILURE: false
     steps:
       - uses: actions/checkout@v4
 

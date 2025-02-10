@@ -8,15 +8,14 @@ on:
         required: false
         type: string
 
-env:
-  APK_PATH: android/app/build/outputs/apk/release/app-release.apk
-  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  SENTRY_ALLOW_FAILURE: false
-
 jobs:
   build-android:
     name: Android
     runs-on: ubuntu-latest
+    env:
+      APK_PATH: android/app/build/outputs/apk/release/app-release.apk
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ALLOW_FAILURE: false
     steps:
       - uses: actions/checkout@v4
         with:
