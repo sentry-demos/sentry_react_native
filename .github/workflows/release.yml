@@ -1,12 +1,10 @@
 name: Release
-
 on:
   workflow_dispatch:
     inputs:
-      version_name:
+      version:
         description: 'The version name to release. E.g. 4.0.2'
         required: true
-        default: null
 
 jobs:
   bump-version:
@@ -25,17 +23,17 @@ jobs:
 
       - name: Bump Version
         run: |
-          git checkout -b release/${{ inputs.version_name }}
-          npm version ${{ inputs.version_name }}
+          git checkout -b release/${{ inputs.version }}
+          npm version ${{ inputs.version }}
           # # TODO: This should happen after the GH Release is created
           # git checkout main
-          # git merge release/${{ inputs.version_name }}
+          # git merge release/${{ inputs.version }}
 
   build-android:
     needs: [bump-version]
     uses: ./.github/workflows/build-android.yml
     with:
-      ref: release/${{ inputs.version_name }}
+      ref: release/${{ inputs.version }}
 
   # build-ios:
   #   needs: [release]
