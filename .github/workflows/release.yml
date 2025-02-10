@@ -30,8 +30,8 @@ jobs:
         run: |
           git checkout -b release/${{ env.VERSION }}
           npm version ${{ env.VERSION }}
-          git tag --force v${{ env.VERSION }} -m ${{ env.VERSION }}
-          git push origin v${{ env.VERSION }}
+          git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
+          git push origin ${{ env.VERSION }}
           git push origin release/${{ env.VERSION }}
           # # TODO: This should happen after the GH Release is created
           # git checkout main
