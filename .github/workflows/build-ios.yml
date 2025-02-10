@@ -2,6 +2,11 @@ name: iOS
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        description: 'The branch to build from. E.g. main'
+        required: false
+        type: string
 
 jobs:
   build-ios:
@@ -13,6 +18,8 @@ jobs:
       SENTRY_ALLOW_FAILURE: false
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - uses: actions/setup-node@v4
         with:
