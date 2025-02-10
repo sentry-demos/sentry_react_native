@@ -10,6 +10,8 @@ env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   SENTRY_ALLOW_FAILURE: false
   MAESTRO_VERSION: 1.39.0
+  APK_PATH: android/app/build/outputs/apk/release/app-release.apk
+  APP_ARCHIVE_PATH: sentry_react_native.app.zip
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -44,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: empower-plant-react-native-android
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: ${{ env.APK_PATH }}
           retention-days: 60
 
   build-ios:
@@ -84,11 +86,17 @@ jobs:
             | tee xcodebuild.log \
             | xcbeautify --quieter --is-ci --disable-colored-output
 
+      - name: Archive App
+        run: |
+          zip -r \
+            ${{ env.APP_ARCHIVE_PATH }} \
+            ios/DerivedData/Build/Products/Release-iphonesimulator/sentry_react_native.app
+
       - name: Upload APP
         uses: actions/upload-artifact@v4
         with:
           name: empower-plant-react-native-ios
-          path: ios/DerivedData/Build/Products/Release-iphonesimulator/sentry_react_native.app
+          path: ${{ env.APP_ARCHIVE_PATH }}
           retention-days: 60
 
       - name: Upload logs
