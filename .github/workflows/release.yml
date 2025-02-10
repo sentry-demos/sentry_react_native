@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Set environment variables
         run: |
-          echo "VERSION=${{ inputs.version || "3.2.0" }}" >> $GITHUB_ENV
+          echo "VERSION=${{ inputs.version || '3.2.0' }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
 
@@ -42,7 +42,7 @@ jobs:
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
     with:
-      ref: release/${{ inputs.version || "3.2.0" }}
+      ref: release/${{ inputs.version || '3.2.0' }}
 
   # build-ios:
   #   needs: [release]
