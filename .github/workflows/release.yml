@@ -14,7 +14,7 @@ env:
 
 jobs:
   bump-version:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     name: 'Prepare Release'
     steps:
       - name: Set environment variables
@@ -48,22 +48,24 @@ jobs:
     with:
       ref: release/${{ inputs.version || '99.0.0' }}
 
-  build-ios:
-    name: 'Build iOS'
-    needs: [bump-version]
-    uses: ./.github/workflows/build-ios.yml
-    secrets: inherit
-    with:
-      ref: release/${{ inputs.version || '99.0.0' }}
+  # build-ios:
+  #   name: 'Build iOS'
+  #   needs: [bump-version]
+  #   uses: ./.github/workflows/build-ios.yml
+  #   secrets: inherit
+  #   with:
+  #     ref: release/${{ inputs.version || '99.0.0' }}
 
   publish-release:
     name: 'Publish Release'
-    needs: [bump-version, build-android, build-ios]
-    runs-on: macos-latest
+    needs: [bump-version, build-android]
+    runs-on: ubuntu-latest
     steps:
       - name: Set environment variables
         run: |
           echo "VERSION=${{ inputs.version || '99.0.0' }}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
 
       - name: Download iOS App
         uses: actions/download-artifact@v4
@@ -82,7 +84,6 @@ jobs:
           gh release create \
             ${{ env.VERSION }} \
             ${{ env.APK_PATH }} \
-            ${{ env.APP_ARCHIVE_PATH }} \
             --title ${{ env.VERSION }} \
             --notes "Release ${{ env.VERSION }}" \
             || error_exit "Failed to create GitHub release."
