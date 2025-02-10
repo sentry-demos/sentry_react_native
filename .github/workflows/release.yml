@@ -34,6 +34,9 @@ jobs:
 
       - name: Bump Version
         run: |
+          git config user.name getsentry-bot
+          git config user.email bot@sentry.io
+
           git checkout -b release/${{ env.VERSION }}
           npm version ${{ env.VERSION }}
           git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
@@ -81,6 +84,9 @@ jobs:
 
       - name: Create Release
         run: |
+          git config user.name getsentry-bot
+          git config user.email bot@sentry.io
+
           gh release create \
             ${{ env.VERSION }} \
             ${{ env.APK_PATH }} \
