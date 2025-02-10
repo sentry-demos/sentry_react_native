@@ -12,13 +12,16 @@ concurrency:
 
 jobs:
   build-android:
+    name: 'Build Android'
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
 
   build-ios:
+    name: 'Build iOS'
     uses: ./.github/workflows/build-ios.yml
     secrets: inherit
 
   test:
+    name: 'Run UI Tests'
     needs: build-android
     uses: ./.github/workflows/test.yml

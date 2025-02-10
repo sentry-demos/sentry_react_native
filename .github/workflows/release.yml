@@ -10,11 +10,12 @@ on:
 env:
   APK_PATH: app-release.apk
   APP_ARCHIVE_PATH: sentry_react_native.app.zip
+  GH_TOKEN: ${{ github.token }}
 
 jobs:
   bump-version:
     runs-on: macos-latest
-    name: 'Release a new React Native Empower Plant version'
+    name: 'Prepare Release'
     steps:
       - name: Set environment variables
         run: |
@@ -40,6 +41,7 @@ jobs:
           git push origin release/${{ env.VERSION }}
 
   build-android:
+    name: 'Build Android'
     needs: [bump-version]
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
@@ -47,6 +49,7 @@ jobs:
       ref: release/${{ inputs.version || '99.0.0' }}
 
   build-ios:
+    name: 'Build iOS'
     needs: [bump-version]
     uses: ./.github/workflows/build-ios.yml
     secrets: inherit
@@ -54,6 +57,7 @@ jobs:
       ref: release/${{ inputs.version || '99.0.0' }}
 
   publish-release:
+    name: 'Publish Release'
     needs: [bump-version, build-android, build-ios]
     runs-on: macos-latest
     steps:
