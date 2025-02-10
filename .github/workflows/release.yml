@@ -1,6 +1,5 @@
 name: Release
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -19,7 +18,7 @@ jobs:
     steps:
       - name: Set environment variables
         run: |
-          echo "VERSION=${{ inputs.version || '99.0.0' }}" >> $GITHUB_ENV
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
 
@@ -49,15 +48,15 @@ jobs:
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
     with:
-      ref: release/${{ inputs.version || '99.0.0' }}
+      ref: release/${{ inputs.version }}
 
-  # build-ios:
-  #   name: 'Build iOS'
-  #   needs: [bump-version]
-  #   uses: ./.github/workflows/build-ios.yml
-  #   secrets: inherit
-  #   with:
-  #     ref: release/${{ inputs.version || '99.0.0' }}
+  build-ios:
+    name: 'Build iOS'
+    needs: [bump-version]
+    uses: ./.github/workflows/build-ios.yml
+    secrets: inherit
+    with:
+      ref: release/${{ inputs.version }}
 
   publish-release:
     name: 'Publish Release'
@@ -66,16 +65,16 @@ jobs:
     steps:
       - name: Set environment variables
         run: |
-          echo "VERSION=${{ inputs.version || '99.0.0' }}" >> $GITHUB_ENV
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
         with:
           ref: master
 
-      # - name: Download iOS App
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: empower-plant-react-native-ios
+      - name: Download iOS App
+        uses: actions/download-artifact@v4
+        with:
+          name: empower-plant-react-native-ios
 
       - name: Download Android APK
         uses: actions/download-artifact@v4
@@ -96,8 +95,8 @@ jobs:
             --notes "Release ${{ env.VERSION }}" \
             || error_exit "Failed to create GitHub release."
 
-      # - name: Merge Release
-      #   run: |
-      #     git merge release/${{ env.VERSION }} \
-      #       && git push origin master \
-      #       || gh pr create --title "Merge Release ${{ env.VERSION }}" --body "Merge of the release ${{ env.VERSION }} into master failed. Please it merge manually."
+      - name: Merge Release
+        run: |
+          git merge release/${{ env.VERSION }} \
+            && git push origin master \
+            || gh pr create --title "Merge Release ${{ env.VERSION }}" --body "Merge of the release ${{ env.VERSION }} into master failed. Please it merge manually."
