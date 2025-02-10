@@ -62,6 +62,8 @@ jobs:
     name: 'Publish Release'
     needs: [bump-version, build-android]
     runs-on: ubuntu-latest
+    env:
+      MERGE_TARGET: master
     steps:
       - name: Set environment variables
         run: |
@@ -69,7 +71,7 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          ref: master
+          ref: ${{ env.MERGE_TARGET }}
 
       - name: Download iOS App
         uses: actions/download-artifact@v4
@@ -98,5 +100,5 @@ jobs:
       - name: Merge Release
         run: |
           git merge release/${{ env.VERSION }} \
-            && git push origin master \
-            || gh pr create --title "Merge Release ${{ env.VERSION }}" --body "Merge of the release ${{ env.VERSION }} into master failed. Please it merge manually."
+            && git push origin ${{ env.MERGE_TARGET }} \
+            || gh pr create --title "Merge Release ${{ env.VERSION }}" --body "Merge of the release ${{ env.VERSION }} into ${{ env.MERGE_TARGET }} failed. Please it merge manually."
