@@ -40,11 +40,13 @@ jobs:
   build-android:
     needs: [bump-version]
     uses: ./.github/workflows/build-android.yml
+    secrets: inherit
     with:
       ref: release/${{ inputs.version || "3.2.0" }}
 
   # build-ios:
   #   needs: [release]
+  #   secrets: inherit
   #   uses: ./.github/workflows/build-ios.yml
 
   # publish-release:
