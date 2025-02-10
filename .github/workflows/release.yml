@@ -24,17 +24,20 @@ jobs:
 
       - name: Bump Version
         run: |
-          git checkout -b release/3.2.0
-          npm version 3.2.0
+          git checkout -b release/${{ inputs.version }}
+          npm version ${{ inputs.version }}
+          git tag --force v${{ inputs.version }} -m ${{ inputs.version }}
+          git push origin v${{ inputs.version }}
+          git push origin release/${{ inputs.version }}
           # # TODO: This should happen after the GH Release is created
           # git checkout main
-          # git merge release/3.2.0
+          # git merge release/${{ inputs.version }}
 
   build-android:
     needs: [bump-version]
     uses: ./.github/workflows/build-android.yml
     with:
-      ref: release/3.2.0
+      ref: release/${{ inputs.version }}
 
   # build-ios:
   #   needs: [release]
