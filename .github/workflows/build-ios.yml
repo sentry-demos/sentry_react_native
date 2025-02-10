@@ -54,9 +54,10 @@ jobs:
 
       - name: Archive App
         run: |
+          cd ios/DerivedData/Build/Products/Release-iphonesimulator
           zip -r \
-            ${{ env.APP_ARCHIVE_PATH }} \
-            ios/DerivedData/Build/Products/Release-iphonesimulator/sentry_react_native.app
+            ${{ github.workspace }}/${{ env.APP_ARCHIVE_PATH }} \
+            sentry_react_native.app
 
       - name: Upload APP
         uses: actions/upload-artifact@v4
