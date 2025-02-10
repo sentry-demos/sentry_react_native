@@ -27,34 +27,36 @@ jobs:
         run: |
           git checkout -b release/${{ inputs.version_name }}
           npm version ${{ inputs.version_name }}
-          # TODO: This should happen after the GH Release is created
-          git checkout main
-          git merge release/${{ inputs.version_name }}
+          # # TODO: This should happen after the GH Release is created
+          # git checkout main
+          # git merge release/${{ inputs.version_name }}
 
   build-android:
-    needs: [release]
+    needs: [bump-version]
     uses: ./.github/workflows/build-android.yml
+    with:
+      ref: release/${{ inputs.version_name }}
 
-  build-ios:
-    needs: [release]
-    uses: ./.github/workflows/build-ios.yml
+  # build-ios:
+  #   needs: [release]
+  #   uses: ./.github/workflows/build-ios.yml
 
-  publish-release:
-    needs: [bump-version, build-android, build-ios]
-    runs-on: macos-latest
-    steps:
-      - name: Download iOS App
-        uses: actions/download-artifact@v4
-        with:
-          name: empower-plant-react-native-ios
-          path: ios/DerivedData/Build/Products/Release-iphonesimulator/sentry_react_native.app
+  # publish-release:
+  #   needs: [bump-version, build-android, build-ios]
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Download iOS App
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: empower-plant-react-native-ios
+  #         path: ios/DerivedData/Build/Products/Release-iphonesimulator/sentry_react_native.app
 
-      - name: Download Android APK
-        uses: actions/download-artifact@v4
-        with:
-          name: empower-plant-react-native-android
-          path: android/app/build/outputs/apk/release/app-release.apk
+  #     - name: Download Android APK
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: empower-plant-react-native-android
+  #         path: android/app/build/outputs/apk/release/app-release.apk
 
-      - name: Create Release
-        run: |
-          gh release create $PACKAGE_VERSION app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk -t "$PACKAGE_VERSION" --generate-notes || error_exit "Failed to create GitHub release."
+  #     - name: Create Release
+  #       run: |
+  #         gh release create $PACKAGE_VERSION app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk -t "$PACKAGE_VERSION" --generate-notes || error_exit "Failed to create GitHub release."
