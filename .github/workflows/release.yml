@@ -93,6 +93,7 @@ jobs:
           gh release create \
             ${{ env.VERSION }} \
             ${{ env.APK_PATH }} \
+            ${{ env.APP_ARCHIVE_PATH }} \
             --title ${{ env.VERSION }} \
             --notes "Release ${{ env.VERSION }}" \
             || error_exit "Failed to create GitHub release."
