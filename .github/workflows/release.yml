@@ -12,6 +12,10 @@ jobs:
     runs-on: macos-latest
     name: 'Release a new React Native Empower Plant version'
     steps:
+      - name: Set environment variables
+        run: |
+          echo "VERSION=${{ inputs.version || "3.2.0" }}" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -24,10 +28,10 @@ jobs:
 
       - name: Bump Version
         run: |
-          git checkout -b release/${{ inputs.version }}
-          npm version ${{ inputs.version }}
-          git tag --force v${{ inputs.version }} -m ${{ inputs.version }}
-          git push origin v${{ inputs.version }}
+          git checkout -b release/${{ env.VERSION }}
+          npm version ${{ env.VERSION }}
+          git tag --force v${{ env.VERSION }} -m ${{ env.VERSION }}
+          git push origin v${{ env.VERSION }}
           git push origin release/${{ inputs.version }}
           # # TODO: This should happen after the GH Release is created
           # git checkout main
@@ -37,7 +41,7 @@ jobs:
     needs: [bump-version]
     uses: ./.github/workflows/build-android.yml
     with:
-      ref: release/${{ inputs.version }}
+      ref: release/${{ inputs.version || "3.2.0" }}
 
   # build-ios:
   #   needs: [release]
