@@ -1,4 +1,5 @@
 name: Release
+
 on:
   workflow_dispatch:
     inputs:
@@ -6,16 +7,11 @@ on:
         description: 'The version name to release. E.g. 4.0.2'
         required: true
         default: null
-      version_code:
-        description: 'The version code (numeric) to release. E.g. 123'
-        required: true
-        default: null
 
 jobs:
   bump-version:
     runs-on: macos-latest
     name: 'Release a new React Native Empower Plant version'
-    steps:
     steps:
       - uses: actions/checkout@v4
 
