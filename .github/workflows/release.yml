@@ -7,6 +7,10 @@ on:
         description: 'The version name to release. E.g. 4.0.2'
         required: true
 
+env:
+  APK_PATH: app-release.apk
+  APP_ARCHIVE_PATH: sentry_react_native.app.zip
+
 jobs:
   bump-version:
     runs-on: macos-latest
@@ -14,7 +18,7 @@ jobs:
     steps:
       - name: Set environment variables
         run: |
-          echo "VERSION=${{ inputs.version || '3.2.0' }}" >> $GITHUB_ENV
+          echo "VERSION=${{ inputs.version || '99.0.0' }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
 
@@ -24,7 +28,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
       - name: Bump Version
         run: |
@@ -33,38 +38,52 @@ jobs:
           git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
           git push origin ${{ env.VERSION }}
           git push origin release/${{ env.VERSION }}
-          # # TODO: This should happen after the GH Release is created
-          # git checkout main
-          # git merge release/${{ env.VERSION }}
 
   build-android:
     needs: [bump-version]
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
     with:
-      ref: release/${{ inputs.version || '3.2.0' }}
+      ref: release/${{ inputs.version || '99.0.0' }}
 
-  # build-ios:
-  #   needs: [release]
-  #   secrets: inherit
-  #   uses: ./.github/workflows/build-ios.yml
+  build-ios:
+    needs: [bump-version]
+    uses: ./.github/workflows/build-ios.yml
+    secrets: inherit
+    with:
+      ref: release/${{ inputs.version || '99.0.0' }}
 
-  # publish-release:
-  #   needs: [bump-version, build-android, build-ios]
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: Download iOS App
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: empower-plant-react-native-ios
-  #         path: ios/DerivedData/Build/Products/Release-iphonesimulator/sentry_react_native.app
+  publish-release:
+    needs: [bump-version, build-android, build-ios]
+    runs-on: macos-latest
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "VERSION=${{ inputs.version || '99.0.0' }}" >> $GITHUB_ENV
 
-  #     - name: Download Android APK
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: empower-plant-react-native-android
-  #         path: android/app/build/outputs/apk/release/app-release.apk
+      - name: Download iOS App
+        uses: actions/download-artifact@v4
+        with:
+          name: empower-plant-react-native-ios
+          path: ${{ env.APP_ARCHIVE_PATH }}
 
-  #     - name: Create Release
-  #       run: |
-  #         gh release create $PACKAGE_VERSION app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk -t "$PACKAGE_VERSION" --generate-notes || error_exit "Failed to create GitHub release."
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: empower-plant-react-native-android
+          path: ${{ env.APK_PATH }}
+
+      - name: Create Release
+        run: |
+          gh release create \
+            ${{ env.VERSION }} \
+            ${{ env.APK_PATH }} \
+            ${{ env.APP_ARCHIVE_PATH }} \
+            --title ${{ env.VERSION }} \
+            --notes "Release ${{ env.VERSION }}" \
+            || error_exit "Failed to create GitHub release."
+
+      # - name: Merge Release
+      #   run: |
+      #     git merge release/${{ inputs.version }}
+      #     git push origin master
