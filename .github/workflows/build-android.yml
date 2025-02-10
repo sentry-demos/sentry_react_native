@@ -1,7 +1,12 @@
 name: Android
 
+on:
+  workflow_call:
+
 env:
   APK_PATH: android/app/build/outputs/apk/release/app-release.apk
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  SENTRY_ALLOW_FAILURE: false
 
 jobs:
   build-android:
