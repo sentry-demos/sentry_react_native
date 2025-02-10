@@ -32,10 +32,10 @@ jobs:
           npm version ${{ env.VERSION }}
           git tag --force v${{ env.VERSION }} -m ${{ env.VERSION }}
           git push origin v${{ env.VERSION }}
-          git push origin release/${{ inputs.version }}
+          git push origin release/${{ env.VERSION }}
           # # TODO: This should happen after the GH Release is created
           # git checkout main
-          # git merge release/${{ inputs.version }}
+          # git merge release/${{ env.VERSION }}
 
   build-android:
     needs: [bump-version]
