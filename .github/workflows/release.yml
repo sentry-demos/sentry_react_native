@@ -69,6 +69,8 @@ jobs:
           echo "VERSION=${{ inputs.version || '99.0.0' }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
+        with:
+          ref: master
 
       # - name: Download iOS App
       #   uses: actions/download-artifact@v4
@@ -80,11 +82,13 @@ jobs:
         with:
           name: empower-plant-react-native-android
 
-      - name: Create Release
+      - name: Set GitHub user
         run: |
           git config user.name getsentry-bot
           git config user.email bot@sentry.io
 
+      - name: Create Release
+        run: |
           gh release create \
             ${{ env.VERSION }} \
             ${{ env.APK_PATH }} \
@@ -94,5 +98,6 @@ jobs:
 
       # - name: Merge Release
       #   run: |
-      #     git merge release/${{ inputs.version }}
-      #     git push origin master
+      #     git merge release/${{ env.VERSION }} \
+      #       && git push origin master \
+      #       || gh pr create --title "Merge Release ${{ env.VERSION }}" --body "Merge of the release ${{ env.VERSION }} into master failed. Please it merge manually."
