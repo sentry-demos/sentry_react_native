@@ -1,5 +1,8 @@
 name: Android
 
+env:
+  APK_PATH: android/app/build/outputs/apk/release/app-release.apk
+
 jobs:
   build-android:
     name: Android
@@ -29,5 +32,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: empower-plant-react-native-android
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: ${{ env.APK_PATH }}
           retention-days: 60

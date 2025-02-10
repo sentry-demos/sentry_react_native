@@ -10,7 +10,6 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 
 // Import the Sentry React Native SDK
 import * as Sentry from '@sentry/react-native';
-import {TransactionContext} from '@sentry/types';
 
 import HomeScreen from './screens/HomeScreen';
 import ListApp from './screens/ListApp';
@@ -18,24 +17,26 @@ import TrackerScreen from './screens/TrackerScreen';
 import ManualTrackerScreen from './screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
 import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
+import ProductDetailScreen from './screens/ProductDetailScreen';
 import ReduxScreen from './screens/ReduxScreen';
 import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
 
-import {RootState, store} from './reduxApp';
+import {RootState, store, showFeedbackActionButton} from './reduxApp';
 import {DSN} from './config';
 import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LogBox, Platform, StyleSheet} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {SentryUserFeedbackActionButton} from './components/UserFeedbackModal';
 console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
 
-const reactNavigationInstrumentation =
-  new Sentry.ReactNavigationInstrumentation({
+const reactNavigationIntegration =
+  Sentry.reactNavigationIntegration({
     // How long it will wait for the route change to complete. Default is 1000ms
     routeChangeTimeoutMs: 500,
     enableTimeToInitialDisplay: true,
@@ -56,36 +57,36 @@ Sentry.init({
       // Make issue for the SE
       event.fingerprint = ['{{ default }}', SE];
     }
+
+    if (!event.type) {
+      // Only show the feedback button for errors
+      store.dispatch(showFeedbackActionButton());
+    }
+
     return event;
   },
   integrations: [
-    new Sentry.ReactNativeTracing({
-      enableUserInteractionTracing: true,
-
-      routingInstrumentation: reactNavigationInstrumentation,
-      tracePropagationTargets: ['localhost', /^\//, /^https:\/\//],
-      idleTimeout: 15000, // set to prevent spans in the home screen from cancelling prematurely
-
-      // How to ignore transactions for the "Manual Tracker" screen
-      beforeNavigate: (context: TransactionContext) => {
-        if (context.data?.route.name === 'ManualTracker') {
-          context.sampled = false;
-        }
-        return context;
-      },
+    Sentry.reactNativeTracingIntegration({
+      traceFetch: false, // RN uses XHR to implement fetch, this prevents duplicates
     }),
+    Sentry.mobileReplayIntegration({
+      maskAllImages: true,
+      maskAllText: true,
+    }),
+    reactNavigationIntegration,
   ],
   tracesSampleRate: 1.0,
-  enableAutoSessionTracking: true, // For testing, session close when 5 seconds (instead of the default 30) in the background.
-  sessionTrackingIntervalMillis: 5000,
+  profilesSampleRate: 1.0,
+  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: 1.0,
+  enableUserInteractionTracing: true,
+  enableAutoSessionTracking: true,
+  sessionTrackingIntervalMillis: 5000, // For testing, session close when 5 seconds (instead of the default 30) in the background.
   maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
   attachStacktrace: true,
   attachScreenshot: true,
   attachViewHierarchy: true,
-  enableSpotlight: true,
-  _experiments: {
-    profilesSampleRate: 1,
-  },
+  spotlight: true,
 });
 
 Sentry.setTag('se', SE);
@@ -97,17 +98,16 @@ const Stack = createStackNavigator<RootStackParamList>();
 const App = () => {
   const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
 
-  Sentry.configureScope((scope) => {
-    const customerType = [
-      'medium-plan',
-      'large-plan',
-      'small-plan',
-      'enterprise',
-    ][Math.floor(Math.random() * 4)];
-    scope.setTag('customerType', customerType);
-    let email = Math.random().toString(36).substring(2, 6) + '@yahoo.com';
-    scope.setUser({email: email});
-  });
+  const scope = Sentry.getCurrentScope();
+  const customerType = [
+    'medium-plan',
+    'large-plan',
+    'small-plan',
+    'enterprise',
+  ][Math.floor(Math.random() * 4)];
+  scope.setTag('customerType', customerType);
+  let email = Math.random().toString(36).substring(2, 6) + '@yahoo.com';
+  scope.setUser({email: email});
 
   return (
     <Provider store={store}>
@@ -116,12 +116,13 @@ const App = () => {
           <NavigationContainer
             ref={navigation}
             onReady={() => {
-              reactNavigationInstrumentation.registerNavigationContainer(
+              reactNavigationIntegration.registerNavigationContainer(
                 navigation,
               );
             }}>
             <BottomTabNavigator />
-            <Toast />
+            {/* <Toast /> */}
+            <SentryUserFeedbackActionButton />
           </NavigationContainer>
         </GestureHandlerRootView>
       </SafeAreaProvider>
@@ -163,6 +164,7 @@ const BottomTabNavigator = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <Icon
+              testID="bottom-tab-cart"
               name="cart-shopping"
               size={30}
               color={focused ? '#f6cfb2' : '#dae3e4'}
@@ -177,7 +179,7 @@ const BottomTabNavigator = () => {
         options={{
           tabBarIcon: ({focused}) => (
             <Icon
-              name="bug"
+              name="gear"
               size={30}
               color={focused ? '#f6cfb2' : '#dae3e4'}
             />
@@ -204,6 +206,7 @@ const ShopNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
     </Stack.Navigator>
   );
 };

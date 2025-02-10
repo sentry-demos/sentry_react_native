@@ -20,3 +20,7 @@ jobs:
 
   build-ios:
     uses: ./.github/workflows/build-ios.yml
+
+  test:
+    needs: build-android
+    uses: ./.github/workflows/test.yml
