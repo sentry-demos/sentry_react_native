@@ -1,5 +1,8 @@
 name: UI Test Android
 
+on:
+  workflow_call:
+
 env:
   MAESTRO_VERSION: 1.39.0
 
