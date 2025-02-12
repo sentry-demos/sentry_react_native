@@ -1,5 +1,6 @@
 name: Release
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -12,66 +13,66 @@ env:
   GH_TOKEN: ${{ github.token }}
 
 jobs:
-  bump-version:
-    runs-on: ubuntu-latest
-    name: 'Prepare Release'
-    steps:
-      - name: Set environment variables
-        run: |
-          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+  # bump-version:
+  #   runs-on: ubuntu-latest
+  #   name: 'Prepare Release'
+  #   steps:
+  #     - name: Set environment variables
+  #       run: |
+  #         echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 18
+  #         cache: 'npm'
+  #         cache-dependency-path: package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+  #     - name: Install dependencies
+  #       run: npm ci
 
-      - name: Bump Version
-        run: |
-          git config user.name getsentry-bot
-          git config user.email bot@sentry.io
+  #     - name: Bump Version
+  #       run: |
+  #         git config user.name getsentry-bot
+  #         git config user.email bot@sentry.io
 
-          git checkout -b release/${{ env.VERSION }}
-          npm version ${{ env.VERSION }}
-          git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
-          git push origin ${{ env.VERSION }}
-          git push origin release/${{ env.VERSION }}
+  #         git checkout -b release/${{ env.VERSION }}
+  #         npm version ${{ env.VERSION }}
+  #         git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
+  #         git push origin ${{ env.VERSION }}
+  #         git push origin release/${{ env.VERSION }}
 
-  build-android:
-    name: 'Build Android'
-    needs: [bump-version]
-    uses: ./.github/workflows/build-android.yml
-    secrets: inherit
-    with:
-      ref: release/${{ inputs.version }}
+  # build-android:
+  #   name: 'Build Android'
+  #   needs: [bump-version]
+  #   uses: ./.github/workflows/build-android.yml
+  #   secrets: inherit
+  #   with:
+  #     ref: release/${{ inputs.version }}
 
-  build-ios:
-    name: 'Build iOS'
-    needs: [bump-version]
-    uses: ./.github/workflows/build-ios.yml
-    secrets: inherit
-    with:
-      ref: release/${{ inputs.version }}
+  # build-ios:
+  #   name: 'Build iOS'
+  #   needs: [bump-version]
+  #   uses: ./.github/workflows/build-ios.yml
+  #   secrets: inherit
+  #   with:
+  #     ref: release/${{ inputs.version }}
 
   publish-release:
     name: 'Publish Release'
     needs: [bump-version, build-android, build-ios]
     runs-on: ubuntu-latest
     env:
-      MERGE_TARGET: master
+      MERGE_TARGET: master-test
     steps:
       - name: Set environment variables
         run: |
-          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+          echo "VERSION=${{ inputs.version || '3.1.0' }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.MERGE_TARGET }}
+          fetch-depth: 0 # fetch all history all branches and tags
 
       - name: Download iOS App
         uses: actions/download-artifact@v4
@@ -100,6 +101,8 @@ jobs:
 
       - name: Merge Release
         run: |
-          git merge release/${{ env.VERSION }} \
-            && git push origin ${{ env.MERGE_TARGET }} \
-            || gh pr create --title "Merge Release ${{ env.VERSION }}" --body "Merge of the release ${{ env.VERSION }} into ${{ env.MERGE_TARGET }} failed. Please it merge manually."
+          git reset --hard
+          git checkout release/${{ env.VERSION }}
+          git checkout ${{ env.MERGE_TARGET }}
+          git merge release/${{ env.VERSION }}
+          git push origin ${{ env.MERGE_TARGET }}
