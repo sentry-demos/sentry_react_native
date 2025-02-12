@@ -74,30 +74,30 @@ jobs:
         with:
           fetch-depth: 0 # fetch all history all branches and tags
 
-      - name: Download iOS App
-        uses: actions/download-artifact@v4
-        with:
-          name: empower-plant-react-native-ios
+      # - name: Download iOS App
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: empower-plant-react-native-ios
 
-      - name: Download Android APK
-        uses: actions/download-artifact@v4
-        with:
-          name: empower-plant-react-native-android
+      # - name: Download Android APK
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: empower-plant-react-native-android
 
       - name: Set GitHub user
         run: |
           git config user.name getsentry-bot
           git config user.email bot@sentry.io
 
-      - name: Create Release
-        run: |
-          gh release create \
-            ${{ env.VERSION }} \
-            ${{ env.APK_PATH }} \
-            ${{ env.APP_ARCHIVE_PATH }} \
-            --title ${{ env.VERSION }} \
-            --notes "Release ${{ env.VERSION }}" \
-            || error_exit "Failed to create GitHub release."
+      # - name: Create Release
+      #   run: |
+      #     gh release create \
+      #       ${{ env.VERSION }} \
+      #       ${{ env.APK_PATH }} \
+      #       ${{ env.APP_ARCHIVE_PATH }} \
+      #       --title ${{ env.VERSION }} \
+      #       --notes "Release ${{ env.VERSION }}" \
+      #       || error_exit "Failed to create GitHub release."
 
       - name: Merge Release
         run: |
