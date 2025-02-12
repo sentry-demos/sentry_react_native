@@ -1,6 +1,5 @@
 name: Release
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -13,55 +12,55 @@ env:
   GH_TOKEN: ${{ github.token }}
 
 jobs:
-  # bump-version:
-  #   runs-on: ubuntu-latest
-  #   name: 'Prepare Release'
-  #   steps:
-  #     - name: Set environment variables
-  #       run: |
-  #         echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+  bump-version:
+    runs-on: ubuntu-latest
+    name: 'Prepare Release'
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
-  #     - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 18
-  #         cache: 'npm'
-  #         cache-dependency-path: package-lock.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
 
-  #     - name: Install dependencies
-  #       run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-  #     - name: Bump Version
-  #       run: |
-  #         git config user.name getsentry-bot
-  #         git config user.email bot@sentry.io
+      - name: Bump Version
+        run: |
+          git config user.name getsentry-bot
+          git config user.email bot@sentry.io
 
-  #         git checkout -b release/${{ env.VERSION }}
-  #         npm version ${{ env.VERSION }}
-  #         git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
-  #         git push origin ${{ env.VERSION }}
-  #         git push origin release/${{ env.VERSION }}
+          git checkout -b release/${{ env.VERSION }}
+          npm version ${{ env.VERSION }}
+          git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
+          git push origin ${{ env.VERSION }}
+          git push origin release/${{ env.VERSION }}
 
-  # build-android:
-  #   name: 'Build Android'
-  #   needs: [bump-version]
-  #   uses: ./.github/workflows/build-android.yml
-  #   secrets: inherit
-  #   with:
-  #     ref: release/${{ inputs.version }}
+  build-android:
+    name: 'Build Android'
+    needs: [bump-version]
+    uses: ./.github/workflows/build-android.yml
+    secrets: inherit
+    with:
+      ref: release/${{ inputs.version }}
 
-  # build-ios:
-  #   name: 'Build iOS'
-  #   needs: [bump-version]
-  #   uses: ./.github/workflows/build-ios.yml
-  #   secrets: inherit
-  #   with:
-  #     ref: release/${{ inputs.version }}
+  build-ios:
+    name: 'Build iOS'
+    needs: [bump-version]
+    uses: ./.github/workflows/build-ios.yml
+    secrets: inherit
+    with:
+      ref: release/${{ inputs.version }}
 
   publish-release:
     name: 'Publish Release'
-    # needs: [bump-version, build-android]
+    needs: [bump-version, build-android]
     runs-on: ubuntu-latest
     env:
       MERGE_TARGET: master-test
@@ -74,30 +73,30 @@ jobs:
         with:
           fetch-depth: 0 # fetch all history all branches and tags
 
-      # - name: Download iOS App
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: empower-plant-react-native-ios
+      - name: Download iOS App
+        uses: actions/download-artifact@v4
+        with:
+          name: empower-plant-react-native-ios
 
-      # - name: Download Android APK
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: empower-plant-react-native-android
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: empower-plant-react-native-android
 
       - name: Set GitHub user
         run: |
           git config user.name getsentry-bot
           git config user.email bot@sentry.io
 
-      # - name: Create Release
-      #   run: |
-      #     gh release create \
-      #       ${{ env.VERSION }} \
-      #       ${{ env.APK_PATH }} \
-      #       ${{ env.APP_ARCHIVE_PATH }} \
-      #       --title ${{ env.VERSION }} \
-      #       --notes "Release ${{ env.VERSION }}" \
-      #       || error_exit "Failed to create GitHub release."
+      - name: Create Release
+        run: |
+          gh release create \
+            ${{ env.VERSION }} \
+            ${{ env.APK_PATH }} \
+            ${{ env.APP_ARCHIVE_PATH }} \
+            --title ${{ env.VERSION }} \
+            --notes "Release ${{ env.VERSION }}" \
+            || error_exit "Failed to create GitHub release."
 
       - name: Merge Release
         run: |
@@ -106,3 +105,4 @@ jobs:
           git checkout ${{ env.MERGE_TARGET }}
           git merge release/${{ env.VERSION }} --no-ff
           git push origin ${{ env.MERGE_TARGET }}
+          git push origin --delete release/${{ env.VERSION }}
