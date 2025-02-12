@@ -104,5 +104,5 @@ jobs:
           git reset --hard
           git checkout release/${{ env.VERSION }}
           git checkout ${{ env.MERGE_TARGET }}
-          git merge release/${{ env.VERSION }}
+          git merge release/${{ env.VERSION }} --no-ff
           git push origin ${{ env.MERGE_TARGET }}
