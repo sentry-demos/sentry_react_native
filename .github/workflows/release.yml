@@ -60,7 +60,7 @@ jobs:
 
   publish-release:
     name: 'Publish Release'
-    needs: [bump-version, build-android]
+    needs: [bump-version, build-android, build-ios]
     runs-on: ubuntu-latest
     env:
       MERGE_TARGET: master
