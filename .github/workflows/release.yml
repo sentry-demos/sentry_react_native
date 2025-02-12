@@ -61,7 +61,7 @@ jobs:
 
   publish-release:
     name: 'Publish Release'
-    # needs: [bump-version, build-android, build-ios]
+    # needs: [bump-version, build-android]
     runs-on: ubuntu-latest
     env:
       MERGE_TARGET: master-test
