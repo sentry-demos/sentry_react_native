@@ -102,5 +102,4 @@ jobs:
         run: |
           git reset --hard
           git checkout ${{ env.MERGE_TARGET }}
-          git branch --delete release/${{ env.VERSION }}
           git push origin --delete release/${{ env.VERSION }}
