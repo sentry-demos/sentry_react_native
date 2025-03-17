@@ -42,13 +42,13 @@ jobs:
           git push origin ${{ env.VERSION }}
           git push origin release/${{ env.VERSION }}
 
-  build-android:
-    name: 'Build Android'
-    needs: [bump-version]
-    uses: ./.github/workflows/build-android.yml
-    secrets: inherit
-    with:
-      ref: release/${{ inputs.version }}
+  # build-android:
+  #   name: 'Build Android'
+  #   needs: [bump-version]
+  #   uses: ./.github/workflows/build-android.yml
+  #   secrets: inherit
+  #   with:
+  #     ref: release/${{ inputs.version }}
 
   # build-ios:
   #   name: 'Build iOS'
@@ -60,7 +60,7 @@ jobs:
 
   publish-release:
     name: 'Publish Release'
-    needs: [bump-version, build-android]
+    needs: [bump-version]
     runs-on: ubuntu-latest
     env:
       MERGE_TARGET: master
@@ -92,8 +92,6 @@ jobs:
         run: |
           gh release create \
             ${{ env.VERSION }} \
-            ${{ env.APK_PATH }} \
-            # ${{ env.APP_ARCHIVE_PATH }} \
             --title ${{ env.VERSION }} \
             --notes "Release ${{ env.VERSION }}" \
             || error_exit "Failed to create GitHub release."
