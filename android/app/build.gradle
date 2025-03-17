@@ -119,8 +119,8 @@ android {
         applicationId "com.sentry_react_native"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 19
-        versionName "3.1.1"
+        versionCode 20
+        versionName "3.1.2"
     }
     signingConfigs {
         debug {
