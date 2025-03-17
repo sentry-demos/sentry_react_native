@@ -50,17 +50,17 @@ jobs:
     with:
       ref: release/${{ inputs.version }}
 
-  build-ios:
-    name: 'Build iOS'
-    needs: [bump-version]
-    uses: ./.github/workflows/build-ios.yml
-    secrets: inherit
-    with:
-      ref: release/${{ inputs.version }}
+  # build-ios:
+  #   name: 'Build iOS'
+  #   needs: [bump-version]
+  #   uses: ./.github/workflows/build-ios.yml
+  #   secrets: inherit
+  #   with:
+  #     ref: release/${{ inputs.version }}
 
   publish-release:
     name: 'Publish Release'
-    needs: [bump-version, build-android, build-ios]
+    needs: [bump-version, build-android]
     runs-on: ubuntu-latest
     env:
       MERGE_TARGET: master
@@ -73,10 +73,10 @@ jobs:
         with:
           fetch-depth: 0 # fetch all history all branches and tags
 
-      - name: Download iOS App
-        uses: actions/download-artifact@v4
-        with:
-          name: empower-plant-react-native-ios
+      # - name: Download iOS App
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: empower-plant-react-native-ios
 
       - name: Download Android APK
         uses: actions/download-artifact@v4
@@ -93,7 +93,7 @@ jobs:
           gh release create \
             ${{ env.VERSION }} \
             ${{ env.APK_PATH }} \
-            ${{ env.APP_ARCHIVE_PATH }} \
+            # ${{ env.APP_ARCHIVE_PATH }} \
             --title ${{ env.VERSION }} \
             --notes "Release ${{ env.VERSION }}" \
             || error_exit "Failed to create GitHub release."
