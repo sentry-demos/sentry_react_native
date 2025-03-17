@@ -98,11 +98,9 @@ jobs:
             --notes "Release ${{ env.VERSION }}" \
             || error_exit "Failed to create GitHub release."
 
-      - name: Merge Release
+      - name: Clean up Release Branch
         run: |
           git reset --hard
-          git checkout release/${{ env.VERSION }}
           git checkout ${{ env.MERGE_TARGET }}
-          git merge release/${{ env.VERSION }} --no-ff
-          git push origin ${{ env.MERGE_TARGET }}
+          git branch --delete release/${{ env.VERSION }}
           git push origin --delete release/${{ env.VERSION }}
