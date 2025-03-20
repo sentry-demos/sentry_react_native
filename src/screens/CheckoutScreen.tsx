@@ -98,12 +98,27 @@ const CheckoutScreen = () => {
       throw new Error(err);
     });
     setOrderStatusUI(false);
+    
     if (response.status !== 200) {
+      let errorMessage = 'Error: Could not place order.';
+      
+      if (response.status === 422) {
+        try {
+          const errorData = await response.json();
+          if (errorData.error === 'inventory_validation_failed') {
+            errorMessage = `Inventory issue: ${errorData.message}`;
+          }
+        } catch (e) {
+          // If parsing fails, use the generic error message
+          console.error('Failed to parse error response:', e);
+        }
+      }
+
       uiToast
         ? uiToast.show({
             type: 'error',
             position: 'bottom',
-            text1: 'Error: Could not place order.',
+            text1: errorMessage,
           })
         : null;
 
