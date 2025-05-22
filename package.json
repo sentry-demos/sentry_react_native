@@ -16,7 +16,7 @@
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/native-stack": "^6.9.26",
     "@react-navigation/stack": "^6.3.21",
-    "@sentry/react-native": "^6.14.0",
+    "@sentry/react-native": "^7.0.0-alpha.0",
     "promise": "^8.3.0",
     "react": "19.0.0",
     "react-native": "^0.79.0",
