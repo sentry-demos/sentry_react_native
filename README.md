@@ -2,9 +2,9 @@
 
 This is demo repo is used by Solution Engineers when demo'ing Sentry's [React Native](https://docs.sentry.io/platforms/react-native) SDK's capabilities.
 
-<img src="./img/empower-plant.png" height="400">
-<img src="./img/empower-plant-product-detail.png" height="400">
-<img src="./img/empower-plant-cart.png" height="400">
+<img src="./img/empower-plant.png" height="400" style="display: inline-block; margin-right: 10px">
+<img src="./img/empower-plant-product-detail.png" height="400" style="display: inline-block; margin-right: 10px">
+<img src="./img/empower-plant-cart.png" height="400" style="display: inline-block">
 
 ## Versions
 
