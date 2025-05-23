@@ -3,8 +3,10 @@
   "version": "999.0.0",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "build-dev-android": "react-native run-android",
+    "build-dev-ios": "react-native run-ios",
+    "build-release-android": "react-native run-android --mode Release",
+    "build-release-ios": "react-native run-ios --mode Release",
     "lint": "eslint .",
     "start": "react-native start",
     "postversion": "react-native-version",
