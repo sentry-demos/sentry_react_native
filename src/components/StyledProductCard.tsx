@@ -47,6 +47,7 @@ export const StyledProductCard = (props: {
         </View>
         <View style={styles.cardDetailAction}>
           <StyledButton
+            testID={`add-to-cart-button-${props.id}`}
             title="Add to cart"
             onPress={onAddToCartPressed}
             style={{
