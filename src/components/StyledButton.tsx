@@ -10,11 +10,13 @@ import {
 } from 'react-native';
 
 export const StyledButton = ({
+  testID,
   onPress,
   title,
   style,
   isLoading,
 }: {
+  testID?: string;
   style?: {
     default?: ViewStyle;
     pressed?: ViewStyle;
@@ -56,6 +58,7 @@ export const StyledButton = ({
   const InnerContent = isLoading ? InnerLoader : InnerText;
   return (
     <Pressable
+      testID={testID}
       onPress={onPress}
       style={pressableStyle}
       onPressIn={() => setIsPressed(true)}
