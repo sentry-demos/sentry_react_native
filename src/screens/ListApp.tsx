@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   Image,
   ScrollView,
   StatusBar,
@@ -170,7 +171,14 @@ const ListApp = (props: Props) => {
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
-                throw new Error('Thrown Error');
+                Alert.alert(
+                  'Demo Feature',
+                  'This will throw an uncaught error to demonstrate Sentry error capturing. The app will crash as part of the demo.',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Proceed', onPress: () => { throw new Error('Thrown Error'); } }
+                  ]
+                );
               }}>
               <Text style={styles.buttonText}>Uncaught Thrown Error</Text>
             </TouchableOpacity>
