@@ -109,7 +109,7 @@ const CheckoutScreen = () => {
         new Error(
           response.status +
             ' - ' +
-            (response.statusText || ' INTERNAL SERVER ERROR'),
+            (response.statusText || ' INTERNAL_SERVER_ERROR'),
         ),
       );
     } else {
