@@ -1,0 +1,74 @@
+name: iOS
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: 'The branch to build from. E.g. main'
+        required: false
+        type: string
+
+jobs:
+  build-ios:
+    name: iOS
+    runs-on: macos-14
+    env:
+      APP_ARCHIVE_PATH: sentry_react_native.app.zip
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ALLOW_FAILURE: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.0'
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - working-directory: ios
+        run: bundle exec pod install
+
+      - name: Run xcodebuild
+        working-directory: ios
+        run: |
+          mkdir -p "DerivedData"
+          derivedData="$(cd "DerivedData" ; pwd -P)"
+          set -o pipefail && xcodebuild \
+            -workspace sentry_react_native.xcworkspace \
+            -configuration "Release" \
+            -scheme sentry_react_native \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$derivedData" \
+            build \
+            | tee xcodebuild.log \
+            | xcbeautify --quieter --is-ci --disable-colored-output
+
+      - name: Archive App
+        run: |
+          cd ios/DerivedData/Build/Products/Release-iphonesimulator
+          zip -r \
+            ${{ github.workspace }}/${{ env.APP_ARCHIVE_PATH }} \
+            sentry_react_native.app
+
+      - name: Upload APP
+        uses: actions/upload-artifact@v4
+        with:
+          name: empower-plant-react-native-ios
+          path: ${{ env.APP_ARCHIVE_PATH }}
+          retention-days: 60
+
+      - name: Upload logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ios-logs
+          path: ios/xcodebuild.log

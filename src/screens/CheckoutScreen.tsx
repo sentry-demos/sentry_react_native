@@ -65,7 +65,6 @@ const CheckoutScreen = () => {
       },
     );
   };
-
   const placeOrder = async (
     uiToast: null | UIToast = null,
   ): Promise<Response> => {
@@ -78,7 +77,6 @@ const CheckoutScreen = () => {
         quantities[item.id] = item.quantity;
       }
     });
-
     const data = {
       // This is the data structure implemented by application-monitoring-react and flask
       cart: {items: cart, quantities},
@@ -204,7 +202,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   input: {
-    height: 40,
     margin: 10,
     borderWidth: 1,
     padding: 10,
