@@ -33,7 +33,6 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
-.kotlin/
 
 # node.js
 #
@@ -68,5 +67,3 @@ yarn-error.log
 .yalc
 yalc.lock
 .sentry
-.ruby-version
-github_release.sh

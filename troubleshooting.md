@@ -136,17 +136,3 @@ py.test -s -n 4 mobile_native/android_react_native/test_checkout_react_native_an
 ```
 
 now go check sentry for.... se:will?
-
-## [Troubleshooting - Locally undoing an accidental increment of the release version]
-
-If you accidentally tick the version forward by running `npm version patch`, and did not intend to do so, you can undo this.
-
-Let's say we were previously on `2.0.1` and accidentally ran the command twice, ticking the release to `2.0.2` and `2.0.3`, but we only wanted to go to `2.0.2`.
-
-- First, run `git log`.
-- Copy the commit hash associated with the previous commit that you want to reset to.
-
-![Screen Shot 2021-12-08 at 12 55 09 PM](https://user-images.githubusercontent.com/12092849/145283369-2130cae7-fe0c-42ff-b826-0015c3cd565b.png)
-
-- run `git reset <the commit hash>`.
-- Check out any unwanted files that are no longer staged for commit.
