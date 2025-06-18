@@ -68,5 +68,3 @@ yarn-error.log
 .yalc
 yalc.lock
 .sentry
-.ruby-version
-github_release.sh
