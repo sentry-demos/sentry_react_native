@@ -1,5 +1,5 @@
 export const DSN =
-  'https://b87682e62e4cc633d4c35c7154256c66@o87286.ingest.us.sentry.io/4508968204632064';
+  'https://b87682e62e4cc633d4c35c7154256c66@sandbox-mirror.sentry.gg/1';
 
 // SENTRY_INTERNAL_DSN for testing
 // export const DSN =
