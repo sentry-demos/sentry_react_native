@@ -1,0 +1,47 @@
+name: Android
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: 'The branch to build from. E.g. main'
+        required: false
+        type: string
+
+jobs:
+  build-android:
+    name: Android
+    runs-on: ubuntu-latest
+    env:
+      APK_PATH: android/app/build/outputs/apk/release/app-release.apk
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ALLOW_FAILURE: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - uses: gradle/gradle-build-action@v3
+
+      - working-directory: android
+        run: ./gradlew :app:assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: empower-plant-react-native-android
+          path: ${{ env.APK_PATH }}
+          retention-days: 60
