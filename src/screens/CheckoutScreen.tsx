@@ -98,14 +98,20 @@ const CheckoutScreen = () => {
       throw new Error(err);
     });
     setOrderStatusUI(false);
-    if (response.status !== 200) {
-      uiToast
-        ? uiToast.show({
-            type: 'error',
-            position: 'bottom',
-            text1: 'Error: Could not place order.',
-          })
-        : null;
+    if (response.status === 400) {
+      const errorData = await response.json();
+      const outOfStockItems = errorData.out_of_stock.join(', ');
+      uiToast?.show({
+        type: 'error',
+        position: 'bottom',
+        text1: `Error: The following items are out of stock: ${outOfStockItems}.`,
+      });
+    } else if (response.status !== 200) {
+      uiToast?.show({
+        type: 'error',
+        position: 'bottom',
+        text1: 'Error: Could not place order.',
+      });
 
       Sentry.captureException(
         new Error(
