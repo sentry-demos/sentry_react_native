@@ -49,6 +49,7 @@ Sentry.init({
   dsn: DSN,
   debug: true,
   environment: 'dev',
+  enableLogs: true,
   beforeSend: (event) => {
     if (SE === 'tda') {
       // Make issues unique to the release (app version) for Release Health
@@ -73,6 +74,7 @@ Sentry.init({
       maskAllImages: true,
       maskAllText: true,
     }),
+    Sentry.consoleLoggingIntegration({levels: ['log', 'warn', 'error']}),
     reactNavigationIntegration,
   ],
   tracesSampleRate: 1.0,
@@ -109,6 +111,14 @@ const App = () => {
   let email = Math.random().toString(36).substring(2, 6) + '@yahoo.com';
   scope.setUser({email: email});
 
+  // Log app initialization
+  Sentry.logger.info('App initialized', {
+    customerType,
+    email,
+    se: SE,
+    version: packageJson.version,
+  });
+
   return (
     <Provider store={store}>
       <SafeAreaProvider>
@@ -119,6 +129,7 @@ const App = () => {
               reactNavigationIntegration.registerNavigationContainer(
                 navigation,
               );
+              Sentry.logger.info('Navigation container ready');
             }}>
             <BottomTabNavigator />
             {/* <Toast /> */}

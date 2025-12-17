@@ -14,6 +14,15 @@ export const StyledCartProductCard = (props: {
   title: string;
 }): React.ReactElement => {
   const deleteItem = (id: string) => {
+    Sentry.logger.info(
+      Sentry.logger.fmt`'${props.title}' removed from cart`,
+      {
+        productId: props.id,
+        productTitle: props.title,
+        price: props.price,
+        quantity: props.quantity,
+      },
+    );
     props.appDispatch({type: 'DELETE_FROM_CART', payload: id});
   };
 

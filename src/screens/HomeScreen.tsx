@@ -46,6 +46,10 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
       email: email ?? '',
       'Content-Type': 'application/json',
     };
+    Sentry.logger.debug('Loading products', {
+      endpoint: `${BACKEND_URL}/products`,
+    });
+
     fetch(`${BACKEND_URL}/products`, {
       method: 'GET',
       headers,
@@ -53,11 +57,21 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
       .then((response) => response.json())
       .then((json) => {
         setProductData(json);
+        Sentry.logger.info('Products loaded', {
+          productCount: json.length,
+        });
       })
-      .catch((err) => console.log('> api Erorr: ', err));
+      .catch((err) => {
+        Sentry.logger.error('Failed to load products', {
+          error: err.message,
+          endpoint: `${BACKEND_URL}/products`,
+        });
+        console.log('> api Erorr: ', err);
+      });
   };
 
   React.useEffect(() => {
+    Sentry.logger.info('Home screen viewed');
     loadData(); // this line is not blocking
   }, []);
 
@@ -74,6 +88,10 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
   const recordFullDisplay = !!toolData;
 
   const onProductCardPress = (item: Product) => {
+    Sentry.logger.info('Product card pressed', {
+      productId: item.id,
+      productTitle: item.title,
+    });
     navigation.navigate('ProductDetail', item);
   };
 
