@@ -217,27 +217,29 @@ def get_order(order_id):
     return jsonify(order.to_dict()), 200
 
 # Initialize database
-@app.before_first_request
-def create_tables():
-    db.create_all()
-    
-    # Add sample products if none exist
-    if Product.query.count() == 0:
-        sample_products = [
-            Product(id=1, name='Spider Plant', price=19.99, inventory=10, 
-                   description='Easy to care for houseplant'),
-            Product(id=2, name='Monstera Deliciosa', price=29.99, inventory=5,
-                   description='Popular tropical plant'),
-            Product(id=3, name='Snake Plant', price=24.99, inventory=8,
-                   description='Low maintenance succulent'),
-            Product(id=4, name='Pothos', price=15.99, inventory=15,
-                   description='Trailing vine plant'),
-            Product(id=5, name='Peace Lily', price=22.99, inventory=7,
-                   description='Beautiful flowering plant')
-        ]
-        for product in sample_products:
-            db.session.add(product)
-        db.session.commit()
+def init_db():
+    """Initialize the database with tables and sample data"""
+    with app.app_context():
+        db.create_all()
+        
+        # Add sample products if none exist
+        if Product.query.count() == 0:
+            sample_products = [
+                Product(id=1, name='Spider Plant', price=19.99, inventory=10, 
+                       description='Easy to care for houseplant'),
+                Product(id=2, name='Monstera Deliciosa', price=29.99, inventory=5,
+                       description='Popular tropical plant'),
+                Product(id=3, name='Snake Plant', price=24.99, inventory=8,
+                       description='Low maintenance succulent'),
+                Product(id=4, name='Pothos', price=15.99, inventory=15,
+                       description='Trailing vine plant'),
+                Product(id=5, name='Peace Lily', price=22.99, inventory=7,
+                       description='Beautiful flowering plant')
+            ]
+            for product in sample_products:
+                db.session.add(product)
+            db.session.commit()
 
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True, host='0.0.0.0', port=8080)
