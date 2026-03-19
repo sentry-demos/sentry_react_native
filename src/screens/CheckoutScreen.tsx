@@ -27,6 +27,13 @@ const items = [
   {id: 8, placeholder: 'zip code', key: 'zipCode'},
 ];
 
+const promoError = JSON.stringify({
+  error: {
+    code: 'expired',
+    message: 'Provided coupon code has expired.',
+  },
+});
+
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
  * So you can control all spans that belong to that one transaction.
@@ -207,9 +214,9 @@ const CheckoutScreen = () => {
             }}
           />
         </SafeAreaView>
-        <View style={styles.applyButtonWrapper}>
+        <View>
           <StyledButton
-            onPress={() => {
+            onPress={async () => {
               Sentry.logger.info(
                 `Applying promo code: ${contactInfoData.promoCode}`,
                 {
@@ -217,6 +224,25 @@ const CheckoutScreen = () => {
                   action: 'promo_apply',
                 },
               );
+
+              await new Promise((resolve) => setTimeout(resolve, 750));
+
+              Sentry.logger.error(
+                `Failed to apply promo code ${contactInfoData.promoCode}: HTTP 410 | Error: 'expired'`,
+                {
+                  promo_code: contactInfoData.promoCode,
+                  http_status: 410,
+                  error_code: 'expired',
+                  error_message: 'Provided coupon code has expired.',
+                  response_body: promoError,
+                },
+              );
+
+              Toast.show({
+                type: 'error',
+                position: 'bottom',
+                text1: 'Provided coupon code has expired.',
+              });
             }}
             title={'Apply'}
           />
