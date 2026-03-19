@@ -28,6 +28,7 @@ const CheckoutButton = ({
   return (
     <Button
       onPress={() => {
+        Sentry.logger.info('Navigating to checkout');
         navigation.navigate('Checkout');
       }}
       title="Checkout"
@@ -44,6 +45,11 @@ const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
     total += itemTotal;
   });
   let aggregate = {total, quantity};
+  
+  // Log cart calculation
+  Sentry.logger.debug(`Calculated itemsInCart: ${quantity}`);
+  Sentry.logger.debug(`Cart total calculated: $${total.toFixed(2)}`);
+  
   return aggregate;
 };
 
@@ -127,6 +133,12 @@ const CartScreen = ({
 
   React.useEffect(() => {
     fetch(`${BACKEND_URL}/success`); // exists just to add span data to demo
+    const items = Object.values(cartData);
+    Sentry.logger.info('Cart screen viewed', {
+      itemCount: items.length,
+      totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
+      totalValue: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    });
   }, []);
 
   const recordFullDisplay = !!cartData;

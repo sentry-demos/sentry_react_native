@@ -45,17 +45,29 @@ const reducer = (state = initialState, action) => {
       }
     case 'ADD_TO_CART':
       if (state.cart[payload.id]) {
+        const newQuantity = state.cart[payload.id].quantity + 1;
+        Sentry.logger.info(`Adding quantity: ${newQuantity}`, {
+          productId: payload.id,
+          productTitle: payload.title,
+          previousQuantity: state.cart[payload.id].quantity,
+          newQuantity: newQuantity,
+        });
         return {
           ...state,
           cart: {
             ...state.cart,
             [payload.id]: {
               ...state.cart[payload.id],
-              quantity: state.cart[payload.id].quantity + 1,
+              quantity: newQuantity,
             },
           },
         };
       }
+      Sentry.logger.info('Adding new item to cart', {
+        productId: payload.id,
+        productTitle: payload.title,
+        quantity: payload.quantity,
+      });
       return {
         ...state,
         cart: {...state.cart, [action.payload.id]: action.payload},

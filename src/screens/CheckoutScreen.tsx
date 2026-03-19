@@ -48,9 +48,42 @@ const CheckoutScreen = () => {
   const email = scopeData.user?.email;
 
   const performCheckoutOnServer = async () => {
+    const cartItems = Object.values(cartData);
+    const itemsInCart = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    
+    Sentry.logger.info(`Calculated itemsInCart: ${itemsInCart}`);
+    Sentry.logger.info('Checkout initiated', {
+      itemCount: cartItems.length,
+      totalItems: itemsInCart,
+    });
+
     await Sentry.startSpan(
       {name: 'Submit Checkout Form', forceTransaction: true},
-      async () => {
+      async (span) => {
+        // Log checkout span details
+        const activeSpan = span ?? Sentry.getActiveSpan();
+        const spanContext = activeSpan?.spanContext?.() || {};
+        Sentry.logger.info('Checkout span', {
+          _traceId: spanContext.traceId,
+          _spanId: spanContext.spanId,
+          _startTime: Date.now() / 1000,
+          _attributes: {
+            cartItemCount: cartItems.length,
+            totalItems: itemsInCart,
+          },
+        });
+
+        // Log detailed cart contents
+        Sentry.logger.info('Checkout called with cart', {
+          items: cartItems.map((item) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+        });
+
         // Span starts here
         let data = await placeOrder(Toast);
 
@@ -59,6 +92,9 @@ const CheckoutScreen = () => {
           () => {
             // Child span starts here and ends when the function returns
             console.log('Processing shopping cart result...', data);
+            Sentry.logger.debug('Processing shopping cart result', {
+              responseStatus: data?.status,
+            });
           },
         );
         // Span ends with the function returning
@@ -79,11 +115,23 @@ const CheckoutScreen = () => {
       }
     });
 
+    const totalQuantity = Object.values(quantities).reduce(
+      (sum: number, qty: number) => sum + qty,
+      0,
+    ) as number;
+    Sentry.logger.info(`Adding quantity: ${totalQuantity}`);
+
     const data = {
       // This is the data structure implemented by application-monitoring-react and flask
       cart: {items: cart, quantities},
       form: contactInfoData,
     };
+
+    Sentry.logger.debug('Sending checkout request', {
+      itemCount: cart.length,
+      endpoint: `${BACKEND_URL}/checkout`,
+      cart: JSON.stringify(data.cart),
+    });
 
     let response = await fetch(`${BACKEND_URL}/checkout`, {
       method: 'POST',
@@ -95,6 +143,10 @@ const CheckoutScreen = () => {
       },
       body: JSON.stringify(data),
     }).catch((err) => {
+      Sentry.logger.error('Checkout request failed', {
+        error: err.message,
+        endpoint: `${BACKEND_URL}/checkout`,
+      });
       throw new Error(err);
     });
     setOrderStatusUI(false);
@@ -107,14 +159,23 @@ const CheckoutScreen = () => {
           })
         : null;
 
+      const errorMessage = `${response.status} - ${response.statusText || 'INTERNAL SERVER ERROR'}`;
+      Sentry.logger.error(`Error: ${errorMessage}`, {
+        status: response.status,
+        statusText: response.statusText || 'INTERNAL SERVER ERROR',
+        itemCount: cart.length,
+      });
+
       Sentry.captureException(
-        new Error(
-          response.status +
-            ' - ' +
-            (response.statusText || ' INTERNAL SERVER ERROR'),
-        ),
+        new Error(errorMessage),
       );
     } else {
+      Sentry.logger.info('Checkout completed successfully', {
+        status: response.status,
+        itemCount: cart.length,
+        totalValue: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      });
+
       uiToast
         ? uiToast.show({
             type: 'success',

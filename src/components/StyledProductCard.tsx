@@ -34,6 +34,15 @@ export const StyledProductCard = (props: {
       text1: 'Added to Cart',
       visibilityTime: visibilityTimeMs,
     });
+    Sentry.logger.info(
+      Sentry.logger.fmt`'${props.title}' added to cart`,
+      {
+        productId: props.id,
+        productTitle: props.title,
+        price: props.price,
+        productType: props.type,
+      },
+    );
   };
 
   return (

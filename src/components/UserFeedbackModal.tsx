@@ -36,6 +36,7 @@ export const SentryUserFeedbackActionButton = () => {
       : [style.container, style.shadowProp];
 
   const onGiveFeedbackButtonPress = () => {
+    Sentry.logger.info('User feedback modal opened');
     setFromVisibility(true);
   };
 
@@ -110,6 +111,11 @@ export function UserFeedbackModal(props: {onDismiss: () => void}) {
       email: 'example@example.com',
       message: comments,
     };
+
+    Sentry.logger.info('User feedback submitted', {
+      eventId: sentryId,
+      messageLength: comments.length,
+    });
 
     Sentry.captureFeedback(userFeedback);
     clearComments();

@@ -31,6 +31,16 @@ const ProductDetailScreen = ({
   const showProductDetail = !!params;
   const onClosePress = () => navigation.goBack();
 
+  React.useEffect(() => {
+    if (params) {
+      Sentry.logger.info('Product detail viewed', {
+        productId: params.id,
+        productTitle: params.title,
+        price: params.price,
+      });
+    }
+  }, [params]);
+
   useEffect(() => {
     fetch(`${BACKEND_URL}/success`); // Extra fetch to add spans to the demo
   }, []);
@@ -67,6 +77,15 @@ const ProductDetail = (props: Product) => {
         imgcropped: props.imgcropped,
       },
     });
+    Sentry.logger.info(
+      Sentry.logger.fmt`'${props.title}' added to cart from product detail`,
+      {
+        productId: props.id,
+        productTitle: props.title,
+        price: props.price,
+        productType: props.type,
+      },
+    );
   };
 
   return (
