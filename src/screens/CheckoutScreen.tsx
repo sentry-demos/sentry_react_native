@@ -27,6 +27,13 @@ const items = [
   {id: 8, placeholder: 'zip code', key: 'zipCode'},
 ];
 
+const promoError = JSON.stringify({
+  error: {
+    code: 'expired',
+    message: 'Provided coupon code has expired.',
+  },
+});
+
 /**
  * An example of how to add a Sentry Transaction to a React component manually.
  * So you can control all spans that belong to that one transaction.
@@ -41,6 +48,8 @@ const CheckoutScreen = () => {
   const cartData = useSelector((state: RootState) => state.cart);
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
+  const [promoLoading, setPromoLoading] = React.useState(false);
+  const [promoError, setPromoError] = React.useState(false);
 
   const scopeData = Sentry.getCurrentScope().getScopeData();
   const se = scopeData.tags['se'];
@@ -50,7 +59,7 @@ const CheckoutScreen = () => {
   const performCheckoutOnServer = async () => {
     const cartItems = Object.values(cartData);
     const itemsInCart = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    
+
     Sentry.logger.info(`Calculated itemsInCart: ${itemsInCart}`);
     Sentry.logger.info('Checkout initiated', {
       itemCount: cartItems.length,
@@ -159,21 +168,24 @@ const CheckoutScreen = () => {
           })
         : null;
 
-      const errorMessage = `${response.status} - ${response.statusText || 'INTERNAL SERVER ERROR'}`;
+      const errorMessage = `${response.status} - ${
+        response.statusText || 'INTERNAL SERVER ERROR'
+      }`;
       Sentry.logger.error(`Error: ${errorMessage}`, {
         status: response.status,
         statusText: response.statusText || 'INTERNAL SERVER ERROR',
         itemCount: cart.length,
       });
 
-      Sentry.captureException(
-        new Error(errorMessage),
-      );
+      Sentry.captureException(new Error(errorMessage));
     } else {
       Sentry.logger.info('Checkout completed successfully', {
         status: response.status,
         itemCount: cart.length,
-        totalValue: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        totalValue: cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        ),
       });
 
       uiToast
@@ -189,6 +201,60 @@ const CheckoutScreen = () => {
   const renderFooter = () => {
     return (
       <View>
+        <Text style={styles.promoCodeText}>Promo Code</Text>
+        <SafeAreaView>
+          <TextInput
+            style={styles.input}
+            value={contactInfoData.promoCode || ''}
+            placeholder="promo code"
+            onPressIn={() => {
+              dispatch({
+                type: 'FILL_FIELDS',
+                payload: 'dummydata',
+                onScope: email ? email : null,
+              });
+            }}
+          />
+        </SafeAreaView>
+        <View>
+          {promoError && (
+            <Text style={styles.promoErrorText}>Coupon code has expired</Text>
+          )}
+
+          <StyledButton
+            onPress={async () => {
+              setPromoLoading(true);
+              setPromoError(false);
+
+              Sentry.logger.info(
+                `Applying promo code: ${contactInfoData.promoCode}`,
+                {
+                  promoCode: contactInfoData.promoCode,
+                  action: 'promo_apply',
+                },
+              );
+
+              await new Promise((resolve) => setTimeout(resolve, 750));
+
+              setPromoLoading(false);
+
+              Sentry.logger.error(
+                `Failed to apply promo code ${contactInfoData.promoCode}: HTTP 410 | Error: 'expired'`,
+                {
+                  promo_code: contactInfoData.promoCode,
+                  http_status: 410,
+                  error_code: 'expired',
+                  error_message: 'Provided coupon code has expired.',
+                  response_body: promoError,
+                },
+              );
+
+              setPromoError(true);
+            }}
+            isLoading={promoLoading}
+            title={'Apply'}
+          />
+        </View>
         <View style={styles.flavorContainer}>
           {/* <Image
                     source={require('../assets/sentry-logo.png')}
@@ -198,7 +264,7 @@ const CheckoutScreen = () => {
             Deliver to Sentry - San Francisco {contactInfoData.zipCode}
           </Text>
         </View>
-        <View>
+        <View style={styles.placeOrderButton}>
           <StyledButton
             onPress={() => performCheckoutOnServer()}
             isLoading={orderStatusUI}
@@ -217,10 +283,12 @@ const CheckoutScreen = () => {
     <View style={styles.screen}>
       <Sentry.TimeToInitialDisplay record={true} />
       <Sentry.TimeToFullDisplay record={true} />
-      <Text style={styles.contactInfoText}>Contact Info</Text>
       <View style={styles.cartListWrapper}>
         <FlatList
           data={items}
+          ListHeaderComponent={
+            <Text style={styles.contactInfoText}>Contact Info</Text>
+          }
           appDispatch={dispatch}
           ListFooterComponent={renderFooter}
           ListFooterComponentStyle={styles.flavorContainer}
@@ -310,6 +378,21 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '600',
     marginLeft: 10,
+  },
+  promoCodeText: {
+    marginTop: 10,
+    marginLeft: 10,
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  promoErrorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+    marginLeft: 10,
+    marginTop: 4,
+  },
+  placeOrderButton: {
+    paddingBottom: 20,
   },
   cartListWrapper: {
     flex: 1,
