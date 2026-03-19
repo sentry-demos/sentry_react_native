@@ -50,7 +50,7 @@ const CheckoutScreen = () => {
   const performCheckoutOnServer = async () => {
     const cartItems = Object.values(cartData);
     const itemsInCart = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    
+
     Sentry.logger.info(`Calculated itemsInCart: ${itemsInCart}`);
     Sentry.logger.info('Checkout initiated', {
       itemCount: cartItems.length,
@@ -159,21 +159,24 @@ const CheckoutScreen = () => {
           })
         : null;
 
-      const errorMessage = `${response.status} - ${response.statusText || 'INTERNAL SERVER ERROR'}`;
+      const errorMessage = `${response.status} - ${
+        response.statusText || 'INTERNAL SERVER ERROR'
+      }`;
       Sentry.logger.error(`Error: ${errorMessage}`, {
         status: response.status,
         statusText: response.statusText || 'INTERNAL SERVER ERROR',
         itemCount: cart.length,
       });
 
-      Sentry.captureException(
-        new Error(errorMessage),
-      );
+      Sentry.captureException(new Error(errorMessage));
     } else {
       Sentry.logger.info('Checkout completed successfully', {
         status: response.status,
         itemCount: cart.length,
-        totalValue: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        totalValue: cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        ),
       });
 
       uiToast
@@ -189,6 +192,24 @@ const CheckoutScreen = () => {
   const renderFooter = () => {
     return (
       <View>
+        <Text style={styles.promoCodeText}>Promo Code</Text>
+        <SafeAreaView>
+          <TextInput
+            style={styles.input}
+            value={contactInfoData.promoCode || ''}
+            placeholder="promo code"
+            onPressIn={() => {
+              dispatch({
+                type: 'FILL_FIELDS',
+                payload: 'dummydata',
+                onScope: email ? email : null,
+              });
+            }}
+          />
+        </SafeAreaView>
+        <View style={styles.applyButtonWrapper}>
+          <StyledButton onPress={() => {}} title={'Apply'} />
+        </View>
         <View style={styles.flavorContainer}>
           {/* <Image
                     source={require('../assets/sentry-logo.png')}
@@ -198,7 +219,7 @@ const CheckoutScreen = () => {
             Deliver to Sentry - San Francisco {contactInfoData.zipCode}
           </Text>
         </View>
-        <View>
+        <View style={styles.placeOrderButtonß}>
           <StyledButton
             onPress={() => performCheckoutOnServer()}
             isLoading={orderStatusUI}
@@ -217,10 +238,12 @@ const CheckoutScreen = () => {
     <View style={styles.screen}>
       <Sentry.TimeToInitialDisplay record={true} />
       <Sentry.TimeToFullDisplay record={true} />
-      <Text style={styles.contactInfoText}>Contact Info</Text>
       <View style={styles.cartListWrapper}>
         <FlatList
           data={items}
+          ListHeaderComponent={
+            <Text style={styles.contactInfoText}>Contact Info</Text>
+          }
           appDispatch={dispatch}
           ListFooterComponent={renderFooter}
           ListFooterComponentStyle={styles.flavorContainer}
@@ -310,6 +333,15 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '600',
     marginLeft: 10,
+  },
+  promoCodeText: {
+    marginTop: 10,
+    marginLeft: 10,
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  placeOrderButtonß: {
+    paddingBottom: 20,
   },
   cartListWrapper: {
     flex: 1,

@@ -13,6 +13,7 @@ const initialState = {
     countryRegion: '',
     state: '',
     zipCode: '',
+    promoCode: '',
   },
   feedback: {
     isActionButtonVisible: false,
@@ -38,6 +39,7 @@ const reducer = (state = initialState, action) => {
             countryRegion: 'USA',
             state: 'CA',
             zipCode: (Math.floor(Math.random() * 90000) + 10000).toString(),
+            promoCode: 'SAVE20',
           },
         };
       } else {
