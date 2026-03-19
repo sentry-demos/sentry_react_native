@@ -208,7 +208,18 @@ const CheckoutScreen = () => {
           />
         </SafeAreaView>
         <View style={styles.applyButtonWrapper}>
-          <StyledButton onPress={() => {}} title={'Apply'} />
+          <StyledButton
+            onPress={() => {
+              Sentry.logger.info(
+                `Applying promo code: ${contactInfoData.promoCode}`,
+                {
+                  promoCode: contactInfoData.promoCode,
+                  action: 'promo_apply',
+                },
+              );
+            }}
+            title={'Apply'}
+          />
         </View>
         <View style={styles.flavorContainer}>
           {/* <Image
