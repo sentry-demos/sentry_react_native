@@ -264,7 +264,7 @@ const CheckoutScreen = () => {
             Deliver to Sentry - San Francisco {contactInfoData.zipCode}
           </Text>
         </View>
-        <View style={styles.placeOrderButtonß}>
+        <View style={styles.placeOrderButton}>
           <StyledButton
             onPress={() => performCheckoutOnServer()}
             isLoading={orderStatusUI}
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: 4,
   },
-  placeOrderButtonß: {
+  placeOrderButton: {
     paddingBottom: 20,
   },
   cartListWrapper: {
