@@ -44,8 +44,12 @@ export const SentryUserFeedbackActionButton = () => {
     <>
       {feedbackState.isActionButtonVisible && (
         <Pressable onPress={onGiveFeedbackButtonPress} style={pressableStyle}>
-          <Icon name="bug" size={24} color="#fff" />
-          <Text style={style.text}>Report a Bug</Text>
+          <Sentry.Unmask>
+            <Icon name="bug" size={24} color="#fff" />
+          </Sentry.Unmask>
+          <Sentry.Unmask>
+            <Text style={style.text}>Report a Bug</Text>
+          </Sentry.Unmask>
         </Pressable>
       )}
       {isFormVisible && (

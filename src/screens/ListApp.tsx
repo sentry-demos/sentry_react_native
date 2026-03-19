@@ -158,42 +158,54 @@ const ListApp = (props: Props) => {
               onPress={() => {
                 Sentry.captureMessage('Test Message');
               }}>
-              <Text style={styles.buttonText}>Capture Message</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Capture Message</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
                 Sentry.captureException(new Error('Test Error'));
               }}>
-              <Text style={styles.buttonText}>Capture Exception</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Capture Exception</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
                 throw new Error('Thrown Error');
               }}>
-              <Text style={styles.buttonText}>Uncaught Thrown Error</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Uncaught Thrown Error</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
                 Promise.reject(new Error('Unhandled Promise Rejection'));
               }}>
-              <Text style={styles.buttonText}>Unhandled Promise Rejection</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Unhandled Promise Rejection</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
                 Sentry.nativeCrash();
               }}>
-              <Text style={styles.buttonText}>Native Crash</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Native Crash</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
                 setScopeProps();
               }}>
-              <Text style={styles.buttonText}>Set Scope Properties</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Set Scope Properties</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <Sentry.ErrorBoundary
@@ -204,9 +216,11 @@ const ListApp = (props: Props) => {
                 onPress={() => {
                   setShowBadCode(true);
                 }}>
-                <Text style={styles.buttonText}>
-                  Activate Error Boundary {showBadCode && <div />}
-                </Text>
+                <Sentry.Unmask>
+                  <Text style={styles.buttonText}>
+                    Activate Error Boundary {showBadCode && <div />}
+                  </Text>
+                </Sentry.Unmask>
               </TouchableOpacity>
             </Sentry.ErrorBoundary>
           </View>
@@ -215,14 +229,18 @@ const ListApp = (props: Props) => {
               onPress={() => {
                 props.navigation.navigate('Tracker');
               }}>
-              <Text style={styles.buttonText}>Auto Tracing Example</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Auto Tracing Example</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
                 props.navigation.navigate('ManualTracker');
               }}>
-              <Text style={styles.buttonText}>Manual Tracing Example</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Manual Tracing Example</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
@@ -241,14 +259,18 @@ const ListApp = (props: Props) => {
                   }),
                 );
               }}>
-              <Text style={styles.buttonText}>Performance Timing</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Performance Timing</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
                 props.navigation.navigate('Redux');
               }}>
-              <Text style={styles.buttonText}>Redux Example</Text>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Redux Example</Text>
+              </Sentry.Unmask>
             </TouchableOpacity>
           </View>
         </View>
