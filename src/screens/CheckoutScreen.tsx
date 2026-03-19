@@ -49,6 +49,7 @@ const CheckoutScreen = () => {
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
   const [promoLoading, setPromoLoading] = React.useState(false);
+  const [promoError, setPromoError] = React.useState(false);
 
   const scopeData = Sentry.getCurrentScope().getScopeData();
   const se = scopeData.tags['se'];
@@ -216,9 +217,14 @@ const CheckoutScreen = () => {
           />
         </SafeAreaView>
         <View>
+          {promoError && (
+            <Text style={styles.promoErrorText}>Coupon code has expired</Text>
+          )}
+
           <StyledButton
             onPress={async () => {
               setPromoLoading(true);
+              setPromoError(false);
 
               Sentry.logger.info(
                 `Applying promo code: ${contactInfoData.promoCode}`,
@@ -243,11 +249,7 @@ const CheckoutScreen = () => {
                 },
               );
 
-              Toast.show({
-                type: 'error',
-                position: 'bottom',
-                text1: 'Provided coupon code has expired.',
-              });
+              setPromoError(true);
             }}
             isLoading={promoLoading}
             title={'Apply'}
@@ -382,6 +384,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 18,
     fontWeight: '600',
+  },
+  promoErrorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+    marginLeft: 10,
+    marginTop: 4,
   },
   placeOrderButtonß: {
     paddingBottom: 20,
