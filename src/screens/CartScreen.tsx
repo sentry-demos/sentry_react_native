@@ -133,13 +133,13 @@ const CartScreen = ({
 
   React.useEffect(() => {
     fetch(`${BACKEND_URL}/success`); // exists just to add span data to demo
-    const cartItems = Object.values(cartData);
+    const items = Object.values(cartData);
     Sentry.logger.info('Cart screen viewed', {
-      itemCount: cartItems.length,
-      totalItems: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-      totalValue: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      itemCount: items.length,
+      totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
+      totalValue: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     });
-  }, [cartData]);
+  }, []);
 
   const recordFullDisplay = !!cartData;
 

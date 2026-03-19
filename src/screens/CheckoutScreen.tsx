@@ -61,10 +61,10 @@ const CheckoutScreen = () => {
       {name: 'Submit Checkout Form', forceTransaction: true},
       async (span) => {
         // Log checkout span details
-        const spanContext = span?.spanContext?.() || {};
-        const transaction = Sentry.getCurrentScope().getTransaction();
+        const activeSpan = span ?? Sentry.getActiveSpan();
+        const spanContext = activeSpan?.spanContext?.() || {};
         Sentry.logger.info('Checkout span', {
-          _traceId: transaction?.traceId || spanContext.traceId,
+          _traceId: spanContext.traceId,
           _spanId: spanContext.spanId,
           _startTime: Date.now() / 1000,
           _attributes: {
