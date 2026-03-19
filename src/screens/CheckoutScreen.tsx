@@ -48,6 +48,7 @@ const CheckoutScreen = () => {
   const cartData = useSelector((state: RootState) => state.cart);
   const contactInfoData = useSelector((state: RootState) => state.contactInfo);
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
+  const [promoLoading, setPromoLoading] = React.useState(false);
 
   const scopeData = Sentry.getCurrentScope().getScopeData();
   const se = scopeData.tags['se'];
@@ -217,6 +218,8 @@ const CheckoutScreen = () => {
         <View>
           <StyledButton
             onPress={async () => {
+              setPromoLoading(true);
+
               Sentry.logger.info(
                 `Applying promo code: ${contactInfoData.promoCode}`,
                 {
@@ -226,6 +229,8 @@ const CheckoutScreen = () => {
               );
 
               await new Promise((resolve) => setTimeout(resolve, 750));
+
+              setPromoLoading(false);
 
               Sentry.logger.error(
                 `Failed to apply promo code ${contactInfoData.promoCode}: HTTP 410 | Error: 'expired'`,
@@ -244,6 +249,7 @@ const CheckoutScreen = () => {
                 text1: 'Provided coupon code has expired.',
               });
             }}
+            isLoading={promoLoading}
             title={'Apply'}
           />
         </View>
