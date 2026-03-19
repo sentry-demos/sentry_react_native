@@ -11,7 +11,7 @@ import {
   TextStyle,
 } from 'react-native';
 import * as Sentry from '@sentry/react-native';
-import {UserFeedback} from '@sentry/react-native';
+import {SendFeedbackParams} from '@sentry/react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import {android} from '../../utils/platform';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -104,14 +104,14 @@ export function UserFeedbackModal(props: {onDismiss: () => void}) {
       Sentry.lastEventId() ??
       Sentry.captureMessage('User Feedback Fallback Message');
 
-    const userFeedback: UserFeedback = {
-      event_id: sentryId,
+    const userFeedback: SendFeedbackParams = {
+      associatedEventId: sentryId,
       name: 'Anonymous User',
       email: 'example@example.com',
-      comments,
+      message: comments,
     };
 
-    Sentry.captureUserFeedback(userFeedback);
+    Sentry.captureFeedback(userFeedback);
     clearComments();
     dispatch(hideFeedbackActionButton());
   };
