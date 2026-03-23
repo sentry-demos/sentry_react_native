@@ -1,6 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, Pressable} from 'react-native';
-import * as Sentry from '@sentry/react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import {StyledButton} from './StyledButton';
 
@@ -25,13 +24,6 @@ const BuggyCart = (): React.ReactElement => {
   );
 };
 
-const FallbackComponent = (): React.ReactElement => (
-  <View style={styles.fallback}>
-    <Icon name="circle-exclamation" size={24} color="#c0392b" />
-    <Text style={styles.fallbackText}>Something went wrong</Text>
-  </View>
-);
-
 export const ErrorBoundaryProduct = (): React.ReactElement => {
   return (
     <View style={styles.cardContainer}>
@@ -44,9 +36,7 @@ export const ErrorBoundaryProduct = (): React.ReactElement => {
           <Text style={styles.cardDescription}>Boundary error testing</Text>
         </View>
         <View style={styles.cardDetailAction}>
-          <Sentry.ErrorBoundary fallback={<FallbackComponent />}>
-            <BuggyCart />
-          </Sentry.ErrorBoundary>
+          <BuggyCart />
         </View>
       </View>
     </View>
@@ -101,16 +91,5 @@ const styles = StyleSheet.create({
   },
   addToCartButton: {
     margin: 10,
-  },
-  fallback: {
-    margin: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  fallbackText: {
-    color: '#c0392b',
-    fontSize: 14,
-    fontWeight: '500',
   },
 });

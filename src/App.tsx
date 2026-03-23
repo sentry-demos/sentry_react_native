@@ -23,10 +23,10 @@ import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
 
-import {RootState, store, showFeedbackActionButton} from './reduxApp';
-import {DSN} from './config';
+import {RootState, store} from './reduxApp';
 import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
+import SentryProvider, {reactNavigationIntegration} from './components/SentryProvider';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LogBox, Platform, StyleSheet} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -35,63 +35,11 @@ console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
 
-const reactNavigationIntegration =
-  Sentry.reactNavigationIntegration({
-    // How long it will wait for the route change to complete. Default is 1000ms
-    routeChangeTimeoutMs: 500,
-    enableTimeToInitialDisplay: true,
-  });
-
-// Get app version from package.json, for fingerprinting
-const packageJson = require('../package.json');
-
-Sentry.init({
-  dsn: DSN,
-  debug: true,
-  environment: 'dev',
-  enableLogs: true,
-  beforeSend: (event) => {
-    if (SE === 'tda') {
-      // Make issues unique to the release (app version) for Release Health
-      event.fingerprint = ['{{ default }}', SE, packageJson.version];
-    } else if (SE) {
-      // Make issue for the SE
-      event.fingerprint = ['{{ default }}', SE];
-    }
-
-    if (!event.type) {
-      // Only show the feedback button for errors
-      store.dispatch(showFeedbackActionButton());
-    }
-
-    return event;
-  },
-  integrations: [
-    Sentry.reactNativeTracingIntegration({
-      traceFetch: false, // RN uses XHR to implement fetch, this prevents duplicates
-    }),
-    Sentry.mobileReplayIntegration({
-      maskAllImages: true,
-      maskAllText: true,
-    }),
-    Sentry.consoleLoggingIntegration({levels: ['log', 'warn', 'error']}),
-    reactNavigationIntegration,
-  ],
-  tracesSampleRate: 1.0,
-  profilesSampleRate: 1.0,
-  replaysOnErrorSampleRate: 1.0,
-  replaysSessionSampleRate: 1.0,
-  enableUserInteractionTracing: true,
-  enableAutoSessionTracking: true,
-  sessionTrackingIntervalMillis: 5000, // For testing, session close when 5 seconds (instead of the default 30) in the background.
-  maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
-  attachStacktrace: true,
-  attachScreenshot: true,
-  attachViewHierarchy: true,
-  spotlight: true,
-});
-
-Sentry.setTag('se', SE);
+// Sentry.init has been moved to SentryProvider.tsx
+// const reactNavigationIntegration = Sentry.reactNavigationIntegration({ ... });
+// const packageJson = require('../package.json');
+// Sentry.init({ ... });
+// Sentry.setTag('se', SE);
 
 const Tab = createBottomTabNavigator();
 
@@ -116,10 +64,10 @@ const App = () => {
     customerType,
     email,
     se: SE,
-    version: packageJson.version,
   });
 
   return (
+    <SentryProvider>
     <Provider store={store}>
       <SafeAreaProvider>
         <GestureHandlerRootView style={styles.gestureHandlerRootView}>
@@ -138,6 +86,7 @@ const App = () => {
         </GestureHandlerRootView>
       </SafeAreaProvider>
     </Provider>
+    </SentryProvider>
   );
 };
 
@@ -244,9 +193,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Sentry.wrap(App, {
-  touchEventBoundaryProps: {
-    ignoreNames: ['Provider', 'UselessName', /^SomeRegex/],
-    labelName: 'id',
-  },
-});
+export default App;
