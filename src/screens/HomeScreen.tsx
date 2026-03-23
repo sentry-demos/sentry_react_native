@@ -6,6 +6,7 @@ import {BACKEND_URL} from '../config';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParamList} from '../navigation';
 import {ProfiledStyledProductCard} from '../components/StyledProductCard';
+import {ErrorBoundaryProduct} from '../components/ErrorBoundaryProduct';
 import {Product} from '../types/Product';
 
 type ExtendedSentryScope = Sentry.Scope & {
@@ -108,6 +109,7 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
           refreshing={toolData === null}
           data={toolData}
           contentContainerStyle={styles.productListContainer}
+          ListHeaderComponent={toolData ? <ErrorBoundaryProduct /> : null}
           renderItem={({item}) => {
             return (
               <ProfiledStyledProductCard
