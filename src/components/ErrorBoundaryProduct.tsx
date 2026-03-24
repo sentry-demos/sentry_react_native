@@ -3,19 +3,14 @@ import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import {StyledButton} from './StyledButton';
 
-// Throws during render so the ErrorBoundary can catch it
 const BuggyCart = (): React.ReactElement => {
-  const [shouldThrow, setShouldThrow] = React.useState(false);
-
-  if (shouldThrow) {
-    throw new Error('Error boundary triggered from error product card');
-  }
-
   return (
     <StyledButton
       testID="add-to-cart-button-error-product"
       title="Add to cart"
-      onPress={() => setShouldThrow(true)}
+      onPress={() => {
+        throw new Error('Error boundary triggered from error product card');
+      }}
       style={{
         default: styles.addToCartButton,
         pressed: styles.addToCartButton,
