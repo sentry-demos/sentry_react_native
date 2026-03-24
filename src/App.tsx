@@ -21,25 +21,65 @@ import ProductDetailScreen from './screens/ProductDetailScreen';
 import ReduxScreen from './screens/ReduxScreen';
 import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
-import Toast from 'react-native-toast-message';
 
 import {RootState, store} from './reduxApp';
 import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
-import SentryProvider, {reactNavigationIntegration} from './components/SentryProvider';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LogBox, Platform, StyleSheet} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {SentryUserFeedbackActionButton} from './components/UserFeedbackModal';
+import {DSN} from './config';
 console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
 
-// Sentry.init has been moved to SentryProvider.tsx
-// const reactNavigationIntegration = Sentry.reactNavigationIntegration({ ... });
-// const packageJson = require('../package.json');
-// Sentry.init({ ... });
-// Sentry.setTag('se', SE);
+const reactNavigationIntegration = Sentry.reactNavigationIntegration({
+  routeChangeTimeoutMs: 500,
+  enableTimeToInitialDisplay: true,
+});
+
+const packageJson = require('../package.json');
+
+Sentry.init({
+  dsn: DSN,
+  debug: true,
+  environment: 'dev',
+  enableLogs: true,
+  beforeSend: event => {
+    if (SE === 'tda') {
+      event.fingerprint = ['{{ default }}', SE, packageJson.version];
+    } else if (SE) {
+      event.fingerprint = ['{{ default }}', SE];
+    }
+    return event;
+  },
+  integrations: [
+    Sentry.reactNativeTracingIntegration({
+      traceFetch: false,
+    }),
+    Sentry.mobileReplayIntegration({
+      maskAllImages: true,
+      maskAllText: true,
+    }),
+    Sentry.consoleLoggingIntegration({levels: ['log', 'warn', 'error']}),
+    reactNavigationIntegration,
+  ],
+  tracesSampleRate: 1.0,
+  profilesSampleRate: 1.0,
+  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: 1.0,
+  enableUserInteractionTracing: true,
+  enableAutoSessionTracking: true,
+  sessionTrackingIntervalMillis: 5000,
+  maxBreadcrumbs: 150,
+  attachStacktrace: true,
+  attachScreenshot: true,
+  attachViewHierarchy: true,
+  spotlight: true,
+});
+
+Sentry.setTag('se', SE);
 
 const Tab = createBottomTabNavigator();
 
@@ -67,7 +107,6 @@ const App = () => {
   });
 
   return (
-    <SentryProvider>
     <Provider store={store}>
       <SafeAreaProvider>
         <GestureHandlerRootView style={styles.gestureHandlerRootView}>
@@ -86,7 +125,6 @@ const App = () => {
         </GestureHandlerRootView>
       </SafeAreaProvider>
     </Provider>
-    </SentryProvider>
   );
 };
 
@@ -193,4 +231,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Sentry.wrap(App);
