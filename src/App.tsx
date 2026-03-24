@@ -26,7 +26,7 @@ import {RootState, store} from './reduxApp';
 import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {LogBox, Platform, StyleSheet} from 'react-native';
+import {LogBox, Platform, Pressable, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {SentryUserFeedbackActionButton} from './components/UserFeedbackModal';
 import {DSN} from './config';
@@ -81,6 +81,15 @@ Sentry.init({
 
 Sentry.setTag('se', SE);
 
+const FallbackComponent = ({resetError}: {resetError: () => void}) => (
+  <View style={styles.fallback}>
+    <Text style={styles.fallbackText}>Something went wrong.</Text>
+    <Pressable style={styles.fallbackButton} onPress={resetError}>
+      <Text style={styles.fallbackButtonText}>Refresh</Text>
+    </Pressable>
+  </View>
+);
+
 const Tab = createBottomTabNavigator();
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -107,6 +116,7 @@ const App = () => {
   });
 
   return (
+    <Sentry.ErrorBoundary fallback={FallbackComponent}>
     <Provider store={store}>
       <SafeAreaProvider>
         <GestureHandlerRootView style={styles.gestureHandlerRootView}>
@@ -125,6 +135,7 @@ const App = () => {
         </GestureHandlerRootView>
       </SafeAreaProvider>
     </Provider>
+    </Sentry.ErrorBoundary>
   );
 };
 
@@ -228,6 +239,27 @@ const DebugNavigator = () => {
 const styles = StyleSheet.create({
   gestureHandlerRootView: {
     flex: 1,
+  },
+  fallback: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  fallbackText: {
+    fontSize: 18,
+    marginBottom: 20,
+    color: '#000',
+  },
+  fallbackButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    backgroundColor: '#002626',
+    borderRadius: 8,
+  },
+  fallbackButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
