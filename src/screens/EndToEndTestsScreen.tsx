@@ -18,7 +18,7 @@ const EndToEndTestsScreen = () => {
   React.useEffect(() => {
     Sentry.init({
       dsn: DSN,
-      beforeSend: (e: Sentry.Event) => {
+      beforeSend: (e: Sentry.ErrorEvent) => {
         setEventId(e.event_id);
         return e;
       },
