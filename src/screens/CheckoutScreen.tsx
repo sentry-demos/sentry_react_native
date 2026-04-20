@@ -218,7 +218,9 @@ const CheckoutScreen = () => {
         </SafeAreaView>
         <View>
           {promoError && (
-            <Text style={styles.promoErrorText}>Coupon code has expired</Text>
+            <Text style={styles.promoErrorText}>
+              Unknown error applying promo code
+            </Text>
           )}
 
           <StyledButton
