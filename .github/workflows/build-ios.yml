@@ -11,7 +11,7 @@ on:
 jobs:
   build-ios:
     name: iOS
-    runs-on: macos-14
+    runs-on: macos-15
     env:
       APP_ARCHIVE_PATH: sentry_react_native.app.zip
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
