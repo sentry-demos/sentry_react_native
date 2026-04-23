@@ -206,7 +206,9 @@ const CheckoutScreen = () => {
   const renderFooter = () => {
     return (
       <View>
-        <Text style={styles.promoCodeText}>Promo Code</Text>
+        <Sentry.Unmask>
+          <Text style={styles.promoCodeText}>Promo Code</Text>
+        </Sentry.Unmask>
         <SafeAreaView>
           <TextInput
             style={styles.input}
@@ -223,9 +225,11 @@ const CheckoutScreen = () => {
         </SafeAreaView>
         <View>
           {promoError && (
-            <Text style={styles.promoErrorText}>
-              Unknown error applying promo code
-            </Text>
+            <Sentry.Unmask>
+              <Text style={styles.promoErrorText}>
+                Unknown error applying promo code
+              </Text>
+            </Sentry.Unmask>
           )}
 
           <StyledButton
@@ -262,20 +266,13 @@ const CheckoutScreen = () => {
             title={'Apply'}
           />
         </View>
-        <View style={styles.flavorContainer}>
-          {/* <Image
-                    source={require('../assets/sentry-logo.png')}
-                    style={styles.logo}
-                    /> */}
-          <Text style={styles.deliverToText}>
-            Deliver to Sentry - San Francisco {contactInfoData.zipCode}
-          </Text>
-        </View>
         <View style={styles.placeOrderButton}>
           {checkoutError && (
-            <Text style={styles.promoErrorText}>
-              Unknown error placing order
-            </Text>
+            <Sentry.Unmask>
+              <Text style={styles.promoErrorText}>
+                Unknown error placing order
+              </Text>
+            </Sentry.Unmask>
           )}
           <StyledButton
             onPress={() => performCheckoutOnServer()}
@@ -376,9 +373,8 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#f5f5f5',
     padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
+    flexDirection: 'column',
+    alignItems: 'stretch',
   },
   deliverToText: {
     marginLeft: 5,
@@ -404,7 +400,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   placeOrderButton: {
-    paddingBottom: 20,
+    marginTop: 20,
+    marginBottom: 40,
   },
   cartListWrapper: {
     flex: 1,
