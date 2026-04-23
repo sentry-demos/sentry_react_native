@@ -21,28 +21,24 @@ import ProductDetailScreen from './screens/ProductDetailScreen';
 import ReduxScreen from './screens/ReduxScreen';
 import CartScreen from './screens/CartScreen';
 import CheckoutScreen from './screens/CheckoutScreen';
-import Toast from 'react-native-toast-message';
 
-import {RootState, store, showFeedbackActionButton} from './reduxApp';
-import {DSN} from './config';
+import {RootState, store} from './reduxApp';
 import {SE} from '@env'; // SE is undefined if no .env file is set
 import {RootStackParamList} from './navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {LogBox, Platform, StyleSheet} from 'react-native';
+import {LogBox, Platform, Pressable, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {SentryUserFeedbackActionButton} from './components/UserFeedbackModal';
+import {DSN} from './config';
 console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
 
-const reactNavigationIntegration =
-  Sentry.reactNavigationIntegration({
-    // How long it will wait for the route change to complete. Default is 1000ms
-    routeChangeTimeoutMs: 500,
-    enableTimeToInitialDisplay: true,
-  });
+const reactNavigationIntegration = Sentry.reactNavigationIntegration({
+  routeChangeTimeoutMs: 500,
+  enableTimeToInitialDisplay: true,
+});
 
-// Get app version from package.json, for fingerprinting
 const packageJson = require('../package.json');
 
 Sentry.init({
@@ -50,25 +46,17 @@ Sentry.init({
   debug: true,
   environment: 'dev',
   enableLogs: true,
-  beforeSend: (event) => {
+  beforeSend: event => {
     if (SE === 'tda') {
-      // Make issues unique to the release (app version) for Release Health
       event.fingerprint = ['{{ default }}', SE, packageJson.version];
     } else if (SE) {
-      // Make issue for the SE
       event.fingerprint = ['{{ default }}', SE];
     }
-
-    if (!event.type) {
-      // Only show the feedback button for errors
-      store.dispatch(showFeedbackActionButton());
-    }
-
     return event;
   },
   integrations: [
     Sentry.reactNativeTracingIntegration({
-      traceFetch: false, // RN uses XHR to implement fetch, this prevents duplicates
+      traceFetch: false,
     }),
     Sentry.mobileReplayIntegration({
       maskAllImages: true,
@@ -83,8 +71,8 @@ Sentry.init({
   replaysSessionSampleRate: 1.0,
   enableUserInteractionTracing: true,
   enableAutoSessionTracking: true,
-  sessionTrackingIntervalMillis: 5000, // For testing, session close when 5 seconds (instead of the default 30) in the background.
-  maxBreadcrumbs: 150, // Extend from the default 100 breadcrumbs.
+  sessionTrackingIntervalMillis: 5000,
+  maxBreadcrumbs: 150,
   attachStacktrace: true,
   attachScreenshot: true,
   attachViewHierarchy: true,
@@ -92,6 +80,15 @@ Sentry.init({
 });
 
 Sentry.setTag('se', SE);
+
+const FallbackComponent = ({resetError}: {resetError: () => void}) => (
+  <View style={styles.fallback}>
+    <Text style={styles.fallbackText}>Something went wrong.</Text>
+    <Pressable style={styles.fallbackButton} onPress={resetError}>
+      <Text style={styles.fallbackButtonText}>Refresh</Text>
+    </Pressable>
+  </View>
+);
 
 const Tab = createBottomTabNavigator();
 
@@ -116,10 +113,10 @@ const App = () => {
     customerType,
     email,
     se: SE,
-    version: packageJson.version,
   });
 
   return (
+    <Sentry.ErrorBoundary fallback={FallbackComponent}>
     <Provider store={store}>
       <SafeAreaProvider>
         <GestureHandlerRootView style={styles.gestureHandlerRootView}>
@@ -138,6 +135,7 @@ const App = () => {
         </GestureHandlerRootView>
       </SafeAreaProvider>
     </Provider>
+    </Sentry.ErrorBoundary>
   );
 };
 
@@ -242,11 +240,27 @@ const styles = StyleSheet.create({
   gestureHandlerRootView: {
     flex: 1,
   },
-});
-
-export default Sentry.wrap(App, {
-  touchEventBoundaryProps: {
-    ignoreNames: ['Provider', 'UselessName', /^SomeRegex/],
-    labelName: 'id',
+  fallback: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  fallbackText: {
+    fontSize: 18,
+    marginBottom: 20,
+    color: '#000',
+  },
+  fallbackButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    backgroundColor: '#002626',
+    borderRadius: 8,
+  },
+  fallbackButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
+
+export default Sentry.wrap(App);
