@@ -50,6 +50,7 @@ const CheckoutScreen = () => {
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
   const [promoLoading, setPromoLoading] = React.useState(false);
   const [promoError, setPromoError] = React.useState(false);
+  const [checkoutError, setCheckoutError] = React.useState(false);
 
   const scopeData = Sentry.getCurrentScope().getScopeData();
   const se = scopeData.tags['se'];
@@ -115,6 +116,7 @@ const CheckoutScreen = () => {
     uiToast: null | UIToast = null,
   ): Promise<Response> => {
     setOrderStatusUI(true);
+    setCheckoutError(false);
 
     const cart = Object.values(cartData);
     let quantities = {};
@@ -156,10 +158,13 @@ const CheckoutScreen = () => {
         error: err.message,
         endpoint: `${BACKEND_URL}/checkout`,
       });
+      setOrderStatusUI(false);
+      setCheckoutError(true);
       throw new Error(err);
     });
     setOrderStatusUI(false);
     if (response.status !== 200) {
+      setCheckoutError(true);
       uiToast
         ? uiToast.show({
             type: 'error',
@@ -267,6 +272,11 @@ const CheckoutScreen = () => {
           </Text>
         </View>
         <View style={styles.placeOrderButton}>
+          {checkoutError && (
+            <Text style={styles.promoErrorText}>
+              Unknown error placing order
+            </Text>
+          )}
           <StyledButton
             onPress={() => performCheckoutOnServer()}
             isLoading={orderStatusUI}
