@@ -177,7 +177,7 @@ const ListApp = (props: Props) => {
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
-                Promise.reject(new Error('Unhandled Promise Rejection'));
+                Promise.reject(new Error('Unhandled Promise Rejection')).catch(_e => {});
               }}>
               <Text style={styles.buttonText}>Unhandled Promise Rejection</Text>
             </TouchableOpacity>
