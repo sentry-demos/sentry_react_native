@@ -170,7 +170,11 @@ const ListApp = (props: Props) => {
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
-                throw new Error('Thrown Error');
+                try {
+                  throw new Error('Thrown Error');
+                } catch (error) {
+                  Sentry.captureException(error);
+                }
               }}>
               <Text style={styles.buttonText}>Uncaught Thrown Error</Text>
             </TouchableOpacity>
