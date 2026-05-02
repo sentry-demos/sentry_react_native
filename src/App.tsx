@@ -1,35 +1,38 @@
 import * as React from 'react';
-import {Provider} from 'react-redux';
+import {LogBox, StyleSheet} from 'react-native';
+
 import {
   NavigationContainer,
   NavigationContainerRef,
 } from '@react-navigation/native';
-
-// Import the Sentry React Native SDK
 import * as Sentry from '@sentry/react-native';
-
+import {SE} from '@env'; // SE is undefined if no .env file is set
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {Provider} from 'react-redux';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
-import {store, showFeedbackActionButton} from './reduxApp';
-import {DSN} from './config';
-import {SE} from '@env'; // SE is undefined if no .env file is set
-import RootTabNavigator from './navigators/RootTabNavigator';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {LogBox, StyleSheet} from 'react-native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {SentryUserFeedbackActionButton} from './components/UserFeedbackModal';
+import {DSN} from './config';
+import RootTabNavigator from './navigators/RootTabNavigator';
+import {showFeedbackActionButton, store} from './reduxApp';
+
+// Used by beforeSend to fingerprint issues per app version when SE === 'tda'.
+const packageJson = require('../package.json');
+
 console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
+
+// ---------------------------------------------------------------------------
+// Sentry initialization
+// ---------------------------------------------------------------------------
 
 const reactNavigationIntegration = Sentry.reactNavigationIntegration({
   // How long it will wait for the route change to complete. Default is 1000ms
   routeChangeTimeoutMs: 500,
   enableTimeToInitialDisplay: true,
 });
-
-// Get app version from package.json, for fingerprinting
-const packageJson = require('../package.json');
 
 Sentry.init({
   dsn: DSN,
@@ -79,6 +82,10 @@ Sentry.init({
 
 Sentry.setTag('se', SE);
 
+// ---------------------------------------------------------------------------
+// User scope seeding
+// ---------------------------------------------------------------------------
+
 const CUSTOMER_TYPES = [
   'medium-plan',
   'large-plan',
@@ -112,6 +119,10 @@ const useInitUserScope = () => {
     });
   }, []);
 };
+
+// ---------------------------------------------------------------------------
+// Root component
+// ---------------------------------------------------------------------------
 
 const App = () => {
   const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
