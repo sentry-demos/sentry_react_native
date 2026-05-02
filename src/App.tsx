@@ -24,8 +24,7 @@ LogBox.ignoreAllLogs();
 // Sentry initialization
 // ---------------------------------------------------------------------------
 
-// Use version for fingerprinting
-const packageJson = require('../package.json');
+const APP_VERSION: string = require('../package.json').version;
 
 const reactNavigationIntegration = Sentry.reactNavigationIntegration({
   // How long it will wait for the route change to complete. Default is 1000ms
@@ -41,7 +40,7 @@ Sentry.init({
   beforeSend: (event) => {
     if (SE === 'tda') {
       // Make issues unique to the release (app version) for Release Health
-      event.fingerprint = ['{{ default }}', SE, packageJson.version];
+      event.fingerprint = ['{{ default }}', SE, APP_VERSION];
     } else if (SE) {
       // Make issue for the SE
       event.fingerprint = ['{{ default }}', SE];
@@ -119,7 +118,7 @@ const useInitUserScope = () => {
       customerType,
       email,
       se: SE,
-      version: packageJson.version,
+      version: APP_VERSION,
     });
   }, []);
 };
