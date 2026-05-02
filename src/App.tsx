@@ -10,7 +10,6 @@ import {SE} from '@env'; // SE is undefined if no .env file is set
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Provider} from 'react-redux';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
 
 import {SentryUserFeedbackActionButton} from './components/UserFeedbackModal';
 import {DSN} from './config';
@@ -20,7 +19,9 @@ import {showFeedbackActionButton, store} from './reduxApp';
 // Used by beforeSend to fingerprint issues per app version when SE === 'tda'.
 const packageJson = require('../package.json');
 
-console.log('> SE', SE);
+if (__DEV__) {
+  console.log('> SE', SE);
+}
 
 LogBox.ignoreAllLogs();
 
