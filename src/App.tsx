@@ -16,9 +16,6 @@ import {DSN} from './config';
 import RootTabNavigator from './navigators/RootTabNavigator';
 import {showFeedbackActionButton, store} from './reduxApp';
 
-// Use app version for fingerprinting
-const packageJson = require('../package.json');
-
 console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
@@ -26,6 +23,9 @@ LogBox.ignoreAllLogs();
 // ---------------------------------------------------------------------------
 // Sentry initialization
 // ---------------------------------------------------------------------------
+
+// Use version for fingerprinting
+const packageJson = require('../package.json');
 
 const reactNavigationIntegration = Sentry.reactNavigationIntegration({
   // How long it will wait for the route change to complete. Default is 1000ms
@@ -129,14 +129,14 @@ const useInitUserScope = () => {
 // ---------------------------------------------------------------------------
 
 const App = () => {
-  const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
-
   useInitUserScope();
+
+  const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
 
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <GestureHandlerRootView style={styles.gestureHandlerRootView}>
+        <GestureHandlerRootView style={styles.root}>
           <NavigationContainer
             ref={navigation}
             onReady={() => {
@@ -155,7 +155,7 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  gestureHandlerRootView: {
+  root: {
     flex: 1,
   },
 });
