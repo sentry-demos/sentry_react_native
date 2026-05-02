@@ -60,17 +60,14 @@ const CheckoutScreen = () => {
     const cartItems = Object.values(cartData);
     const itemsInCart = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-    const cart = {
-      items: cartItems,
-      total: cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0,
-      ),
-    };
+    const orderTotal = cartItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
 
     Sentry.metrics.count('checkout_submit.click', 1);
     Sentry.metrics.gauge('checkout_submit.num_items', itemsInCart);
-    Sentry.metrics.gauge('checkout_submit.order_total', cart.total);
+    Sentry.metrics.gauge('checkout_submit.order_total', orderTotal);
 
     Sentry.logger.info(`Calculated itemsInCart: ${itemsInCart}`);
     Sentry.logger.info('Checkout initiated', {
