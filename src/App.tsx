@@ -16,12 +16,10 @@ import {DSN} from './config';
 import RootTabNavigator from './navigators/RootTabNavigator';
 import {showFeedbackActionButton, store} from './reduxApp';
 
-// Used by beforeSend to fingerprint issues per app version when SE === 'tda'.
+// Use app version for fingerprinting
 const packageJson = require('../package.json');
 
-if (__DEV__) {
-  console.log('> SE', SE);
-}
+console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
 
