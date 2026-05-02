@@ -1,15 +1,23 @@
 import * as React from 'react';
-import {Platform} from 'react-native';
 import {useSelector} from 'react-redux';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 
 import {RootState} from '../reduxApp';
+import {
+  TAB_BAR_COLORS,
+  TAB_BAR_HEIGHT,
+  TAB_BAR_ICON_SIZE,
+  TAB_BAR_PADDING_TOP,
+} from '../theme/tabBar';
 import CartNavigator from './CartNavigator';
 import DebugNavigator from './DebugNavigator';
 import ShopNavigator from './ShopNavigator';
 
 const Tab = createBottomTabNavigator();
+
+const tabIconColor = (focused: boolean) =>
+  focused ? TAB_BAR_COLORS.active : TAB_BAR_COLORS.inactive;
 
 const RootTabNavigator = () => {
   const cartItemsCount = useSelector(
@@ -22,8 +30,8 @@ const RootTabNavigator = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          paddingTop: 5,
-          height: Platform.OS === 'ios' ? 90 : 70,
+          paddingTop: TAB_BAR_PADDING_TOP,
+          height: TAB_BAR_HEIGHT,
         },
       }}>
       <Tab.Screen
@@ -33,8 +41,8 @@ const RootTabNavigator = () => {
           tabBarIcon: ({focused}) => (
             <Icon
               name="store"
-              size={30}
-              color={focused ? '#f6cfb2' : '#dae3e4'}
+              size={TAB_BAR_ICON_SIZE}
+              color={tabIconColor(focused)}
             />
           ),
         }}
@@ -47,8 +55,8 @@ const RootTabNavigator = () => {
             <Icon
               testID="bottom-tab-cart"
               name="cart-shopping"
-              size={30}
-              color={focused ? '#f6cfb2' : '#dae3e4'}
+              size={TAB_BAR_ICON_SIZE}
+              color={tabIconColor(focused)}
             />
           ),
           tabBarBadge: cartItemsCount || undefined,
@@ -61,8 +69,8 @@ const RootTabNavigator = () => {
           tabBarIcon: ({focused}) => (
             <Icon
               name="gear"
-              size={30}
-              color={focused ? '#f6cfb2' : '#dae3e4'}
+              size={TAB_BAR_ICON_SIZE}
+              color={tabIconColor(focused)}
             />
           ),
         }}
