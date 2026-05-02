@@ -79,27 +79,44 @@ Sentry.init({
 
 Sentry.setTag('se', SE);
 
+const CUSTOMER_TYPES = [
+  'medium-plan',
+  'large-plan',
+  'small-plan',
+  'enterprise',
+] as const;
+
+const randomCustomerType = () =>
+  CUSTOMER_TYPES[Math.floor(Math.random() * CUSTOMER_TYPES.length)];
+
+const randomEmail = () =>
+  Math.random().toString(36).substring(2, 6) + '@yahoo.com';
+
+// Seed Sentry's scope with a random user + customer plan once per app launch
+// so issues/sessions are attributable. Runs in an effect to avoid re-firing
+// on every render of <App />.
+const useInitUserScope = () => {
+  React.useEffect(() => {
+    const customerType = randomCustomerType();
+    const email = randomEmail();
+
+    const scope = Sentry.getCurrentScope();
+    scope.setTag('customerType', customerType);
+    scope.setUser({email});
+
+    Sentry.logger.info('App initialized', {
+      customerType,
+      email,
+      se: SE,
+      version: packageJson.version,
+    });
+  }, []);
+};
+
 const App = () => {
   const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
 
-  const scope = Sentry.getCurrentScope();
-  const customerType = [
-    'medium-plan',
-    'large-plan',
-    'small-plan',
-    'enterprise',
-  ][Math.floor(Math.random() * 4)];
-  scope.setTag('customerType', customerType);
-  let email = Math.random().toString(36).substring(2, 6) + '@yahoo.com';
-  scope.setUser({email: email});
-
-  // Log app initialization
-  Sentry.logger.info('App initialized', {
-    customerType,
-    email,
-    se: SE,
-    version: packageJson.version,
-  });
+  useInitUserScope();
 
   return (
     <Provider store={store}>
@@ -114,7 +131,6 @@ const App = () => {
               Sentry.logger.info('Navigation container ready');
             }}>
             <RootTabNavigator />
-            {/* <Toast /> */}
             <SentryUserFeedbackActionButton />
           </NavigationContainer>
         </GestureHandlerRootView>
