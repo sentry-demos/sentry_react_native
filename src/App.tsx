@@ -98,13 +98,18 @@ const randomCustomerType = () =>
 const randomEmail = () =>
   Math.random().toString(36).substring(2, 6) + '@yahoo.com';
 
+// Use a stable per-SE identity unless we're unset or in the 'tda'
+// release-health bucket (where we want fresh users per launch).
+const resolveEmail = () =>
+  !SE || SE === 'tda' ? randomEmail() : `${SE}@yahoo.com`;
+
 // Seed Sentry's scope with a random user + customer plan once per app launch
 // so issues/sessions are attributable. Runs in an effect to avoid re-firing
 // on every render of <App />.
 const useInitUserScope = () => {
   React.useEffect(() => {
     const customerType = randomCustomerType();
-    const email = randomEmail();
+    const email = resolveEmail();
 
     const scope = Sentry.getCurrentScope();
     scope.setTag('customerType', customerType);
