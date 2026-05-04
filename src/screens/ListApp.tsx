@@ -28,6 +28,10 @@ const ListApp = (props: Props) => {
   // Show bad code inside error boundary to trigger it.
   const [showBadCode, setShowBadCode] = React.useState(false);
 
+  // Cooldown to prevent spamming Sentry with repeated button presses.
+  const [captureExceptionCooldown, setCaptureExceptionCooldown] =
+    React.useState(false);
+
   const setScopeProps = () => {
     const dateString = new Date().toString();
 
@@ -164,11 +168,22 @@ const ListApp = (props: Props) => {
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
+              disabled={captureExceptionCooldown}
               onPress={() => {
                 Sentry.captureException(new Error('Test Error'));
+                setCaptureExceptionCooldown(true);
+                setTimeout(() => setCaptureExceptionCooldown(false), 3000);
               }}>
               <Sentry.Unmask>
-                <Text style={styles.buttonText}>Capture Exception</Text>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    captureExceptionCooldown && styles.buttonTextDisabled,
+                  ]}>
+                  {captureExceptionCooldown
+                    ? 'Exception Sent!'
+                    : 'Capture Exception'}
+                </Text>
               </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
@@ -332,6 +347,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 14,
     textAlign: 'center',
+  },
+  buttonTextDisabled: {
+    color: '#999',
   },
   spacer: {
     height: 1,
