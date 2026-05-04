@@ -50,6 +50,7 @@ const CheckoutScreen = () => {
   const [orderStatusUI, setOrderStatusUI] = React.useState(false);
   const [promoLoading, setPromoLoading] = React.useState(false);
   const [promoError, setPromoError] = React.useState(false);
+  const [checkoutError, setCheckoutError] = React.useState(false);
 
   const scopeData = Sentry.getCurrentScope().getScopeData();
   const se = scopeData.tags['se'];
@@ -115,6 +116,7 @@ const CheckoutScreen = () => {
     uiToast: null | UIToast = null,
   ): Promise<Response> => {
     setOrderStatusUI(true);
+    setCheckoutError(false);
 
     const cart = Object.values(cartData);
     let quantities = {};
@@ -156,10 +158,13 @@ const CheckoutScreen = () => {
         error: err.message,
         endpoint: `${BACKEND_URL}/checkout`,
       });
+      setOrderStatusUI(false);
+      setCheckoutError(true);
       throw new Error(err);
     });
     setOrderStatusUI(false);
     if (response.status !== 200) {
+      setCheckoutError(true);
       uiToast
         ? uiToast.show({
             type: 'error',
@@ -201,7 +206,9 @@ const CheckoutScreen = () => {
   const renderFooter = () => {
     return (
       <View>
-        <Text style={styles.promoCodeText}>Promo Code</Text>
+        <Sentry.Unmask>
+          <Text style={styles.promoCodeText}>Promo Code</Text>
+        </Sentry.Unmask>
         <SafeAreaView>
           <TextInput
             style={styles.input}
@@ -218,9 +225,11 @@ const CheckoutScreen = () => {
         </SafeAreaView>
         <View>
           {promoError && (
-            <Text style={styles.promoErrorText}>
-              Unknown error applying promo code
-            </Text>
+            <Sentry.Unmask>
+              <Text style={styles.promoErrorText}>
+                Unknown error applying promo code
+              </Text>
+            </Sentry.Unmask>
           )}
 
           <StyledButton
@@ -257,16 +266,14 @@ const CheckoutScreen = () => {
             title={'Apply'}
           />
         </View>
-        <View style={styles.flavorContainer}>
-          {/* <Image
-                    source={require('../assets/sentry-logo.png')}
-                    style={styles.logo}
-                    /> */}
-          <Text style={styles.deliverToText}>
-            Deliver to Sentry - San Francisco {contactInfoData.zipCode}
-          </Text>
-        </View>
         <View style={styles.placeOrderButton}>
+          {checkoutError && (
+            <Sentry.Unmask>
+              <Text style={styles.promoErrorText}>
+                Unknown error placing order
+              </Text>
+            </Sentry.Unmask>
+          )}
           <StyledButton
             onPress={() => performCheckoutOnServer()}
             isLoading={orderStatusUI}
@@ -366,9 +373,8 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#f5f5f5',
     padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
+    flexDirection: 'column',
+    alignItems: 'stretch',
   },
   deliverToText: {
     marginLeft: 5,
@@ -394,7 +400,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   placeOrderButton: {
-    paddingBottom: 20,
+    marginTop: 20,
+    marginBottom: 40,
   },
   cartListWrapper: {
     flex: 1,

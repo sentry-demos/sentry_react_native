@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import React, {useState} from 'react';
 import {
   ActivityIndicator,
@@ -46,13 +47,17 @@ export const StyledButton = ({
     />
   );
   const InnerText = (
-    <Text
-      style={{
-        ...(isPressed ? defaultStyles.pressedText : defaultStyles.defaultText),
-        ...(style && style.defaultText),
-      }}>
-      {title}
-    </Text>
+    <Sentry.Unmask>
+      <Text
+        style={{
+          ...(isPressed
+            ? defaultStyles.pressedText
+            : defaultStyles.defaultText),
+          ...(style && style.defaultText),
+        }}>
+        {title}
+      </Text>
+    </Sentry.Unmask>
   );
 
   const InnerContent = isLoading ? InnerLoader : InnerText;

@@ -34,15 +34,12 @@ export const StyledProductCard = (props: {
       text1: 'Added to Cart',
       visibilityTime: visibilityTimeMs,
     });
-    Sentry.logger.info(
-      Sentry.logger.fmt`'${props.title}' added to cart`,
-      {
-        productId: props.id,
-        productTitle: props.title,
-        price: props.price,
-        productType: props.type,
-      },
-    );
+    Sentry.logger.info(Sentry.logger.fmt`'${props.title}' added to cart`, {
+      productId: props.id,
+      productTitle: props.title,
+      price: props.price,
+      productType: props.type,
+    });
   };
 
   return (
@@ -50,9 +47,15 @@ export const StyledProductCard = (props: {
       <View style={styles.cardHero}>{selectImage(props.imgcropped)}</View>
       <View style={styles.cardDetail}>
         <View style={styles.cardDetailContent}>
-          <Text style={styles.cardTitle}>{props.title}</Text>
-          <Text style={styles.cardDescription}>{props.description}</Text>
-          <Text style={styles.itemPrice}>${props.price}</Text>
+          <Sentry.Unmask>
+            <Text style={styles.cardTitle}>{props.title}</Text>
+          </Sentry.Unmask>
+          <Sentry.Unmask>
+            <Text style={styles.cardDescription}>{props.description}</Text>
+          </Sentry.Unmask>
+          <Sentry.Unmask>
+            <Text style={styles.itemPrice}>${props.price}</Text>
+          </Sentry.Unmask>
         </View>
         <View style={styles.cardDetailAction}>
           <StyledButton

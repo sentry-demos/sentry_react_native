@@ -35,12 +35,11 @@ console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
 
-const reactNavigationIntegration =
-  Sentry.reactNavigationIntegration({
-    // How long it will wait for the route change to complete. Default is 1000ms
-    routeChangeTimeoutMs: 500,
-    enableTimeToInitialDisplay: true,
-  });
+const reactNavigationIntegration = Sentry.reactNavigationIntegration({
+  // How long it will wait for the route change to complete. Default is 1000ms
+  routeChangeTimeoutMs: 500,
+  enableTimeToInitialDisplay: true,
+});
 
 // Get app version from package.json, for fingerprinting
 const packageJson = require('../package.json');
@@ -161,11 +160,13 @@ const BottomTabNavigator = () => {
         component={ShopNavigator}
         options={{
           tabBarIcon: ({focused}) => (
-            <Icon
-              name="store"
-              size={30}
-              color={focused ? '#f6cfb2' : '#dae3e4'}
-            />
+            <Sentry.Unmask>
+              <Icon
+                name="store"
+                size={30}
+                color={focused ? '#f6cfb2' : '#dae3e4'}
+              />
+            </Sentry.Unmask>
           ),
         }}
       />
@@ -174,12 +175,14 @@ const BottomTabNavigator = () => {
         component={CartNavigator}
         options={{
           tabBarIcon: ({focused}) => (
-            <Icon
-              testID="bottom-tab-cart"
-              name="cart-shopping"
-              size={30}
-              color={focused ? '#f6cfb2' : '#dae3e4'}
-            />
+            <Sentry.Unmask>
+              <Icon
+                testID="bottom-tab-cart"
+                name="cart-shopping"
+                size={30}
+                color={focused ? '#f6cfb2' : '#dae3e4'}
+              />
+            </Sentry.Unmask>
           ),
           tabBarBadge: cartItemsCount || undefined,
         }}
@@ -189,11 +192,13 @@ const BottomTabNavigator = () => {
         component={DebugNavigator}
         options={{
           tabBarIcon: ({focused}) => (
-            <Icon
-              name="gear"
-              size={30}
-              color={focused ? '#f6cfb2' : '#dae3e4'}
-            />
+            <Sentry.Unmask>
+              <Icon
+                name="gear"
+                size={30}
+                color={focused ? '#f6cfb2' : '#dae3e4'}
+              />
+            </Sentry.Unmask>
           ),
         }}
       />
