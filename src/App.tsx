@@ -1,48 +1,36 @@
 import * as React from 'react';
-import {Provider, useSelector} from 'react-redux';
+import {LogBox, StyleSheet} from 'react-native';
+
 import {
   NavigationContainer,
   NavigationContainerRef,
 } from '@react-navigation/native';
-import {createNativeStackNavigator as createStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome6';
-
-// Import the Sentry React Native SDK
 import * as Sentry from '@sentry/react-native';
-
-import HomeScreen from './screens/HomeScreen';
-import ListApp from './screens/ListApp';
-import TrackerScreen from './screens/TrackerScreen';
-import ManualTrackerScreen from './screens/ManualTrackerScreen';
-import PerformanceTimingScreen from './screens/PerformanceTimingScreen';
-import EndToEndTestsScreen from './screens/EndToEndTestsScreen';
-import ProductDetailScreen from './screens/ProductDetailScreen';
-import ReduxScreen from './screens/ReduxScreen';
-import CartScreen from './screens/CartScreen';
-import CheckoutScreen from './screens/CheckoutScreen';
-import Toast from 'react-native-toast-message';
-
-import {RootState, store, showFeedbackActionButton} from './reduxApp';
-import {DSN} from './config';
 import {SE} from '@env'; // SE is undefined if no .env file is set
-import {RootStackParamList} from './navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {LogBox, Platform, StyleSheet} from 'react-native';
+import {Provider} from 'react-redux';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+
 import {SentryUserFeedbackActionButton} from './components/UserFeedbackModal';
+import {DSN} from './config';
+import RootTabNavigator from './navigators/RootTabNavigator';
+import {showFeedbackActionButton, store} from './reduxApp';
+
 console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
+
+// ---------------------------------------------------------------------------
+// Sentry initialization
+// ---------------------------------------------------------------------------
+
+const APP_VERSION: string = require('../package.json').version;
 
 const reactNavigationIntegration = Sentry.reactNavigationIntegration({
   // How long it will wait for the route change to complete. Default is 1000ms
   routeChangeTimeoutMs: 500,
   enableTimeToInitialDisplay: true,
 });
-
-// Get app version from package.json, for fingerprinting
-const packageJson = require('../package.json');
 
 Sentry.init({
   dsn: DSN,
@@ -52,7 +40,7 @@ Sentry.init({
   beforeSend: (event) => {
     if (SE === 'tda') {
       // Make issues unique to the release (app version) for Release Health
-      event.fingerprint = ['{{ default }}', SE, packageJson.version];
+      event.fingerprint = ['{{ default }}', SE, APP_VERSION];
     } else if (SE) {
       // Make issue for the SE
       event.fingerprint = ['{{ default }}', SE];
@@ -92,36 +80,62 @@ Sentry.init({
 
 Sentry.setTag('se', SE);
 
-const Tab = createBottomTabNavigator();
+// ---------------------------------------------------------------------------
+// User scope seeding
+// ---------------------------------------------------------------------------
 
-const Stack = createStackNavigator<RootStackParamList>();
+const CUSTOMER_TYPES = [
+  'medium-plan',
+  'large-plan',
+  'small-plan',
+  'enterprise',
+] as const;
+
+const randomCustomerType = () =>
+  CUSTOMER_TYPES[Math.floor(Math.random() * CUSTOMER_TYPES.length)];
+
+const randomEmail = () =>
+  Math.random().toString(36).substring(2, 6) + '@yahoo.com';
+
+// Use a stable per-SE identity unless we're unset or in the 'tda'
+// release-health bucket (where we want fresh users per launch).
+const resolveEmail = () =>
+  !SE || SE === 'tda' ? randomEmail() : `${SE}@yahoo.com`;
+
+// Seed Sentry's scope with a random user + customer plan once per app launch
+// so issues/sessions are attributable. Runs in an effect to avoid re-firing
+// on every render of <App />.
+const useInitUserScope = () => {
+  React.useEffect(() => {
+    const customerType = randomCustomerType();
+    const email = resolveEmail();
+
+    const scope = Sentry.getCurrentScope();
+    scope.setTag('customerType', customerType);
+    scope.setUser({email});
+
+    Sentry.logger.info('App initialized', {
+      customerType,
+      email,
+      se: SE,
+      version: APP_VERSION,
+    });
+  }, []);
+};
+
+// ---------------------------------------------------------------------------
+// Root component
+// ---------------------------------------------------------------------------
 
 const App = () => {
+  useInitUserScope();
+
   const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
-
-  const scope = Sentry.getCurrentScope();
-  const customerType = [
-    'medium-plan',
-    'large-plan',
-    'small-plan',
-    'enterprise',
-  ][Math.floor(Math.random() * 4)];
-  scope.setTag('customerType', customerType);
-  let email = Math.random().toString(36).substring(2, 6) + '@yahoo.com';
-  scope.setUser({email: email});
-
-  // Log app initialization
-  Sentry.logger.info('App initialized', {
-    customerType,
-    email,
-    se: SE,
-    version: packageJson.version,
-  });
 
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <GestureHandlerRootView style={styles.gestureHandlerRootView}>
+        <GestureHandlerRootView style={styles.root}>
           <NavigationContainer
             ref={navigation}
             onReady={() => {
@@ -130,8 +144,7 @@ const App = () => {
               );
               Sentry.logger.info('Navigation container ready');
             }}>
-            <BottomTabNavigator />
-            {/* <Toast /> */}
+            <RootTabNavigator />
             <SentryUserFeedbackActionButton />
           </NavigationContainer>
         </GestureHandlerRootView>
@@ -140,111 +153,8 @@ const App = () => {
   );
 };
 
-const BottomTabNavigator = () => {
-  const cartItemsCount = useSelector(
-    (state: RootState) => Object.values(state.cart || {}).length,
-  );
-
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          paddingTop: 5,
-          height: Platform.OS === 'ios' ? 90 : 70,
-        },
-      }}>
-      <Tab.Screen
-        name="Shop"
-        component={ShopNavigator}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Sentry.Unmask>
-              <Icon
-                name="store"
-                size={30}
-                color={focused ? '#f6cfb2' : '#dae3e4'}
-              />
-            </Sentry.Unmask>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Cart"
-        component={CartNavigator}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Sentry.Unmask>
-              <Icon
-                testID="bottom-tab-cart"
-                name="cart-shopping"
-                size={30}
-                color={focused ? '#f6cfb2' : '#dae3e4'}
-              />
-            </Sentry.Unmask>
-          ),
-          tabBarBadge: cartItemsCount || undefined,
-        }}
-      />
-      <Tab.Screen
-        name="Debug"
-        component={DebugNavigator}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Sentry.Unmask>
-              <Icon
-                name="gear"
-                size={30}
-                color={focused ? '#f6cfb2' : '#dae3e4'}
-              />
-            </Sentry.Unmask>
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
-};
-
-const CartNavigator = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="CartScreen" component={CartScreen} />
-      <Stack.Screen name="Checkout" component={CheckoutScreen} />
-    </Stack.Navigator>
-  );
-};
-
-const ShopNavigator = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
-    </Stack.Navigator>
-  );
-};
-
-const DebugNavigator = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="ListApp" component={ListApp} />
-      <Stack.Screen name="Tracker" component={TrackerScreen} />
-      <Stack.Screen name="ManualTracker" component={ManualTrackerScreen} />
-      <Stack.Screen
-        name="PerformanceTiming"
-        component={PerformanceTimingScreen}
-      />
-      <Stack.Screen name="Redux" component={ReduxScreen} />
-      <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
-    </Stack.Navigator>
-  );
-};
-
 const styles = StyleSheet.create({
-  gestureHandlerRootView: {
+  root: {
     flex: 1,
   },
 });
