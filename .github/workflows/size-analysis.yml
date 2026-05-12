@@ -1,0 +1,125 @@
+name: Size Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch, tag, or SHA to analyze. Defaults to the ref the workflow was dispatched from.'
+        required: false
+        type: string
+
+concurrency:
+  group: size-analysis-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SENTRY_ORG: demo
+  SENTRY_PROJECT: mobile-react-native
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+jobs:
+  size-analysis-ios:
+    name: iOS
+    runs-on: macos-15
+    env:
+      XCARCHIVE_PATH: ios/build/sentry_react_native.xcarchive
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.0'
+          bundler-cache: true
+
+      - working-directory: ios
+        run: bundle exec pod install
+
+      # Archive for a real iOS device (arm64) so the binary that Sentry analyzes
+      # matches what users would actually download. Code signing is disabled so
+      # CI doesn't need provisioning profiles or distribution certs - the
+      # resulting archive is unshippable but valid for size analysis.
+      - name: Archive iOS app
+        working-directory: ios
+        run: |
+          set -o pipefail && xcodebuild archive \
+            -workspace sentry_react_native.xcworkspace \
+            -scheme sentry_react_native \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$PWD/build/sentry_react_native.xcarchive" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-archive.log \
+            | xcbeautify --quieter --is-ci --disable-colored-output
+
+      # Sentry recommends Homebrew on macOS so we get the arm64 binary
+      # (XCArchive uploads fail with the x86_64 binary, even under Rosetta).
+      - name: Install sentry-cli
+        run: brew install getsentry/tools/sentry-cli
+
+      - name: Upload XCArchive to Sentry
+        run: |
+          sentry-cli build upload "${{ env.XCARCHIVE_PATH }}" \
+            --org "$SENTRY_ORG" \
+            --project "$SENTRY_PROJECT" \
+            --build-configuration Release
+
+      - name: Upload xcodebuild logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: size-analysis-ios-logs
+          path: ios/xcodebuild-archive.log
+
+  size-analysis-android:
+    name: Android
+    runs-on: ubuntu-latest
+    env:
+      AAB_PATH: android/app/build/outputs/bundle/release/app-release.aab
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - uses: gradle/gradle-build-action@v3
+
+      # AAB is the preferred upload format for Android size analysis. The existing
+      # `build-android.yml` produces an APK via `:app:assembleRelease` for the
+      # Maestro UI tests and release flow; this workflow produces an AAB only.
+      - name: Bundle release AAB
+        working-directory: android
+        run: ./gradlew :app:bundleRelease
+
+      - name: Install sentry-cli
+        run: curl -sSfL https://sentry.io/get-cli/ | sh
+
+      - name: Upload AAB to Sentry
+        run: |
+          sentry-cli build upload "${{ env.AAB_PATH }}" \
+            --org "$SENTRY_ORG" \
+            --project "$SENTRY_PROJECT" \
+            --build-configuration Release
