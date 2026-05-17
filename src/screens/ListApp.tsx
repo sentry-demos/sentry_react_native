@@ -183,6 +183,7 @@ const ListApp = (props: Props) => {
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
+                // This explicitly creates an unhandled rejection for demonstration purposes
                 Promise.reject(new Error('Unhandled Promise Rejection'));
               }}>
               <Sentry.Unmask>
