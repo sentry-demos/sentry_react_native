@@ -1,4 +1,35 @@
 {
-  "name": "sentry_react_native",
-  "displayName": "sentry_react_native"
+  "expo": {
+    "name": "sentry_react_native_expo",
+    "slug": "sentry_react_native_expo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "@sentry/react-native",
+        {
+          "url": "https://sentry.io/",
+          "organization": "sentry-sdks",
+          "project": "sentry-react-native"
+        }
+      ]
+    ]
+  }
 }

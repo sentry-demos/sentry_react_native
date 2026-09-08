@@ -1,5 +1,5 @@
 module.exports = {
-  preset: 'react-native',
+  preset: 'jest-expo',
   moduleNameMapper: {
     '.+\\.(png|jpg|ttf|woff|woff2)$': 'identity-obj-proxy',
   },

@@ -13,7 +13,7 @@ import {selectImage} from '../components/imageFromAssets';
 import {Product} from '../types/Product';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StyledButton} from '../components/StyledButton';
-import Icon from 'react-native-vector-icons/FontAwesome6';
+import {FontAwesome6} from '@expo/vector-icons';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
@@ -42,7 +42,7 @@ const ProductDetailScreen = ({
   }, [params]);
 
   useEffect(() => {
-    fetch(`${BACKEND_URL}/success`); // Extra fetch to add spans to the demo
+    fetch(`${BACKEND_URL}/success`);
   }, []);
 
   return (
@@ -161,7 +161,7 @@ const CloseButton = ({onPress}: {onPress: () => void}) => {
 
   return (
     <Pressable onPress={onPress} style={pressableStyle}>
-      <Icon name="xmark" size={24} color="#fff" />
+      <FontAwesome6 name="xmark" size={24} color="#fff" />
     </Pressable>
   );
 };
