@@ -141,9 +141,14 @@ const CheckoutScreen = () => {
     ) as number;
     Sentry.logger.info(`Adding quantity: ${totalQuantity}`);
 
+    const total = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
+
     const data = {
       // This is the data structure implemented by application-monitoring-react and flask
-      cart: {items: cart, quantities},
+      cart: {items: cart, quantities, total},
       form: contactInfoData,
     };
 
@@ -196,10 +201,7 @@ const CheckoutScreen = () => {
       Sentry.logger.info('Checkout completed successfully', {
         status: response.status,
         itemCount: cart.length,
-        totalValue: cart.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0,
-        ),
+        totalValue: total,
       });
 
       uiToast
