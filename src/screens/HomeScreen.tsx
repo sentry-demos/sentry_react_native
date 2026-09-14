@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
+import {View, StyleSheet, Text, FlatList} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
