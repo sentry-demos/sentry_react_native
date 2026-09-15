@@ -30,12 +30,15 @@ npm run android
 
 ## Sentry source maps not uploading
 
-Ensure `SENTRY_AUTH_TOKEN` is set in your environment before running EAS builds:
+Ensure `SENTRY_AUTH_TOKEN` is set in your environment before a release build:
 
 ```bash
 export SENTRY_AUTH_TOKEN=<your_token>
-eas build --platform ios
 ```
+
+The token needs access to the org and project configured in `app.config.js`
+(`demo` / `mobile-react-native`). A token scoped to a different org fails the
+`createBundleRelease...SentryUpload` Gradle task with `error: organization not found`.
 
 ## Environment variable not working
 

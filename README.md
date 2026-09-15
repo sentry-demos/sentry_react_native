@@ -20,21 +20,27 @@ See [package.json](./package.json) for up to date information about the `@sentry
 
 ## Development
 
+This app uses native modules (the Sentry config plugin), so it can't run in Expo Go —
+`npm run android` / `npm run ios` generate the native projects and build a dev client.
+
 ```bash
-# Start the Expo dev server (choose platform in terminal)
+# Start the Metro dev server against an already-installed dev build
 npm start
 
-# Or target a specific platform directly
+# Generate the native project and build/install it
 npm run android
 npm run ios
 ```
 
-For release builds with EAS:
+For release builds, the same flow CI uses (see `.github/workflows/build-*.yml`):
 
 ```bash
-eas build --platform android
-eas build --platform ios
+npx expo prebuild --platform android
+cd android && ./gradlew :app:assembleRelease
 ```
+
+The generated `android/` and `ios/` directories are gitignored — `expo prebuild`
+recreates them from `app.config.js`, so don't edit them by hand.
 
 ## Environment Variables
 
@@ -51,10 +57,9 @@ This replaces the `react-native-dotenv` / `@env` approach from the bare RN versi
 | Area | Bare RN | Expo |
 |------|---------|------|
 | Icons | `react-native-vector-icons` | `@expo/vector-icons` (built-in) |
-| Gradients | `react-native-linear-gradient` | `expo-linear-gradient` |
 | Env vars | `import {SE} from '@env'` | `process.env.EXPO_PUBLIC_SE` |
 | Metro config | `withSentryConfig` | `getSentryExpoConfig` |
-| Build | `react-native run-*` | `expo start` / EAS Build |
+| Build | `react-native run-*` | `expo prebuild` + `expo run:*` |
 | Sentry plugin | Android Gradle plugin | Expo config plugin (`@sentry/react-native`) |
 
 ## Troubleshooting
