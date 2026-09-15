@@ -23,4 +23,4 @@ while true; do
     esac
 done
 
-gh release create $PACKAGE_VERSION
+gh release create $PACKAGE_VERSION app-release.apk sentry_react_native.app.zip

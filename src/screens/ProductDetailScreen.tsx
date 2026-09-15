@@ -11,10 +11,7 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParamList} from '../navigation';
 import {selectImage} from '../components/imageFromAssets';
 import {Product} from '../types/Product';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StyledButton} from '../components/StyledButton';
 import {FontAwesome6} from '@expo/vector-icons';
 import {useDispatch} from 'react-redux';

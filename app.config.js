@@ -11,9 +11,22 @@ module.exports = {
     supportsTablet: true,
     // iOS bundle identifiers can't contain underscores, unlike the Android package name below.
     bundleIdentifier: 'com.sentry-react-native',
+    // Continues the build number sequence from the pre-Expo app, which was at 19.
+    buildNumber: '20',
+    infoPlist: {
+      // Set here rather than via `name`, which would also rename the generated
+      // Xcode project and the .app bundle the release archive is built from.
+      CFBundleDisplayName: 'Empower Plant RN',
+      // Lets the app reach a flask backend on localhost (see BACKEND_URL in src/config.ts).
+      NSAppTransportSecurity: {
+        NSAllowsArbitraryLoads: false,
+        NSAllowsLocalNetworking: true,
+      },
+    },
   },
   android: {
     package: 'com.sentry_react_native',
+    versionCode: 20,
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/android-icon-foreground.png',
