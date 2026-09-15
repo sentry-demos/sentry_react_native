@@ -13,7 +13,6 @@ export const selectImage = (
    * Dynamic strings with require syntax is not possible.
    * https://github.com/facebook/react-native/issues/2481
    */
-  // Image name comes from the url path to the image. In this app, we have the images in the bundle. In application-monitoring the url path is used for fetching the image.
   let length = source.split('/').length;
   let image = source.split('/')[length - 1];
   switch (image) {

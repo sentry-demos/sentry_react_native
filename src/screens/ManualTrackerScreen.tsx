@@ -2,15 +2,8 @@ import * as React from 'react';
 import {Button, View, StyleSheet, Text, ActivityIndicator} from 'react-native';
 
 import * as Sentry from '@sentry/react-native';
-import {Span} from '@sentry/types';
+import {Span} from '@sentry/core';
 
-/**
- * An example of how to add a Sentry Transaction to a React component manually.
- * So you can control all spans that belong to that one transaction.
- *
- * This screen calls an API to get the latest COVID-19 Data to display. We attach a span
- * to the fetch call and track the time it takes for Promise to resolve.
- */
 const TrackerScreen = () => {
   const [cases, setCases] = React.useState<{
     TotalConfirmed: number;
@@ -21,7 +14,6 @@ const TrackerScreen = () => {
   const rootSpan = React.useRef<Span | undefined>(undefined);
 
   React.useEffect(() => {
-    // Initialize the transaction for the screen.
     rootSpan.current = Sentry.startSpanManual(
       {
         name: 'Tracker Screen (manual)',
@@ -31,7 +23,6 @@ const TrackerScreen = () => {
     );
 
     return () => {
-      // Ending the span triggers sending the data to Sentry.
       rootSpan.current?.end();
       rootSpan.current = undefined;
     };
@@ -40,7 +31,6 @@ const TrackerScreen = () => {
   const loadData = async () => {
     setCases(null);
 
-    // Create a child span for the API call.
     await Sentry.startSpan(
       {
         op: 'http',

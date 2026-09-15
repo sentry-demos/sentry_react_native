@@ -10,7 +10,8 @@ import {StackScreenProps} from '@react-navigation/stack';
 import {ProfiledStyledCartProductCard} from '../components/StyledCartProductCard';
 
 interface CartData {
-  name: string;
+  name?: string;
+  title?: string;
   imgcropped: string;
   id: number;
   price: number;
@@ -45,11 +46,10 @@ const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
     total += itemTotal;
   });
   let aggregate = {total, quantity};
-  
-  // Log cart calculation
+
   Sentry.logger.debug(`Calculated itemsInCart: ${quantity}`);
   Sentry.logger.debug(`Cart total calculated: $${total.toFixed(2)}`);
-  
+
   return aggregate;
 };
 
@@ -85,7 +85,6 @@ const CartScreen = ({
     );
   };
 
-  //TODO: This looks like it should be used
   //eslint-disable-next-line @typescript-eslint/no-unused-vars
   const placeOrder = async (
     uiToast: null | UIToast = null,
@@ -132,7 +131,7 @@ const CartScreen = ({
   };
 
   React.useEffect(() => {
-    fetch(`${BACKEND_URL}/success`); // exists just to add span data to demo
+    fetch(`${BACKEND_URL}/success`);
     const items = Object.values(cartData);
     Sentry.logger.info('Cart screen viewed', {
       itemCount: items.length,
@@ -168,12 +167,11 @@ const CartScreen = ({
                 title={item.title}
                 imgcropped={item.imgcropped}
                 id={item.id}
-                // type={""}
                 price={item.price}
               />
             );
           }}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
         />
       </View>
     </View>
