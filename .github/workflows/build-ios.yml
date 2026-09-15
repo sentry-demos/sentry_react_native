@@ -11,7 +11,9 @@ on:
 jobs:
   build-ios:
     name: iOS
-    runs-on: macos-15
+    # Expo SDK 57 needs Xcode 26.4+ (Swift 6.3) to compile expo-modules-jsi, which
+    # uses `weak let`. Older images fail with "'weak' must be a mutable variable".
+    runs-on: macos-26
     env:
       APP_ARCHIVE_PATH: sentry_react_native.app.zip
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

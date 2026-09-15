@@ -20,6 +20,23 @@ npm install
 npm run ios
 ```
 
+### Build fails with "'weak' must be a mutable variable"
+
+Expo SDK 57 needs **Xcode 26.4 or newer**. The failure comes from
+`node_modules/expo-modules-jsi`, whose Swift sources use `weak let` — valid only
+from Swift 6.3 (Xcode 26.4). On Xcode 26.1 the build dies with ~15 of these
+errors while building the `ExpoModulesJSI` xcframework.
+
+Update Xcode, then clear the stale framework before rebuilding:
+
+```bash
+rm -rf node_modules/expo-modules-jsi/apple/Products ios
+npx expo prebuild --platform ios
+npm run ios
+```
+
+Don't patch the `weak let` declarations — it hides the real cause and breaks in CI.
+
 ## Android Emulator
 
 Make sure Android emulator has internet access enabled (AVD Manager).
