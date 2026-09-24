@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
+import {View, StyleSheet, Text, FlatList} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
@@ -13,15 +14,6 @@ type ExtendedSentryScope = Sentry.Scope & {
   _user: Record<string, string>;
 };
 
-/**
- * An example of how to add a Sentry Transaction to a React component manually.
- * So you can control all spans that belong to that one transaction.
- * EmpowerPlant is a  Higher-order component, because it's a Function Component,
- * and both Function Components and Class Components are Higher-order components.
- * Higher-order component can only read the props coming in. Props are changed as they're passed in.
- * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
- * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
- */
 const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
   const dispatch = useDispatch();
   const [toolData, setProductData] = React.useState<Product[] | [] | null>(
@@ -72,7 +64,7 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
 
   React.useEffect(() => {
     Sentry.logger.info('Home screen viewed');
-    loadData(); // this line is not blocking
+    loadData();
   }, []);
 
   const onProductsListRefresh = () => {
@@ -129,13 +121,6 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
   );
 };
 
-/* This works because sentry/react-native wraps sentry/react right now.
- * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`,
- * because that comes from props being passed into the Profiler (which comes from redux).
- * The Profiler doesn't watch the internal state of EmpowerPlant here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
- * Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
- * and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
- */
 export default EmpowerPlant;
 
 const styles = StyleSheet.create({
