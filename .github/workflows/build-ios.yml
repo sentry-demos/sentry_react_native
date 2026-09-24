@@ -7,6 +7,11 @@ on:
         description: 'The branch to build from. E.g. main'
         required: false
         type: string
+      se:
+        description: 'Inlined into the JS bundle as EXPO_PUBLIC_SE. The TDA pipeline expects "tda".'
+        required: false
+        type: string
+        default: tda
 
 jobs:
   build-ios:
@@ -18,6 +23,8 @@ jobs:
       APP_ARCHIVE_PATH: sentry_react_native.app.zip
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_ALLOW_FAILURE: false
+      # babel-preset-expo inlines EXPO_PUBLIC_* at bundle time, so this has to be set for the build step, not just at runtime.
+      EXPO_PUBLIC_SE: ${{ inputs.se }}
     steps:
       - uses: actions/checkout@v4
         with:
