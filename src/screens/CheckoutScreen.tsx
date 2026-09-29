@@ -27,22 +27,13 @@ const items = [
   {id: 8, placeholder: 'zip code', key: 'zipCode'},
 ];
 
-const promoError = JSON.stringify({
+const promoErrorBody = JSON.stringify({
   error: {
     code: 'expired',
     message: 'Provided coupon code has expired.',
   },
 });
 
-/**
- * An example of how to add a Sentry Transaction to a React component manually.
- * So you can control all spans that belong to that one transaction.
- * EmpowerPlant is a  Higher-order component, because it's a Function Component,
- * and both Function Components and Class Components are Higher-order components.
- * Higher-order component can only read the props coming in. Props are changed as they're passed in.
- * Redux not in use here, so redux is not passing props, therefore Profile can't view that.
- * Could do redux w/ hooks, but the Profiler isn't going to work with that yet.
- */
 const CheckoutScreen = () => {
   const dispatch = useDispatch();
   const cartData = useSelector((state: RootState) => state.cart);
@@ -79,9 +70,8 @@ const CheckoutScreen = () => {
     await Sentry.startSpan(
       {name: 'Submit Checkout Form', forceTransaction: true},
       async (span) => {
-        // Log checkout span details
         const activeSpan = span ?? Sentry.getActiveSpan();
-        const spanContext = activeSpan?.spanContext?.() || {};
+        const spanContext = (activeSpan?.spanContext?.() || {}) as {traceId?: string; spanId?: string};
         Sentry.logger.info('Checkout span', {
           _traceId: spanContext.traceId,
           _spanId: spanContext.spanId,
@@ -92,7 +82,6 @@ const CheckoutScreen = () => {
           },
         });
 
-        // Log detailed cart contents
         Sentry.logger.info('Checkout called with cart', {
           items: cartItems.map((item) => ({
             id: item.id,
@@ -103,20 +92,17 @@ const CheckoutScreen = () => {
           })),
         });
 
-        // Span starts here
         let data = await placeOrder(Toast);
 
         Sentry.startSpan(
           {name: 'Processing shopping cart result', op: 'task'},
           () => {
-            // Child span starts here and ends when the function returns
             console.log('Processing shopping cart result...', data);
             Sentry.logger.debug('Processing shopping cart result', {
               responseStatus: data?.status,
             });
           },
         );
-        // Span ends with the function returning
       },
     );
   };
@@ -128,7 +114,7 @@ const CheckoutScreen = () => {
     setCheckoutError(false);
 
     const cart = Object.values(cartData);
-    let quantities = {};
+    let quantities: Record<number, number> = {};
     cart.map((item) => {
       if (!quantities[item.id]) {
         quantities[item.id] = item.quantity;
@@ -138,11 +124,10 @@ const CheckoutScreen = () => {
     const totalQuantity = Object.values(quantities).reduce(
       (sum: number, qty: number) => sum + qty,
       0,
-    ) as number;
+    );
     Sentry.logger.info(`Adding quantity: ${totalQuantity}`);
 
     const data = {
-      // This is the data structure implemented by application-monitoring-react and flask
       cart: {items: cart, quantities},
       form: contactInfoData,
     };
@@ -157,9 +142,9 @@ const CheckoutScreen = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        email,
-        se,
-        customerType,
+        email: email ?? '',
+        se: String(se ?? ''),
+        customerType: String(customerType ?? ''),
       },
       body: JSON.stringify(data),
     }).catch((err) => {
@@ -212,6 +197,7 @@ const CheckoutScreen = () => {
     }
     return response;
   };
+
   const renderFooter = () => {
     return (
       <View>
@@ -265,7 +251,7 @@ const CheckoutScreen = () => {
                   http_status: 410,
                   error_code: 'expired',
                   error_message: 'Provided coupon code has expired.',
-                  response_body: promoError,
+                  response_body: promoErrorBody,
                 },
               );
 
@@ -294,7 +280,7 @@ const CheckoutScreen = () => {
   };
 
   React.useEffect(() => {
-    fetch(`${BACKEND_URL}/success`); // exists just to add span data to demo
+    fetch(`${BACKEND_URL}/success`);
   }, []);
 
   return (
@@ -307,7 +293,6 @@ const CheckoutScreen = () => {
           ListHeaderComponent={
             <Text style={styles.contactInfoText}>Contact Info</Text>
           }
-          appDispatch={dispatch}
           ListFooterComponent={renderFooter}
           ListFooterComponentStyle={styles.flavorContainer}
           renderItem={({item}) => {
@@ -328,20 +313,13 @@ const CheckoutScreen = () => {
               </SafeAreaView>
             );
           }}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
         />
       </View>
     </View>
   );
 };
 
-/* This works because sentry/react-native wraps sentry/react right now.
- * The Sentry Profiler can use any higher-order component but you need redux if you want the `react.update`,
- * because that comes from props being passed into the Profiler (which comes from redux).
- * The Profiler doesn't watch the internal state of EmpowerPlant here, and that's why `useState` won't be picked up by sentry sdk, unless you use the Profiler.
- * Don't use the Sentry Profiler here yet, because the profiler span was finishing so quick that the transaction would finish prematurely,
- * and this was causing Status:Cancelled on that span, and warning "cancelled span due to idleTransaction finishing"
- */
 export default CheckoutScreen;
 
 const styles = StyleSheet.create({
@@ -354,14 +332,11 @@ const styles = StyleSheet.create({
     margin: 10,
     borderWidth: 1,
     padding: 10,
-
-    // new
     borderRadius: 2,
     borderColor: '#002626',
   },
   linearGradient: {
     height: 50,
-
     paddingLeft: 20,
     paddingRight: 20,
     borderRadius: 2,
@@ -369,7 +344,6 @@ const styles = StyleSheet.create({
     borderColor: '#8D6E63',
     flexDirection: 'column',
     justifyContent: 'center',
-
     width: 300,
     margin: 10,
   },

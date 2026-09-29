@@ -1,5 +1,5 @@
 // tslint:disable: no-implicit-dependencies no-unsafe-any no-console
-import {Event} from '@sentry/types';
+import {Event} from '@sentry/core';
 import fetch from 'node-fetch';
 
 const domain = 'sentry.io';
@@ -50,8 +50,8 @@ const fetchEvent = async (eventId): Promise<ApiEvent> => {
 
   const json: ApiEvent = await fetch(request)
     // tslint:disable-next-line: no-unsafe-any
-    .then((res) => res.json())
-    .then(retryer);
+    .then((res: any) => res.json())
+    .then(retryer) as ApiEvent;
 
   return json;
 };

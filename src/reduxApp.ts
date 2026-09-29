@@ -1,7 +1,38 @@
 import {createStore} from 'redux';
 import * as Sentry from '@sentry/react-native';
 
-const initialState = {
+interface CartItem {
+  id: number;
+  title: string;
+  price: number;
+  quantity: number;
+  imgcropped: string;
+  description?: string;
+}
+
+interface ContactInfo {
+  email: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  countryRegion: string;
+  state: string;
+  zipCode: string;
+  promoCode: string;
+  [key: string]: string;
+}
+
+interface AppState {
+  counter: number;
+  cart: Record<number, CartItem>;
+  contactInfo: ContactInfo;
+  feedback: {
+    isActionButtonVisible: boolean;
+  };
+}
+
+const initialState: AppState = {
   counter: 0,
   cart: {},
   contactInfo: {
@@ -20,8 +51,8 @@ const initialState = {
   },
 };
 
-const reducer = (state = initialState, action) => {
-  let {payload, type, onScope} = action;
+const reducer = (state: AppState = initialState, action: any): AppState => {
+  const {payload, type, onScope} = action;
 
   switch (type) {
     case 'FILL_FIELDS':
@@ -75,6 +106,7 @@ const reducer = (state = initialState, action) => {
         cart: {...state.cart, [action.payload.id]: action.payload},
       };
     case 'DELETE_FROM_CART':
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete state.cart[action.payload];
       return {
         ...state,
@@ -112,10 +144,6 @@ export const showFeedbackActionButton = () => ({
 export const hideFeedbackActionButton = () => ({
   type: 'HIDE_FEEDBACK_ACTION_BUTTON',
 });
-
-/*
-  Example of how to use the Sentry redux enhancer packaged with @sentry/react:
-*/
 
 const sentryEnhancer = Sentry.createReduxEnhancer();
 

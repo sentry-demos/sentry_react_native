@@ -13,6 +13,7 @@ import {CommonActions} from '@react-navigation/native';
 
 import * as Sentry from '@sentry/react-native';
 
+declare const global: any;
 const globalAny: any = global;
 
 import {getTestProps} from '../../utils/getTestProps';
@@ -25,13 +26,11 @@ interface Props {
 const ListApp = (props: Props) => {
   const currentDSN = Sentry.getClient()?.getOptions().dsn;
 
-  // Show bad code inside error boundary to trigger it.
   const [showBadCode, setShowBadCode] = React.useState(false);
 
   const setScopeProps = () => {
     const dateString = new Date().toString();
 
-    // user info was already set in App.tsx
     Sentry.setUser({
       id: 'test-id-0',
       email: 'testing@testing.test',
@@ -245,7 +244,6 @@ const ListApp = (props: Props) => {
             <View style={styles.spacer} />
             <TouchableOpacity
               onPress={() => {
-                // Navigate with a reset action just to test
                 props.navigation.dispatch(
                   CommonActions.reset({
                     index: 1,

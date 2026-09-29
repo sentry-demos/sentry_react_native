@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import {SendFeedbackParams} from '@sentry/react-native';
-import Icon from 'react-native-vector-icons/FontAwesome6';
+import {FontAwesome6} from '@expo/vector-icons';
 import {android} from '../../utils/platform';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {hideFeedbackActionButton, RootState} from '../reduxApp';
@@ -45,7 +45,7 @@ export const SentryUserFeedbackActionButton = () => {
       {feedbackState.isActionButtonVisible && (
         <Pressable onPress={onGiveFeedbackButtonPress} style={pressableStyle}>
           <Sentry.Unmask>
-            <Icon name="bug" size={24} color="#fff" />
+            <FontAwesome6 name="bug" size={24} color="#fff" />
           </Sentry.Unmask>
           <Sentry.Unmask>
             <Text style={style.text}>Report a Bug</Text>
@@ -200,7 +200,7 @@ const modalButtonStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0)',
   },
   secondaryText: {
-    fontWeight: 'regular',
+    fontWeight: 'normal',
   },
 });
 

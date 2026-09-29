@@ -1,12 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-/**
- * A screen to test performance timing.
- * The `performance.now()` api has been found to return values with varying offsets.
- * As Sentry uses it for event and transaction timing, this screen is just to test the possible offsets and issues
- * that occur with it.
- */
 const PerformanceTimingScreen = () => {
   const initialDate = React.useRef(0);
   const initialPerformance = React.useRef(0);

@@ -1,10 +1,8 @@
 import {Platform} from 'react-native';
 
 /**
- * Each platform uses different test ids There is a bug in Appium where accessibilityLabel does not work on iOS so we need testID,
- * and testID does not work on Android so we need accessibilityLabel,
- * @param id
- * @param platform
+ * Each platform uses different test ids. There is a bug in Appium where accessibilityLabel does not work on iOS so we need testID,
+ * and testID does not work on Android so we need accessibilityLabel.
  */
 const getTestProps = (id: string) =>
   Platform.OS === 'android'

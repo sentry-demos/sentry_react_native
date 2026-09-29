@@ -1,11 +1,12 @@
-# If you have an env file, and you've set SE variable to something
+#!/bin/bash
+# If you have an env file, and you've set EXPO_PUBLIC_SE variable to something
 # other than tda, prevent the release from happening
 if [ -f ".env" ]
 then
-    export $(cat .env | xargs) # Set env vars from .env file so they're accessible
-    if [[ $SE && $SE != 'tda' ]]
+    export $(cat .env | xargs)
+    if [[ $EXPO_PUBLIC_SE && $EXPO_PUBLIC_SE != 'tda' ]]
     then
-        printf "Your SE environment variable is set to $SE.\nThe SE variable must be set to tda to create a release.\nPlease change it in your env file and try again."
+        printf "Your EXPO_PUBLIC_SE environment variable is set to $EXPO_PUBLIC_SE.\nThe EXPO_PUBLIC_SE variable must be set to tda to create a release.\nPlease change it in your env file and try again."
         exit
     fi
 fi
@@ -22,5 +23,4 @@ while true; do
     esac
 done
 
-gh release create $PACKAGE_VERSION app-debug.apk app-release.apk sentry_react_native.app.zip sentry_react_native_debug.app.zip
-
+gh release create $PACKAGE_VERSION app-release.apk sentry_react_native.app.zip
