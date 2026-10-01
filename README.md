@@ -42,6 +42,26 @@ cd android && ./gradlew :app:assembleRelease
 The generated `android/` and `ios/` directories are gitignored — `expo prebuild`
 recreates them from `app.config.js`, so don't edit them by hand.
 
+## Releases
+
+Releases are automated via `.github/workflows/release.yml` and use date-based
+versioning, matching the [sentry-demos/android](https://github.com/sentry-demos/android)
+demo: version name `YY.M.D` (e.g. `26.10.5`) and version code `YYMMDD` (e.g. `261005`).
+
+- **Scheduled:** every Monday at 00:00 UTC. The workflow bumps `package.json`,
+  builds the Android APK and iOS app, and publishes them to
+  [GitHub Releases](https://github.com/sentry-demos/sentry_react_native/releases)
+  as `app-release.apk` and `sentry_react_native.app.zip`. The
+  [TDA pipeline](https://github.com/sentry-demos/empower/tree/master/_tda) always
+  tests against the latest release, so its errors are tagged with the current version.
+- **Manual:** Actions → Release → Run workflow, no inputs needed. It releases with
+  today's date just like the scheduled run. If today was already released, the
+  version gets a suffix (`26.10.5-1`, then `-2`, …) so it never collides with the
+  automated releases.
+
+The `version` input on the workflow is an optional escape hatch for forcing a
+specific version; it fails if that version was already released.
+
 ## Environment Variables
 
 Expo reads `.env.local` automatically. Variables must be prefixed with `EXPO_PUBLIC_` to be accessible in app code:

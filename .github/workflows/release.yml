@@ -3,8 +3,10 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'The version name to release. E.g. 4.0.2'
-        required: true
+        description: 'Version to release. Leave blank to auto-generate from today (YY.M.D).'
+        required: false
+  schedule:
+    - cron: "0 0 * * 1" # Mondays at 00:00 UTC
 
 env:
   APK_PATH: app-release.apk
@@ -15,12 +17,41 @@ jobs:
   bump-version:
     runs-on: ubuntu-latest
     name: 'Prepare Release'
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      version_code: ${{ steps.version.outputs.version_code }}
     steps:
-      - name: Set environment variables
-        run: |
-          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
-
       - uses: actions/checkout@v4
+
+      # Auto-generated versions are date-based (YY.M.D name / YYMMDD code), matching
+      # the sentry-demos/android repo. Zero-padding is dropped from the version name
+      # because e.g. "26.03.05" is not valid semver and npm version would reject it.
+      # If today's version was already released (e.g. a manual run after the Monday
+      # cron), suffix it: 26.10.5-1 / 2610051, then -2, etc.
+      - name: Compute version
+        id: version
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+            VERSION_CODE=$(date +'%y%m%d')
+            if gh release view "$VERSION" >/dev/null 2>&1; then
+              echo "Release $VERSION already exists." >&2
+              exit 1
+            fi
+          else
+            BASE=$(date +'%-y.%-m.%-d')
+            CODE=$(date +'%y%m%d')
+            VERSION="$BASE"
+            VERSION_CODE="$CODE"
+            n=0
+            while gh release view "$VERSION" >/dev/null 2>&1; do
+              n=$((n+1))
+              VERSION="$BASE-$n"
+              VERSION_CODE="$CODE$n"
+            done
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v4
         with:
@@ -32,15 +63,17 @@ jobs:
         run: npm ci
 
       - name: Bump Version
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           git config user.name getsentry-bot
           git config user.email bot@sentry.io
 
-          git checkout -b release/${{ env.VERSION }}
-          npm version ${{ env.VERSION }}
-          git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
-          git push origin ${{ env.VERSION }}
-          git push origin release/${{ env.VERSION }}
+          git checkout -b release/${VERSION}
+          npm version ${VERSION}
+          git tag ${VERSION} -m ${VERSION}
+          git push origin ${VERSION}
+          git push origin release/${VERSION}
 
   build-android:
     name: 'Build Android'
@@ -48,7 +81,8 @@ jobs:
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
     with:
-      ref: release/${{ inputs.version }}
+      ref: release/${{ needs.bump-version.outputs.version }}
+      version_code: ${{ needs.bump-version.outputs.version_code }}
 
   build-ios:
     name: 'Build iOS'
@@ -56,7 +90,8 @@ jobs:
     uses: ./.github/workflows/build-ios.yml
     secrets: inherit
     with:
-      ref: release/${{ inputs.version }}
+      ref: release/${{ needs.bump-version.outputs.version }}
+      version_code: ${{ needs.bump-version.outputs.version_code }}
 
   publish-release:
     name: 'Publish Release'
@@ -67,7 +102,7 @@ jobs:
     steps:
       - name: Set environment variables
         run: |
-          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+          echo "VERSION=${{ needs.bump-version.outputs.version }}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
         with:
