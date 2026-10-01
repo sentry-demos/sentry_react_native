@@ -12,6 +12,18 @@ on:
         required: false
         type: string
         default: tda
+      version_name:
+        description: 'Native versionName, e.g. 25.10.01. Baked into app.config.js and source maps.'
+        required: false
+        type: string
+      version_code:
+        description: 'Native versionCode, e.g. 251001. Baked into app.config.js and source maps.'
+        required: false
+        type: string
+      release:
+        description: 'Sentry release name. Must match the runtime release set in Sentry.init.'
+        required: false
+        type: string
 
 jobs:
   build-android:
@@ -21,8 +33,16 @@ jobs:
       APK_PATH: android/app/build/outputs/apk/release/app-release.apk
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_ALLOW_FAILURE: false
-      # babel-preset-expo inlines EXPO_PUBLIC_* at bundle time, so this has to be set for the build step, not just at runtime.
+      # Read by app.config.js to stamp the native version (and thus the SDK release).
+      VERSION_NAME: ${{ inputs.version_name }}
+      VERSION_CODE: ${{ inputs.version_code }}
+      # Read by sentry.gradle to upload source maps under the same release/dist as runtime.
+      SENTRY_RELEASE: ${{ inputs.release }}
+      SENTRY_DIST: ${{ inputs.version_code }}
+      # babel-preset-expo inlines EXPO_PUBLIC_* at bundle time, so these have to be set for the build step, not just at runtime.
       EXPO_PUBLIC_SE: ${{ inputs.se }}
+      EXPO_PUBLIC_SENTRY_RELEASE: ${{ inputs.release }}
+      EXPO_PUBLIC_SENTRY_DIST: ${{ inputs.version_code }}
     steps:
       - uses: actions/checkout@v4
         with:

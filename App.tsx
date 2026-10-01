@@ -47,6 +47,11 @@ Sentry.init({
   dsn: DSN,
   debug: true,
   environment: 'dev',
+  // Set at build time by the release workflow so every event is tagged with the
+  // same date-based release as the native build/source maps. Undefined locally,
+  // where the SDK falls back to the native-derived release.
+  release: process.env.EXPO_PUBLIC_SENTRY_RELEASE || undefined,
+  dist: process.env.EXPO_PUBLIC_SENTRY_DIST || undefined,
   enableLogs: true,
   beforeSend: (event) => {
     if (SE === 'tda') {

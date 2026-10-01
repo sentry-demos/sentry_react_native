@@ -1,77 +1,108 @@
 name: Release
+
+# Weekly release train. Builds Android + iOS with one date-based version, publishes
+# a GitHub release (TDA installs from `releases[0]`) and creates the matching Sentry
+# release. The version is resolved once and flows to the native builds, the SDK
+# runtime release, source maps, the GitHub tag and the Sentry release.
 on:
+  schedule:
+    # Mondays at 15:00 UTC
+    - cron: '0 15 * * 1'
   workflow_dispatch:
     inputs:
-      version:
-        description: 'The version name to release. E.g. 4.0.2'
-        required: true
+      version_name:
+        description: 'Version name, e.g. 25.10.01. Defaults to today (YY.MM.DD).'
+        required: false
+        default: ''
+      version_code:
+        description: 'Version code, e.g. 251001. Defaults to today (YYMMDD).'
+        required: false
+        default: ''
+      ref:
+        description: 'Branch to build from. Defaults to the selected branch.'
+        required: false
+        default: ''
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 env:
-  APK_PATH: app-release.apk
-  APP_ARCHIVE_PATH: sentry_react_native.app.zip
+  SENTRY_ORG: demo
+  SENTRY_PROJECT: mobile-react-native
+  RELEASE_REPO: sentry-demos/sentry_react_native
   GH_TOKEN: ${{ github.token }}
 
 jobs:
-  bump-version:
+  resolve-version:
+    name: 'Resolve version'
     runs-on: ubuntu-latest
-    name: 'Prepare Release'
+    outputs:
+      version_name: ${{ steps.v.outputs.version_name }}
+      version_code: ${{ steps.v.outputs.version_code }}
+      release: ${{ steps.v.outputs.release }}
+      ref: ${{ steps.v.outputs.ref }}
     steps:
-      - name: Set environment variables
+      - id: v
         run: |
-          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+          REF="${{ inputs.ref }}"
+          if [ -z "$REF" ]; then REF="${{ github.ref_name }}"; fi
 
-      - uses: actions/checkout@v4
+          VERSION_NAME="${{ inputs.version_name }}"
+          if [ -z "$VERSION_NAME" ]; then VERSION_NAME="$(date -u +'%y.%m.%d')"; fi
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
+          VERSION_CODE="${{ inputs.version_code }}"
+          if [ -z "$VERSION_CODE" ]; then
+            VERSION_CODE="$(echo "$VERSION_NAME" | tr -cd '0-9')"
+            if [ -z "$VERSION_CODE" ]; then VERSION_CODE="$(date -u +'%y%m%d')"; fi
+          fi
 
-      - name: Install dependencies
-        run: npm ci
+          RELEASE="com.sentry_react_native@${VERSION_NAME}+${VERSION_CODE}"
 
-      - name: Bump Version
-        run: |
-          git config user.name getsentry-bot
-          git config user.email bot@sentry.io
-
-          git checkout -b release/${{ env.VERSION }}
-          npm version ${{ env.VERSION }}
-          git tag --force ${{ env.VERSION }} -m ${{ env.VERSION }}
-          git push origin ${{ env.VERSION }}
-          git push origin release/${{ env.VERSION }}
+          {
+            echo "version_name=$VERSION_NAME"
+            echo "version_code=$VERSION_CODE"
+            echo "release=$RELEASE"
+            echo "ref=$REF"
+          } >> "$GITHUB_OUTPUT"
+          echo "Releasing $RELEASE from $REF"
 
   build-android:
     name: 'Build Android'
-    needs: [bump-version]
+    needs: [resolve-version]
     uses: ./.github/workflows/build-android.yml
     secrets: inherit
     with:
-      ref: release/${{ inputs.version }}
+      ref: ${{ needs.resolve-version.outputs.ref }}
+      version_name: ${{ needs.resolve-version.outputs.version_name }}
+      version_code: ${{ needs.resolve-version.outputs.version_code }}
+      release: ${{ needs.resolve-version.outputs.release }}
 
   build-ios:
     name: 'Build iOS'
-    needs: [bump-version]
+    needs: [resolve-version]
     uses: ./.github/workflows/build-ios.yml
     secrets: inherit
     with:
-      ref: release/${{ inputs.version }}
+      ref: ${{ needs.resolve-version.outputs.ref }}
+      version_name: ${{ needs.resolve-version.outputs.version_name }}
+      version_code: ${{ needs.resolve-version.outputs.version_code }}
+      release: ${{ needs.resolve-version.outputs.release }}
 
   publish-release:
     name: 'Publish Release'
-    needs: [bump-version, build-android, build-ios]
+    needs: [resolve-version, build-android, build-ios]
     runs-on: ubuntu-latest
     env:
-      MERGE_TARGET: master
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      VERSION_NAME: ${{ needs.resolve-version.outputs.version_name }}
+      VERSION_CODE: ${{ needs.resolve-version.outputs.version_code }}
+      RELEASE: ${{ needs.resolve-version.outputs.release }}
     steps:
-      - name: Set environment variables
-        run: |
-          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
-
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # fetch all history all branches and tags
+          ref: ${{ needs.resolve-version.outputs.ref }}
+          fetch-depth: 0
 
       - name: Download iOS App
         uses: actions/download-artifact@v4
@@ -83,23 +114,37 @@ jobs:
         with:
           name: empower-plant-react-native-android
 
-      - name: Set GitHub user
+      - name: Check for an existing GitHub release
+        id: gh
         run: |
-          git config user.name getsentry-bot
-          git config user.email bot@sentry.io
+          if gh release view "$VERSION_NAME" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::GitHub release $VERSION_NAME already exists; skipping."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Create Release
+      - name: Publish GitHub release
+        if: steps.gh.outputs.exists == 'false'
         run: |
-          gh release create \
-            ${{ env.VERSION }} \
-            ${{ env.APK_PATH }} \
-            ${{ env.APP_ARCHIVE_PATH }} \
-            --title ${{ env.VERSION }} \
-            --notes "Release ${{ env.VERSION }}" \
-            || error_exit "Failed to create GitHub release."
+          gh release create "$VERSION_NAME" \
+            app-release.apk \
+            sentry_react_native.app.zip \
+            --title "$VERSION_NAME" \
+            --generate-notes
 
-      - name: Clean up Release Branch
+      - name: Install sentry-cli
+        run: npm install --global @sentry/cli
+
+      - name: Create Sentry release
         run: |
-          git reset --hard
-          git checkout ${{ env.MERGE_TARGET }}
-          git push origin --delete release/${{ env.VERSION }}
+          # `releases new`/`finalize` are idempotent, and set-commits upserts, so
+          # this is safe even if the build's source-map upload already created it.
+          sentry-cli releases new "$RELEASE" -o "$SENTRY_ORG" -p "$SENTRY_PROJECT"
+          sentry-cli releases set-commits "$RELEASE" \
+            -o "$SENTRY_ORG" -p "$SENTRY_PROJECT" \
+            --commit "$RELEASE_REPO@$(git rev-parse HEAD)"
+          sentry-cli releases finalize "$RELEASE" -o "$SENTRY_ORG" -p "$SENTRY_PROJECT"
+          sentry-cli releases deploys new \
+            --release "$RELEASE" -e production \
+            -o "$SENTRY_ORG" -p "$SENTRY_PROJECT"
