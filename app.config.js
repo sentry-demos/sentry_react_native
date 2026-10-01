@@ -12,7 +12,9 @@ module.exports = {
     // iOS bundle identifiers can't contain underscores, unlike the Android package name below.
     bundleIdentifier: 'com.sentry-react-native',
     // Continues the build number sequence from the pre-Expo app, which was at 19.
-    buildNumber: '20',
+    // The release workflow sets IOS_BUILD_NUMBER (YYMMDD); local dev uses the fallback.
+    // `||` not `??`: GitHub Actions sets the var to an empty string when the input is unset.
+    buildNumber: process.env.IOS_BUILD_NUMBER || '20',
     infoPlist: {
       // Set here rather than via `name`, which would also rename the generated
       // Xcode project and the .app bundle the release archive is built from.
@@ -26,7 +28,9 @@ module.exports = {
   },
   android: {
     package: 'com.sentry_react_native',
-    versionCode: 20,
+    // The release workflow sets ANDROID_VERSION_CODE (YYMMDD); local dev uses the fallback.
+    // `||` not `??`: GitHub Actions sets the var to an empty string when the input is unset.
+    versionCode: Number(process.env.ANDROID_VERSION_CODE || 20),
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/android-icon-foreground.png',
