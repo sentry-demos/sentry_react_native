@@ -1,9 +1,6 @@
 import * as React from 'react';
 import {Provider, useSelector} from 'react-redux';
-import {
-  NavigationContainer,
-  NavigationContainerRef,
-} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator as createStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FontAwesome6} from '@expo/vector-icons';
@@ -93,8 +90,6 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
-  const navigation = React.useRef<NavigationContainerRef<[]> | null>(null);
-
   const scope = Sentry.getCurrentScope();
   const customerType = [
     'medium-plan',
@@ -118,11 +113,8 @@ const App = () => {
       <SafeAreaProvider>
         <GestureHandlerRootView style={styles.gestureHandlerRootView}>
           <NavigationContainer
-            ref={navigation}
+            ref={reactNavigationIntegration.registerNavigationContainer}
             onReady={() => {
-              reactNavigationIntegration.registerNavigationContainer(
-                navigation,
-              );
               Sentry.logger.info('Navigation container ready');
             }}>
             <BottomTabNavigator />
