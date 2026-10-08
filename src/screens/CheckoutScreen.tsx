@@ -280,13 +280,12 @@ const CheckoutScreen = () => {
   };
 
   React.useEffect(() => {
+    Sentry.reportFullyDisplayed();
     fetch(`${BACKEND_URL}/success`);
   }, []);
 
   return (
     <View style={styles.screen}>
-      <Sentry.TimeToInitialDisplay record={true} />
-      <Sentry.TimeToFullDisplay record={true} />
       <View style={styles.cartListWrapper}>
         <FlatList
           data={items}
