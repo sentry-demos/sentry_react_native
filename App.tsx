@@ -62,7 +62,9 @@ Sentry.init({
     return event;
   },
   integrations: [
-    Sentry.reactNativeTracingIntegration(),
+    Sentry.reactNativeTracingIntegration({
+      idleTimeoutMs: 30000,
+    }),
     Sentry.mobileReplayIntegration({
       maskAllImages: true,
       maskAllText: true,
