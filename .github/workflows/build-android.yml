@@ -12,6 +12,10 @@ on:
         required: false
         type: string
         default: tda
+      version_code:
+        description: 'Android versionCode. The release workflow passes YYMMDD; unset falls back to app.config.js.'
+        required: false
+        type: string
 
 jobs:
   build-android:
@@ -23,6 +27,8 @@ jobs:
       SENTRY_ALLOW_FAILURE: false
       # babel-preset-expo inlines EXPO_PUBLIC_* at bundle time, so this has to be set for the build step, not just at runtime.
       EXPO_PUBLIC_SE: ${{ inputs.se }}
+      # Read by app.config.js at prebuild time; empty when the caller didn't pass it.
+      ANDROID_VERSION_CODE: ${{ inputs.version_code }}
     steps:
       - uses: actions/checkout@v4
         with:
