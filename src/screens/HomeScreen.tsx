@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, StyleSheet, Text, FlatList} from 'react-native';
+import {View, StyleSheet, Text, FlatList, ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
@@ -19,9 +19,14 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
   const [toolData, setProductData] = React.useState<Product[] | [] | null>(
     null,
   );
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
 
-  const loadData = () => {
-    setProductData(null);
+  const loadData = (isRefresh = false) => {
+    if (isRefresh) {
+      setIsRefreshing(true);
+    } else {
+      setProductData(null);
+    }
     let se, customerType, email;
     Sentry.withScope(function (scope: Sentry.Scope) {
       const extendedScope = scope as ExtendedSentryScope;
@@ -49,16 +54,18 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
       .then((response) => response.json())
       .then((json) => {
         setProductData(json);
+        setIsRefreshing(false);
         Sentry.logger.info('Products loaded', {
           productCount: json.length,
         });
       })
       .catch((err) => {
+        setIsRefreshing(false);
         Sentry.logger.error('Failed to load products', {
           error: err.message,
           endpoint: `${BACKEND_URL}/products`,
         });
-        console.log('> api Erorr: ', err);
+        console.log('> api Error: ', err);
       });
   };
 
@@ -68,7 +75,7 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
   }, []);
 
   const onProductsListRefresh = () => {
-    loadData();
+    loadData(true);
   };
 
   if (toolData && toolData.length <= 10) {
@@ -92,30 +99,36 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Empower Plant</Text>
       </View>
-      <View>
+      <View style={styles.listContainer}>
         <Sentry.TimeToFullDisplay record={recordFullDisplay} />
-        <FlatList
-          id={'productList'}
-          onRefresh={onProductsListRefresh}
-          refreshing={toolData === null}
-          data={toolData}
-          contentContainerStyle={styles.productListContainer}
-          renderItem={({item}) => {
-            return (
-              <ProfiledStyledProductCard
-                appDispatch={dispatch}
-                id={item.id}
-                imgcropped={item.imgcropped}
-                price={item.price}
-                title={item.title}
-                description={item.description}
-                type={''}
-                onPress={() => onProductCardPress(item)}
-              />
-            );
-          }}
-          keyExtractor={(item) => `${item.id}`}
-        />
+        {toolData === null ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#002626" />
+          </View>
+        ) : (
+          <FlatList
+            id={'productList'}
+            onRefresh={onProductsListRefresh}
+            refreshing={isRefreshing}
+            data={toolData}
+            contentContainerStyle={styles.productListContainer}
+            renderItem={({item}) => {
+              return (
+                <ProfiledStyledProductCard
+                  appDispatch={dispatch}
+                  id={item.id}
+                  imgcropped={item.imgcropped}
+                  price={item.price}
+                  title={item.title}
+                  description={item.description}
+                  type={''}
+                  onPress={() => onProductCardPress(item)}
+                />
+              );
+            }}
+            keyExtractor={(item) => `${item.id}`}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -148,5 +161,13 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     paddingBottom: 100,
+  },
+  listContainer: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

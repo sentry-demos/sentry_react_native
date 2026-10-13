@@ -8,6 +8,7 @@ import {FontAwesome6} from '@expo/vector-icons';
 import * as Sentry from '@sentry/react-native';
 
 import HomeScreen from './src/screens/HomeScreen';
+import LandingScreen from './src/screens/LandingScreen';
 import ListApp from './src/screens/ListApp';
 import TrackerScreen from './src/screens/TrackerScreen';
 import ManualTrackerScreen from './src/screens/ManualTrackerScreen';
@@ -117,7 +118,10 @@ const App = () => {
             onReady={() => {
               Sentry.logger.info('Navigation container ready');
             }}>
-            <BottomTabNavigator />
+            <Stack.Navigator id={undefined} screenOptions={{headerShown: false}}>
+              <Stack.Screen name="Landing" component={LandingScreen} />
+              <Stack.Screen name="Main" component={BottomTabNavigator} />
+            </Stack.Navigator>
             <SentryUserFeedbackActionButton />
           </NavigationContainer>
           <Toast />
@@ -210,7 +214,7 @@ const ShopNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Products" component={HomeScreen} />
       <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
     </Stack.Navigator>
   );

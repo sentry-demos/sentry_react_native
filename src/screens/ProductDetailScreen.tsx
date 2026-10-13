@@ -47,6 +47,7 @@ const ProductDetailScreen = ({
 
   return (
     <SafeAreaView style={screenStyles.screen}>
+      <Sentry.TimeToFullDisplay ready={showProductDetail} />
       {showProductDetail ? <ProductDetail {...params} /> : <ProductNotFound />}
       <ProfiledCloseButton onPress={onClosePress} />
     </SafeAreaView>

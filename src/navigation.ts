@@ -1,7 +1,8 @@
 import {Product} from './types/Product';
 
 export type RootStackParamList = {
-  Home: undefined;
+  Landing: undefined;
+  Main: undefined;
   Tracker: undefined;
   ManualTracker: undefined;
   PerformanceTiming: undefined;
