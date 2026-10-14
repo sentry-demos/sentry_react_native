@@ -1,0 +1,39 @@
+From d106af49b6a7e82b1439bdec50f8491c1e555c75 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Mon, 8 Jun 2026 22:36:00 +0000
+Subject: [PATCH] fix: Move quantities assignment before usage in checkout
+ endpoint
+
+Fixes MOBILE-REACT-NATIVE-4S
+
+The checkout endpoint was raising an UnboundLocalError because the
+quantities variable was being referenced (len(quantities)) before
+it was assigned. This caused HTTP 500 errors when the mobile app
+attempted to place orders.
+
+Changes:
+- Move quantities assignment before the len() check
+- Ensures variable is defined before being used
+- Prevents UnboundLocalError in checkout validation flow
+---
+ flask/src/main.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/flask/src/main.py b/flask/src/main.py
+index 5bc7f9c0..2802d87e 100644
+--- a/flask/src/main.py
++++ b/flask/src/main.py
+@@ -222,10 +222,10 @@ def checkout():
+     try:
+         if validate_inventory:
+             with sentry_sdk.start_span(op="code.block", name="checkout.process_order"):
++                quantities = {int(k): v for k, v in cart['quantities'].items()}
+                 if len(quantities) == 0:
+                     raise Exception("Invalid checkout request: cart is empty")
+ 
+-                quantities = {int(k): v for k, v in cart['quantities'].items()}
+                 inventory_dict = {x.productid: x for x in inventory}
+                 for product_id in quantities:
+                     inventory_count = inventory_dict[product_id].count if product_id in inventory_dict else 0
+-- 
+2.43.0
