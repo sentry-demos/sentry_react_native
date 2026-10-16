@@ -5,6 +5,23 @@ appId: ${APP_ID}
 - tapOn:
     id: "landing-enter-button"
 - waitForAnimationToEnd
+# The demo backend's /products is slow (~12s) and intermittently returns 500,
+# which leaves the list empty, so pull to refresh until the products load.
+- extendedWaitUntil:
+    visible: "Botana Voice"
+    timeout: 30000
+    optional: true
+- repeat:
+    while:
+      notVisible: "Botana Voice"
+    times: 5
+    commands:
+      - swipe:
+          direction: DOWN
+      - extendedWaitUntil:
+          visible: "Botana Voice"
+          timeout: 30000
+          optional: true
 - assertVisible: "Botana Voice"
 - tapOn:
     text: "Add to cart"
@@ -25,7 +42,9 @@ appId: ${APP_ID}
       text: "Botana Voice"
 - tapOn: "Checkout"
 - tapOn: "email"
-- scroll
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Place your order"
 - tapOn:
     text: "Place your order"
     repeat: 3
