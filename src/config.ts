@@ -1,4 +1,6 @@
+// Local override: set EXPO_PUBLIC_SENTRY_DSN in .env.local (gitignored).
 export const DSN =
+  process.env.EXPO_PUBLIC_SENTRY_DSN ||
   'https://b87682e62e4cc633d4c35c7154256c66@sandbox-mirror.sentry.gg/1';
 
 // SENTRY_INTERNAL_DSN for testing

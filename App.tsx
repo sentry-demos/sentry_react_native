@@ -63,17 +63,23 @@ Sentry.init({
     Sentry.reactNativeTracingIntegration({
       idleTimeoutMs: 30000,
     }),
-    Sentry.mobileReplayIntegration({
-      maskAllImages: true,
-      maskAllText: true,
-    }),
     Sentry.consoleLoggingIntegration({levels: ['log', 'warn', 'error']}),
     reactNavigationIntegration,
   ],
   tracesSampleRate: 1.0,
-  profilesSampleRate: 1.0,
-  replaysOnErrorSampleRate: 1.0,
-  replaysSessionSampleRate: 1.0,
+  // UI Profiling. Do NOT also set `profilesSampleRate` (legacy transaction-based
+  // profiling): on Android it silently disables UI profiling, and sentry-cocoa 9.x
+  // removed transaction-based profiling.
+  _experiments: {
+    profilingOptions: {
+      // Evaluated once per Sentry session, not per trace.
+      profileSessionSampleRate: 1.0,
+      // Profiler runs while at least one sampled span is active.
+      lifecycle: 'trace',
+      // Also profile the app launch.
+      startOnAppStart: true,
+    },
+  },
   enableUserInteractionTracing: true,
   enableAutoSessionTracking: true,
   sessionTrackingIntervalMillis: 5000,
