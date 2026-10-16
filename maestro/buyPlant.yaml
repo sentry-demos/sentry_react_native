@@ -2,6 +2,8 @@ appId: ${APP_ID}
 ---
 - launchApp
 - assertVisible: "Empower Plant"
+- tapOn:
+    id: "landing-enter-button"
 - waitForAnimationToEnd
 - assertVisible: "Botana Voice"
 - tapOn:
