@@ -226,24 +226,6 @@ const ListApp = (props: Props) => {
           <View style={styles.buttonArea}>
             <TouchableOpacity
               onPress={() => {
-                props.navigation.navigate('Tracker');
-              }}>
-              <Sentry.Unmask>
-                <Text style={styles.buttonText}>Auto Tracing Example</Text>
-              </Sentry.Unmask>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('ManualTracker');
-              }}>
-              <Sentry.Unmask>
-                <Text style={styles.buttonText}>Manual Tracing Example</Text>
-              </Sentry.Unmask>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
                 props.navigation.dispatch(
                   CommonActions.reset({
                     index: 1,

@@ -10,8 +10,6 @@ import * as Sentry from '@sentry/react-native';
 import HomeScreen from './src/screens/HomeScreen';
 import LandingScreen from './src/screens/LandingScreen';
 import ListApp from './src/screens/ListApp';
-import TrackerScreen from './src/screens/TrackerScreen';
-import ManualTrackerScreen from './src/screens/ManualTrackerScreen';
 import PerformanceTimingScreen from './src/screens/PerformanceTimingScreen';
 import EndToEndTestsScreen from './src/screens/EndToEndTestsScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
@@ -224,8 +222,6 @@ const DebugNavigator = () => {
   return (
     <Stack.Navigator id={undefined}>
       <Stack.Screen name="ListApp" component={ListApp} />
-      <Stack.Screen name="Tracker" component={TrackerScreen} />
-      <Stack.Screen name="ManualTracker" component={ManualTrackerScreen} />
       <Stack.Screen
         name="PerformanceTiming"
         component={PerformanceTimingScreen}
