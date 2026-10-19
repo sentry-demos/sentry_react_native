@@ -42,7 +42,7 @@ const packageJson = require('./package.json');
 Sentry.init({
   dsn: DSN,
   debug: true,
-  environment: 'dev',
+  environment: SE === 'tda' ? 'production' : 'dev',
   enableLogs: true,
   beforeSend: (event) => {
     if (SE === 'tda') {
