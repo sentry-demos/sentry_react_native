@@ -59,7 +59,10 @@ Sentry.init({
   },
   integrations: [
     Sentry.reactNativeTracingIntegration({
-      idleTimeoutMs: 30000,
+      // The in-flight /products request already keeps the navigation open for the
+      // whole (intentionally slow) load. A short idle tail lets it be sent before
+      // TDA kills the app; with 30s it was never sent and Flask spans were orphaned.
+      idleTimeoutMs: 3000,
     }),
     Sentry.mobileReplayIntegration({
       maskAllImages: true,
