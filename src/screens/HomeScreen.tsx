@@ -47,26 +47,31 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
       endpoint: `${BACKEND_URL}/products`,
     });
 
-    fetch(`${BACKEND_URL}/products`, {
-      method: 'GET',
-      headers,
-    })
-      .then((response) => response.json())
-      .then((json) => {
+    // Explicit span so the /products request always has an app-side parent (the
+    // navigation transaction when one is active) and its sentry-trace is
+    // propagated to Flask. Without it the fetch can fire with no active span and
+    // the backend ends up in a separate, rootless trace.
+    Sentry.startSpan({name: 'Load Products'}, async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/products`, {
+          method: 'GET',
+          headers,
+        });
+        const json = await response.json();
         setProductData(json);
         setIsRefreshing(false);
         Sentry.logger.info('Products loaded', {
           productCount: json.length,
         });
-      })
-      .catch((err) => {
+      } catch (err) {
         setIsRefreshing(false);
         Sentry.logger.error('Failed to load products', {
           error: err.message,
           endpoint: `${BACKEND_URL}/products`,
         });
         console.log('> api Error: ', err);
-      });
+      }
+    });
   };
 
   React.useEffect(() => {

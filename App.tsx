@@ -19,7 +19,7 @@ import CheckoutScreen from './src/screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
 
 import {RootState, store, showFeedbackActionButton} from './src/reduxApp';
-import {DSN} from './src/config';
+import {DSN, BACKEND_URL} from './src/config';
 import {RootStackParamList} from './src/navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LogBox, Platform, StyleSheet} from 'react-native';
@@ -60,6 +60,14 @@ Sentry.init({
   integrations: [
     Sentry.reactNativeTracingIntegration({
       idleTimeoutMs: 30000,
+      // Expo SDK 56+ uses expo/fetch (bypasses XHR); the auto-detect has been
+      // unreliable, so force it on. Without this no outgoing span is created and
+      // no sentry-trace/baggage header is attached, leaving the backend as its
+      // own orphan trace.
+      traceFetch: true,
+      // Native defaults to /.*/, but web defaults to same-origin only. List the
+      // backend explicitly so the Flask request always carries trace headers.
+      tracePropagationTargets: ['localhost', /^\//, BACKEND_URL],
     }),
     Sentry.mobileReplayIntegration({
       maskAllImages: true,
