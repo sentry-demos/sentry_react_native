@@ -60,11 +60,6 @@ Sentry.init({
   integrations: [
     Sentry.reactNativeTracingIntegration({
       idleTimeoutMs: 30000,
-      // Expo SDK 56+ uses expo/fetch (bypasses XHR); the auto-detect has been
-      // unreliable, so force it on. Without this no outgoing span is created and
-      // no sentry-trace/baggage header is attached, leaving the backend as its
-      // own orphan trace.
-      traceFetch: true,
       // Native defaults to /.*/, but web defaults to same-origin only. List the
       // backend explicitly so the Flask request always carries trace headers.
       tracePropagationTargets: ['localhost', /^\//, BACKEND_URL],
