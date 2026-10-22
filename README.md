@@ -1,40 +1,57 @@
 # Sentry Empower Plant React Native (Expo) Demo
 
-This is a demo repo used by Solution Engineers when demo'ing Sentry's [React Native](https://docs.sentry.io/platforms/react-native) SDK's capabilities. This version is built with [Expo](https://expo.dev) (SDK 57).
+This is a mock mobile app used by Solution Engineers when demo'ing Sentry's [React Native](https://docs.sentry.io/platforms/react-native) SDK's capabilities, built with [Expo](https://expo.dev).
 
 | Home Screen | Product Detail | Cart |
 |------------|----------------|------|
 | <img src="./img/empower-plant.png" height="400"> | <img src="./img/empower-plant-product-detail.png" height="400"> | <img src="./img/empower-plant-cart.png" height="400"> |
 
-## Versions
+## Run the App in a Simulator
 
-See [package.json](./package.json) for up to date information about the `@sentry/react-native` SDK, `react-native`, and `expo` versions.
+No build needed. Download the latest build from
+[Releases](https://github.com/sentry-demos/sentry_react_native/releases):
 
-## Setup
+- **Android:** download `app-release.apk` and drag it onto a running emulator.
+- **iOS:** download `sentry_react_native.app.zip`, unzip it, and drag the `.app` onto a
+  running simulator.
 
-1. `git clone git@github.com:sentry-demos/sentry_react_native.git`
-2. Optional — Add your DSN and BACKEND_URL to `src/config.ts`
-3. Optional — Create `.env.local` in project root and add `EXPO_PUBLIC_SE=<value>`
-4. `export SENTRY_AUTH_TOKEN=<token>` — [How to generate a Sentry Auth Token](https://docs.sentry.io/account/auth-tokens/#organization-auth-tokens)
-5. `npm install`
+> **Note:** Release builds are built with `EXPO_PUBLIC_SE=tda`, so their events are sent to
+> the `production` environment and grouped with the automated TDA data, not under your name.
+> To get your own `SE` tag, follow [Setup Locally](#setup-locally) instead.
+
+## Setup Locally
+
+```bash
+git clone https://github.com/sentry-demos/sentry_react_native.git
+cd sentry_react_native
+echo "EXPO_PUBLIC_SE=<your-name>" > .env.local
+```
+
+- **`EXPO_PUBLIC_SE`** — Expo reads `.env.local` automatically, and only variables prefixed
+  with `EXPO_PUBLIC_` are exposed to app code. `SE` is added to event fingerprints so your
+  demo issues stay separate from everyone else's. The value `tda` is reserved for release
+  builds: it sets the Sentry environment to `production` and fingerprints by app version.
+  Reload the app (press `r` in the Metro terminal) after changing it.
+- **Optional** — `src/config.ts` ships with a working `DSN` and `BACKEND_URL`.
+  Override them if you want to point at your own Sentry project or a local backend.
 
 ## Development
 
-This app uses native modules (the Sentry config plugin), so it can't run in Expo Go —
-`npm run android` / `npm run ios` generate the native projects and build a dev client.
+This app uses native modules (the Sentry config plugin), so it can't run in Expo Go.
+Install dependencies, then run on Android or iOS. The `run` commands generate the native
+project if needed, build and install the app, and start Metro:
 
 ```bash
-# Start the Metro dev server against an already-installed dev build
-npm start
-
-# Generate the native project and build/install it
-npm run android
-npm run ios
+npm install
+npm run android # or: npm run ios
 ```
 
-For release builds, the same flow CI uses (see `.github/workflows/build-*.yml`):
+For release builds, the same flow CI uses (see `.github/workflows/build-*.yml`). Release
+builds upload source maps, so they need a
+[Sentry Auth Token](https://docs.sentry.io/account/auth-tokens/#organization-auth-tokens):
 
 ```bash
+export SENTRY_AUTH_TOKEN=<token>
 npx expo prebuild --platform android
 cd android && ./gradlew :app:assembleRelease
 ```
@@ -45,11 +62,10 @@ recreates them from `app.config.js`, so don't edit them by hand.
 ## Releases
 
 Releases are automated via `.github/workflows/release.yml` and use date-based
-versioning, matching the [sentry-demos/android](https://github.com/sentry-demos/android)
-demo: version name `YY.M.D` (e.g. `26.10.5`) and version code `YYMMDD` (e.g. `261005`).
+versioning: version name `YY.M.D` (e.g. `26.10.5`) and version code `YYMMDD` (e.g. `261005`).
 
-- **Scheduled:** every Monday at 00:00 UTC. The workflow bumps `package.json`,
-  builds the Android APK and iOS app, and publishes them to
+- **Scheduled:** every Monday at 00:00 UTC. The workflow builds the Android APK and iOS app
+  and publishes them to
   [GitHub Releases](https://github.com/sentry-demos/sentry_react_native/releases)
   as `app-release.apk` and `sentry_react_native.app.zip`. The
   [TDA pipeline](https://github.com/sentry-demos/empower/tree/master/_tda) always
@@ -62,25 +78,9 @@ demo: version name `YY.M.D` (e.g. `26.10.5`) and version code `YYMMDD` (e.g. `26
 The `version` input on the workflow is an optional escape hatch for forcing a
 specific version; it fails if that version was already released.
 
-## Environment Variables
-
-Expo reads `.env.local` automatically. Variables must be prefixed with `EXPO_PUBLIC_` to be accessible in app code:
-
-```
-EXPO_PUBLIC_SE=tda
-```
-
-This replaces the `react-native-dotenv` / `@env` approach from the bare RN version.
-
-## Differences from the bare React Native version
-
-| Area | Bare RN | Expo |
-|------|---------|------|
-| Icons | `react-native-vector-icons` | `@expo/vector-icons` (built-in) |
-| Env vars | `import {SE} from '@env'` | `process.env.EXPO_PUBLIC_SE` |
-| Metro config | `withSentryConfig` | `getSentryExpoConfig` |
-| Build | `react-native run-*` | `expo prebuild` + `expo run:*` |
-| Sentry plugin | Android Gradle plugin | Expo config plugin (`@sentry/react-native`) |
+> **Note:** Only GitHub release builds have a real version. The bump happens on a temporary
+> release branch, so `package.json` on `master` stays at `1.0.0` and local builds always
+> report `1.0.0`.
 
 ## Troubleshooting
 
