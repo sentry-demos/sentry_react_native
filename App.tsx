@@ -18,13 +18,12 @@ import CartScreen from './src/screens/CartScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
 
-import {RootState, store, showFeedbackActionButton} from './src/reduxApp';
-import {DSN} from './src/config';
+import {RootState, store} from './src/reduxApp';
+import {BACKEND_URL, DSN} from './src/config';
 import {RootStackParamList} from './src/navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LogBox, Platform, StyleSheet} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {SentryUserFeedbackActionButton} from './src/components/UserFeedbackModal';
 
 // SE is read from EXPO_PUBLIC_SE environment variable (.env file)
 const SE = process.env.EXPO_PUBLIC_SE;
@@ -41,9 +40,10 @@ const packageJson = require('./package.json');
 
 Sentry.init({
   dsn: DSN,
-  debug: true,
+  debug: __DEV__,
   environment: SE === 'tda' ? 'production' : 'dev',
   enableLogs: true,
+  sendDefaultPii: true,
   beforeSend: (event) => {
     if (SE === 'tda') {
       event.fingerprint = ['{{ default }}', SE, packageJson.version];
@@ -51,9 +51,13 @@ Sentry.init({
       event.fingerprint = ['{{ default }}', SE];
     }
 
-    if (!event.type) {
-      store.dispatch(showFeedbackActionButton());
-    }
+    return event;
+  },
+  beforeSendTransaction: (event) => {
+    Sentry.logger.debug('Sending transaction', {
+      transaction: event.transaction,
+      spanCount: event.spans?.length ?? 0,
+    });
 
     return event;
   },
@@ -64,9 +68,21 @@ Sentry.init({
       // TDA kills the app; with 30s it was never sent and Flask spans were orphaned.
       idleTimeoutMs: 3000,
     }),
+    Sentry.httpClientIntegration({
+      failedRequestStatusCodes: [[400, 599]],
+      failedRequestTargets: [BACKEND_URL],
+    }),
+    Sentry.hermesProfilingIntegration(),
     Sentry.mobileReplayIntegration({
       maskAllImages: true,
       maskAllText: true,
+      networkDetailAllowUrls: [BACKEND_URL],
+      networkCaptureBodies: true,
+      networkRequestHeaders: ['se', 'customerType', 'email'],
+      networkResponseHeaders: ['Content-Type'],
+    }),
+    Sentry.feedbackIntegration({
+      enableShakeToReport: true,
     }),
     Sentry.consoleLoggingIntegration({levels: ['log', 'warn', 'error']}),
     reactNavigationIntegration,
@@ -123,7 +139,6 @@ const App = () => {
               <Stack.Screen name="Landing" component={LandingScreen} />
               <Stack.Screen name="Main" component={BottomTabNavigator} />
             </Stack.Navigator>
-            <SentryUserFeedbackActionButton />
           </NavigationContainer>
           <Toast />
         </GestureHandlerRootView>
