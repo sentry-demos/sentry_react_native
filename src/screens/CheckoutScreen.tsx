@@ -175,8 +175,6 @@ const CheckoutScreen = () => {
         statusText: response.statusText || 'INTERNAL SERVER ERROR',
         itemCount: cart.length,
       });
-
-      Sentry.captureException(new Error(errorMessage));
     } else {
       Sentry.logger.info('Checkout completed successfully', {
         status: response.status,

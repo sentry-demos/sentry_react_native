@@ -27,9 +27,6 @@ interface AppState {
   counter: number;
   cart: Record<number, CartItem>;
   contactInfo: ContactInfo;
-  feedback: {
-    isActionButtonVisible: boolean;
-  };
 }
 
 const initialState: AppState = {
@@ -45,9 +42,6 @@ const initialState: AppState = {
     state: '',
     zipCode: '',
     promoCode: '',
-  },
-  feedback: {
-    isActionButtonVisible: false,
   },
 };
 
@@ -122,28 +116,10 @@ const reducer = (state: AppState = initialState, action: any): AppState => {
         ...state,
         counter: 0,
       };
-    case 'SHOW_FEEDBACK_ACTION_BUTTON':
-      return {
-        ...state,
-        feedback: {...state.feedback, isActionButtonVisible: true},
-      };
-    case 'HIDE_FEEDBACK_ACTION_BUTTON':
-      return {
-        ...state,
-        feedback: {...state.feedback, isActionButtonVisible: false},
-      };
     default:
       return state;
   }
 };
-
-export const showFeedbackActionButton = () => ({
-  type: 'SHOW_FEEDBACK_ACTION_BUTTON',
-});
-
-export const hideFeedbackActionButton = () => ({
-  type: 'HIDE_FEEDBACK_ACTION_BUTTON',
-});
 
 const sentryEnhancer = Sentry.createReduxEnhancer();
 
