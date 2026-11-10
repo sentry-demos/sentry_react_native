@@ -93,6 +93,7 @@ Sentry.init({
   replaysSessionSampleRate: 1.0,
   enableUserInteractionTracing: true,
   enableAutoSessionTracking: true,
+  enableJsHangTracking: true,
   sessionTrackingIntervalMillis: 5000,
   maxBreadcrumbs: 150,
   attachStacktrace: true,
