@@ -12,6 +12,7 @@ const LandingScreen = ({
   React.useEffect(() => {
     Sentry.logger.info('Landing screen viewed');
     Sentry.reportFullyDisplayed();
+    Sentry.appLoaded();
   }, []);
 
   return (

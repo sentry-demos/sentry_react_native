@@ -61,6 +61,13 @@ const ListApp = (props: Props) => {
       'MULTI-EXTRA-2': dateString,
     });
 
+    Sentry.setAttribute('SINGLE-ATTRIBUTE', dateString);
+    Sentry.setAttributes({
+      'MULTI-ATTRIBUTE-STRING': dateString,
+      'MULTI-ATTRIBUTE-NUMBER': 418,
+      'MULTI-ATTRIBUTE-BOOLEAN': true,
+    });
+
     Sentry.setContext('TEST-CONTEXT', {
       stringTest: 'Hello',
       numberTest: 404,
@@ -204,6 +211,25 @@ const ListApp = (props: Props) => {
               }}>
               <Sentry.Unmask>
                 <Text style={styles.buttonText}>Set Scope Properties</Text>
+              </Sentry.Unmask>
+            </TouchableOpacity>
+            <View style={styles.spacer} />
+            <TouchableOpacity
+              {...getTestProps('block-js-thread-button')}
+              onPress={() => {
+                const end = Date.now() + 6000;
+                while (Date.now() < end) {
+                  // Busy wait so the JS thread cannot run anything else.
+                }
+              }}>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Block JS Thread</Text>
+              </Sentry.Unmask>
+            </TouchableOpacity>
+            <View style={styles.spacer} />
+            <TouchableOpacity {...getTestProps('rage-tap-button')}>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Rage Tap Me</Text>
               </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
