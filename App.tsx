@@ -98,7 +98,7 @@ Sentry.init({
   spotlight: true,
 });
 
-Sentry.setTag('se', SE);
+Sentry.getCurrentScope().setTag('se', SE);
 
 const Tab = createBottomTabNavigator();
 
