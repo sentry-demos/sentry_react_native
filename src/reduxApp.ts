@@ -24,13 +24,11 @@ interface ContactInfo {
 }
 
 interface AppState {
-  counter: number;
   cart: Record<number, CartItem>;
   contactInfo: ContactInfo;
 }
 
 const initialState: AppState = {
-  counter: 0,
   cart: {},
   contactInfo: {
     email: '',
@@ -105,16 +103,6 @@ const reducer = (state: AppState = initialState, action: any): AppState => {
       return {
         ...state,
         cart: {...state.cart},
-      };
-    case 'COUNTER_INCREMENT':
-      return {
-        ...state,
-        counter: state.counter + 1,
-      };
-    case 'COUNTER_RESET':
-      return {
-        ...state,
-        counter: 0,
       };
     default:
       return state;

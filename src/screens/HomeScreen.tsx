@@ -4,7 +4,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
-import {StackScreenProps} from '@react-navigation/stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation';
 import {ProfiledStyledProductCard} from '../components/StyledProductCard';
 import {Product} from '../types/Product';
@@ -14,7 +14,9 @@ type ExtendedSentryScope = Sentry.Scope & {
   _user: Record<string, string>;
 };
 
-const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
+const EmpowerPlant = ({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList>) => {
   const dispatch = useDispatch();
   const [toolData, setProductData] = React.useState<Product[] | [] | null>(
     null,

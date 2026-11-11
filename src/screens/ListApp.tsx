@@ -8,9 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {CommonActions} from '@react-navigation/native';
-
 import * as Sentry from '@sentry/react-native';
 
 declare const global: any;
@@ -19,11 +16,7 @@ const globalAny: any = global;
 import {getTestProps} from '../../utils/getTestProps';
 import {DSN, BACKEND_URL} from '../config';
 
-interface Props {
-  navigation: StackNavigationProp<any, 'ListApp'>;
-}
-
-const ListApp = (props: Props) => {
+const ListApp = () => {
   const currentDSN = Sentry.getClient()?.getOptions().dsn;
 
   const [showBadCode, setShowBadCode] = React.useState(false);
@@ -144,13 +137,6 @@ const ListApp = (props: Props) => {
             This is a simple sample app for you to try out the Sentry React
             Native SDK.
           </Text>
-          <TouchableOpacity
-            {...getTestProps('openEndToEndTests')}
-            onPress={() => {
-              props.navigation.navigate('EndToEndTests');
-            }}>
-            <Text style={styles.hiddenE2e}>End to End Tests</Text>
-          </TouchableOpacity>
           {currentDSN == null && DSN && (
             <View style={styles.warningBlock}>
               <Text style={styles.warningText}>
@@ -249,36 +235,6 @@ const ListApp = (props: Props) => {
               </TouchableOpacity>
             </Sentry.ErrorBoundary>
           </View>
-          <View style={styles.buttonArea}>
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.dispatch(
-                  CommonActions.reset({
-                    index: 1,
-                    routes: [
-                      {name: 'Home'},
-                      {
-                        name: 'PerformanceTiming',
-                        params: {someParam: 'hello'},
-                      },
-                    ],
-                  }),
-                );
-              }}>
-              <Sentry.Unmask>
-                <Text style={styles.buttonText}>Performance Timing</Text>
-              </Sentry.Unmask>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('Redux');
-              }}>
-              <Sentry.Unmask>
-                <Text style={styles.buttonText}>Redux Example</Text>
-              </Sentry.Unmask>
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
     </>
@@ -343,11 +299,6 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
     backgroundColor: '#c6becf',
-  },
-  hiddenE2e: {
-    width: 1,
-    height: 1,
-    opacity: 0,
   },
 });
 

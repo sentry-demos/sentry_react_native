@@ -10,10 +10,7 @@ import * as Sentry from '@sentry/react-native';
 import HomeScreen from './src/screens/HomeScreen';
 import LandingScreen from './src/screens/LandingScreen';
 import ListApp from './src/screens/ListApp';
-import PerformanceTimingScreen from './src/screens/PerformanceTimingScreen';
-import EndToEndTestsScreen from './src/screens/EndToEndTestsScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
-import ReduxScreen from './src/screens/ReduxScreen';
 import CartScreen from './src/screens/CartScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
 import Toast from 'react-native-toast-message';
@@ -241,12 +238,6 @@ const DebugNavigator = () => {
   return (
     <Stack.Navigator id={undefined}>
       <Stack.Screen name="ListApp" component={ListApp} />
-      <Stack.Screen
-        name="PerformanceTiming"
-        component={PerformanceTimingScreen}
-      />
-      <Stack.Screen name="Redux" component={ReduxScreen} />
-      <Stack.Screen name="EndToEndTests" component={EndToEndTestsScreen} />
     </Stack.Navigator>
   );
 };
