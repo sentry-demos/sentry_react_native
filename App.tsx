@@ -24,7 +24,6 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 // SE is read from EXPO_PUBLIC_SE environment variable (.env file)
 const SE = process.env.EXPO_PUBLIC_SE;
-console.log('> SE', SE);
 
 LogBox.ignoreAllLogs();
 
@@ -250,7 +249,7 @@ const styles = StyleSheet.create({
 
 export default Sentry.wrap(App, {
   touchEventBoundaryProps: {
-    ignoreNames: ['Provider', 'UselessName', /^SomeRegex/],
+    ignoreNames: ['Provider'],
     labelName: 'id',
   },
 });

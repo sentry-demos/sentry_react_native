@@ -14,11 +14,9 @@ declare const global: any;
 const globalAny: any = global;
 
 import {getTestProps} from '../../utils/getTestProps';
-import {DSN, BACKEND_URL} from '../config';
+import {BACKEND_URL} from '../config';
 
 const ListApp = () => {
-  const currentDSN = Sentry.getClient()?.getOptions().dsn;
-
   const [showBadCode, setShowBadCode] = React.useState(false);
 
   const setScopeProps = () => {
@@ -132,19 +130,11 @@ const ListApp = () => {
             source={require('../assets/sentry-logo.png')}
             style={styles.logo}
           />
-          <Text style={styles.welcomeTitle}>Hey there!</Text>
+          <Text style={styles.welcomeTitle}>Debug</Text>
           <Text style={styles.welcomeBody}>
-            This is a simple sample app for you to try out the Sentry React
-            Native SDK.
+            Each button sends data to Sentry: errors, crashes, hangs, rage taps,
+            or scope data.
           </Text>
-          {currentDSN == null && DSN && (
-            <View style={styles.warningBlock}>
-              <Text style={styles.warningText}>
-                😃 Hey! You need to replace the DSN inside Sentry.init with your
-                own or you won't see the events on your dashboard.
-              </Text>
-            </View>
-          )}
           <View style={styles.buttonArea}>
             <TouchableOpacity
               onPress={() => {
@@ -267,15 +257,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
     color: '#362D59',
-  },
-  warningBlock: {
-    marginTop: 12,
-    backgroundColor: '#E1567C',
-    padding: 8,
-    borderRadius: 6,
-  },
-  warningText: {
-    color: '#fff',
   },
   contentContainer: {
     paddingHorizontal: 20,
