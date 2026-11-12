@@ -6,7 +6,7 @@ import Toast from 'react-native-toast-message';
 import {RootState} from '../reduxApp';
 import {BACKEND_URL} from '../config';
 import {RootStackParamList} from '../navigation';
-import {StackScreenProps} from '@react-navigation/stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ProfiledStyledCartProductCard} from '../components/StyledCartProductCard';
 
 interface CartData {
@@ -25,7 +25,7 @@ export type UIToast = typeof Toast;
 
 const CheckoutButton = ({
   navigation,
-}: Pick<StackScreenProps<RootStackParamList>, 'navigation'>) => {
+}: Pick<NativeStackScreenProps<RootStackParamList>, 'navigation'>) => {
   return (
     <Button
       onPress={() => {
@@ -55,14 +55,13 @@ const computeCartTotal = (cartItems: Array<CartData>): subTotal => {
 
 const CartScreen = ({
   navigation,
-}: StackScreenProps<RootStackParamList, 'CartScreen'>) => {
+}: NativeStackScreenProps<RootStackParamList, 'CartScreen'>) => {
   const dispatch = useDispatch();
   const cartData = useSelector((state: RootState) => state.cart);
   const [_, setOrderStatusUI] = React.useState(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRightContainerStyle: {paddingRight: 20},
       headerRight: () => <CheckoutButton navigation={navigation} />,
     });
   }, [navigation]);

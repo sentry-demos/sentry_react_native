@@ -1,17 +1,18 @@
 import * as React from 'react';
 import {ImageBackground, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {StackScreenProps} from '@react-navigation/stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import * as Sentry from '@sentry/react-native';
 import {RootStackParamList} from '../navigation';
 import {StyledButton} from '../components/StyledButton';
 
 const LandingScreen = ({
   navigation,
-}: StackScreenProps<RootStackParamList, 'Landing'>) => {
+}: NativeStackScreenProps<RootStackParamList, 'Landing'>) => {
   React.useEffect(() => {
     Sentry.logger.info('Landing screen viewed');
     Sentry.reportFullyDisplayed();
+    Sentry.appLoaded();
   }, []);
 
   return (
