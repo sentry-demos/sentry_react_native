@@ -4,42 +4,29 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import {BACKEND_URL} from '../config';
-import {StackScreenProps} from '@react-navigation/stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation';
 import {ProfiledStyledProductCard} from '../components/StyledProductCard';
 import {Product} from '../types/Product';
 
-type ExtendedSentryScope = Sentry.Scope & {
-  _tags: Record<string, string>;
-  _user: Record<string, string>;
-};
-
-const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
+const EmpowerPlant = ({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList>) => {
   const dispatch = useDispatch();
   const [toolData, setProductData] = React.useState<Product[] | [] | null>(
     null,
   );
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
-  const loadData = (isRefresh = false) => {
-    if (isRefresh) {
-      setIsRefreshing(true);
-    } else {
-      setProductData(null);
-    }
-    let se, customerType, email;
-    Sentry.withScope(function (scope: Sentry.Scope) {
-      const extendedScope = scope as ExtendedSentryScope;
-      [se, customerType] = [
-        extendedScope._tags.se,
-        extendedScope._tags.customerType,
-      ];
-      email = extendedScope._user.email;
-    });
+  const loadData = () => {
+    const scopeData = Sentry.getCurrentScope().getScopeData();
+    const se = scopeData.tags['se'];
+    const customerType = scopeData.tags['customerType'];
+    const email = scopeData.user?.email;
 
     const headers: Record<string, string> = {
-      se: se ?? '',
-      customerType: customerType ?? '',
+      se: String(se ?? ''),
+      customerType: String(customerType ?? ''),
       email: email ?? '',
       'Content-Type': 'application/json',
     };
@@ -75,7 +62,8 @@ const EmpowerPlant = ({navigation}: StackScreenProps<RootStackParamList>) => {
   }, []);
 
   const onProductsListRefresh = () => {
-    loadData(true);
+    setIsRefreshing(true);
+    loadData();
   };
 
   if (toolData && toolData.length <= 10) {
