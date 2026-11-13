@@ -16,6 +16,7 @@ import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import ReduxScreen from './src/screens/ReduxScreen';
 import CartScreen from './src/screens/CartScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
+import WebStoreScreen from './src/screens/WebStoreScreen';
 import Toast from 'react-native-toast-message';
 
 import {RootState, store} from './src/reduxApp';
@@ -203,6 +204,23 @@ const BottomTabNavigator = () => {
             <Sentry.Unmask>
               <FontAwesome6
                 name="gear"
+                size={30}
+                color={focused ? '#f6cfb2' : '#dae3e4'}
+              />
+            </Sentry.Unmask>
+          ),
+        }}
+      />
+      {/* Last, so existing tabs keep their positions for TDA. */}
+      <Tab.Screen
+        name="WebStore"
+        component={WebStoreScreen}
+        options={{
+          tabBarIcon: ({focused}) => (
+            <Sentry.Unmask>
+              <FontAwesome6
+                testID="bottom-tab-webview"
+                name="globe"
                 size={30}
                 color={focused ? '#f6cfb2' : '#dae3e4'}
               />
