@@ -6,6 +6,37 @@ This is a mock mobile app used by Solution Engineers when demo'ing Sentry's [Rea
 |------------|----------------|------|
 | <img src="./img/empower-plant.png" height="400"> | <img src="./img/empower-plant-product-detail.png" height="400"> | <img src="./img/empower-plant-cart.png" height="400"> |
 
+## Sentry Features
+
+`App.tsx` configures the SDK. The shop flow (Landing, Products, Cart, Checkout) sends this data:
+
+- Tracing: Navigation and tap spans, time to initial display, and time to full display. The Landing screen calls `Sentry.appLoaded()`, so the app start span ends there.
+- Profiling: `hermesProfilingIntegration()` adds JavaScript profiles to transactions.
+- Session Replay: The SDK records all sessions. For the backend host, it also records request and response bodies and the `se`, `customerType`, and `email` headers.
+- HTTP errors: `httpClientIntegration()` creates an issue for each 4xx or 5xx response from the backend. A failed checkout creates one.
+- User Feedback: Shake the device to open the feedback form.
+- Logs and metrics: The screens send logs with `Sentry.logger`. The console logging integration also sends `console.log`, `console.warn`, and `console.error` calls. Checkout sends metrics with `Sentry.metrics`.
+- JS hangs: If the JS thread is blocked for more than 2 seconds, the SDK sends an error. This works only in iOS release builds.
+
+## Debug Tab
+
+The Debug tab (gear icon) has these buttons:
+
+| Button | Result in Sentry |
+|--------|------------------|
+| Capture Message | A message event. |
+| Capture Exception | A handled error. |
+| Uncaught Thrown Error | An unhandled error. |
+| Unhandled Promise Rejection | An unhandled promise rejection. |
+| Native Crash | A native crash. Sentry receives it on the next app start. |
+| Set Scope Properties | No event. It sets the user, tags, extras, attributes, context, and breadcrumbs for the next events. |
+| Block JS Thread | It blocks the JS thread for 6 seconds. In iOS release builds, the SDK sends a JS hang error. |
+| Rage Tap Me | Tap it 3 times in 1 second. The SDK adds a `ui.multiClick` breadcrumb. |
+| Activate Error Boundary | A render error that `Sentry.ErrorBoundary` catches. |
+
+The [TDA pipeline](https://github.com/sentry-demos/empower/tree/master/_tda) taps the first five
+buttons by their labels. If you rename one of them, update the TDA tests too.
+
 ## Run the App in a Simulator
 
 No build needed. Download the latest build from

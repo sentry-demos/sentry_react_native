@@ -7,7 +7,7 @@ import {
   View,
   PressableProps,
 } from 'react-native';
-import {StackScreenProps} from '@react-navigation/stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation';
 import {selectImage} from '../components/imageFromAssets';
 import {Product} from '../types/Product';
@@ -22,7 +22,7 @@ import {android} from '../../utils/platform';
 const ProductDetailScreen = ({
   navigation,
   route: {params},
-}: StackScreenProps<RootStackParamList>) => {
+}: NativeStackScreenProps<RootStackParamList, 'ProductDetail'>) => {
   console.debug('Loading ProductDetailScreen...', {
     id: params?.id,
     title: params?.title,

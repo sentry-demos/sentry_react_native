@@ -8,24 +8,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {CommonActions} from '@react-navigation/native';
-
 import * as Sentry from '@sentry/react-native';
 
 declare const global: any;
 const globalAny: any = global;
 
 import {getTestProps} from '../../utils/getTestProps';
-import {DSN, BACKEND_URL} from '../config';
+import {BACKEND_URL} from '../config';
 
-interface Props {
-  navigation: StackNavigationProp<any, 'ListApp'>;
-}
-
-const ListApp = (props: Props) => {
-  const currentDSN = Sentry.getClient()?.getOptions().dsn;
-
+const ListApp = () => {
   const [showBadCode, setShowBadCode] = React.useState(false);
 
   const setScopeProps = () => {
@@ -59,6 +50,13 @@ const ListApp = (props: Props) => {
       'MULTI-EXTRA-0': dateString,
       'MULTI-EXTRA-1': dateString,
       'MULTI-EXTRA-2': dateString,
+    });
+
+    Sentry.setAttribute('SINGLE-ATTRIBUTE', dateString);
+    Sentry.setAttributes({
+      'MULTI-ATTRIBUTE-STRING': dateString,
+      'MULTI-ATTRIBUTE-NUMBER': 418,
+      'MULTI-ATTRIBUTE-BOOLEAN': true,
     });
 
     Sentry.setContext('TEST-CONTEXT', {
@@ -132,26 +130,11 @@ const ListApp = (props: Props) => {
             source={require('../assets/sentry-logo.png')}
             style={styles.logo}
           />
-          <Text style={styles.welcomeTitle}>Hey there!</Text>
+          <Text style={styles.welcomeTitle}>Debug</Text>
           <Text style={styles.welcomeBody}>
-            This is a simple sample app for you to try out the Sentry React
-            Native SDK.
+            Each button sends data to Sentry: errors, crashes, hangs, rage taps,
+            or scope data.
           </Text>
-          <TouchableOpacity
-            {...getTestProps('openEndToEndTests')}
-            onPress={() => {
-              props.navigation.navigate('EndToEndTests');
-            }}>
-            <Text style={styles.hiddenE2e}>End to End Tests</Text>
-          </TouchableOpacity>
-          {currentDSN == null && DSN && (
-            <View style={styles.warningBlock}>
-              <Text style={styles.warningText}>
-                😃 Hey! You need to replace the DSN inside Sentry.init with your
-                own or you won't see the events on your dashboard.
-              </Text>
-            </View>
-          )}
           <View style={styles.buttonArea}>
             <TouchableOpacity
               onPress={() => {
@@ -207,6 +190,25 @@ const ListApp = (props: Props) => {
               </Sentry.Unmask>
             </TouchableOpacity>
             <View style={styles.spacer} />
+            <TouchableOpacity
+              {...getTestProps('block-js-thread-button')}
+              onPress={() => {
+                const end = Date.now() + 6000;
+                while (Date.now() < end) {
+                  // Busy wait so the JS thread cannot run anything else.
+                }
+              }}>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Block JS Thread</Text>
+              </Sentry.Unmask>
+            </TouchableOpacity>
+            <View style={styles.spacer} />
+            <TouchableOpacity {...getTestProps('rage-tap-button')}>
+              <Sentry.Unmask>
+                <Text style={styles.buttonText}>Rage Tap Me</Text>
+              </Sentry.Unmask>
+            </TouchableOpacity>
+            <View style={styles.spacer} />
             <Sentry.ErrorBoundary
               fallback={({eventId}) => (
                 <Text>Error boundary caught with event id: {eventId}</Text>
@@ -222,36 +224,6 @@ const ListApp = (props: Props) => {
                 </Sentry.Unmask>
               </TouchableOpacity>
             </Sentry.ErrorBoundary>
-          </View>
-          <View style={styles.buttonArea}>
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.dispatch(
-                  CommonActions.reset({
-                    index: 1,
-                    routes: [
-                      {name: 'Home'},
-                      {
-                        name: 'PerformanceTiming',
-                        params: {someParam: 'hello'},
-                      },
-                    ],
-                  }),
-                );
-              }}>
-              <Sentry.Unmask>
-                <Text style={styles.buttonText}>Performance Timing</Text>
-              </Sentry.Unmask>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('Redux');
-              }}>
-              <Sentry.Unmask>
-                <Text style={styles.buttonText}>Redux Example</Text>
-              </Sentry.Unmask>
-            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -286,15 +258,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#362D59',
   },
-  warningBlock: {
-    marginTop: 12,
-    backgroundColor: '#E1567C',
-    padding: 8,
-    borderRadius: 6,
-  },
-  warningText: {
-    color: '#fff',
-  },
   contentContainer: {
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -317,11 +280,6 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
     backgroundColor: '#c6becf',
-  },
-  hiddenE2e: {
-    width: 1,
-    height: 1,
-    opacity: 0,
   },
 });
 
